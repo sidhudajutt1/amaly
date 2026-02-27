@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
@@ -37,6 +38,7 @@ function DuaCategoryRow({ cat, language, theme }: {
     <TouchableOpacity
       style={[styles.duaRow, { backgroundColor: theme.surface, borderColor: theme.border }]}
       activeOpacity={0.7}
+      onPress={() => router.push(`/dua/${cat.id}`)}
     >
       <Text style={styles.duaIcon}>{cat.icon}</Text>
       <View style={styles.duaInfo}>
@@ -83,12 +85,14 @@ export default function IbadahScreen() {
           label={t(language, 'ibadah.dhikr')}
           sublabel={t(language, 'ibadah.counter')}
           theme={theme}
+          onPress={() => router.push('/dhikr')}
         />
         <QuickAccessCard
           icon="✨"
           label={t(language, 'ibadah.namesOfAllah')}
           sublabel="99"
           theme={theme}
+          onPress={() => router.push('/names')}
         />
         <QuickAccessCard
           icon="🕋"

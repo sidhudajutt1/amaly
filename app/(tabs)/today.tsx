@@ -1,4 +1,5 @@
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { t } from '../../src/i18n';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -26,7 +27,7 @@ export default function TodayScreen() {
       style={[styles.container, { backgroundColor: theme.background }]}
       contentContainerStyle={styles.content}
     >
-      {/* Streak Counter */}
+      {/* Streak Counter + Settings */}
       <View style={[styles.streakRow, { borderBottomColor: theme.border }]}>
         <Text style={[styles.streakIcon]}>🔥</Text>
         <Text style={[styles.streakNumber, { color: theme.streak }]}>
@@ -35,6 +36,10 @@ export default function TodayScreen() {
         <Text style={[styles.streakLabel, { color: theme.textSecondary }]}>
           {t(language, 'today.streakDays')}
         </Text>
+        <View style={{ flex: 1 }} />
+        <TouchableOpacity onPress={() => router.push('/settings')}>
+          <Text style={{ fontSize: 22 }}>⚙️</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Bismillah */}

@@ -29,6 +29,10 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="surah/[id]" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="dua/[categoryId]" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="names" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="dhikr" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </>
   );
