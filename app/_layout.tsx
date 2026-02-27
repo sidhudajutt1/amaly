@@ -28,6 +28,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
+        <Stack.Screen name="surah/[id]" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </>
   );

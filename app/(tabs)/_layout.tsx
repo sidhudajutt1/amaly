@@ -4,6 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppStore } from '../../src/store/useAppStore';
 import { t } from '../../src/i18n';
 import { useTheme } from '../../src/hooks/useTheme';
+import { usePrayerTimes } from '../../src/hooks/usePrayerTimes';
+import { formatTime } from '../../src/services/prayerService';
 import { fontSizes, spacing } from '../../src/theme';
 
 function TabIcon({ name, focused, color }: { name: string; focused: boolean; color: string }) {
@@ -24,11 +26,20 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
 function PrayerBar() {
   const language = useAppStore((s) => s.settings.language);
   const { theme } = useTheme();
+  const { nextPrayer, countdown } = usePrayerTimes();
+
+  const prayerNameKey = nextPrayer
+    ? `prayer.${nextPrayer.name}` as const
+    : 'prayer.dhuhr';
+  const timeStr = nextPrayer ? formatTime(nextPrayer.time) : '--:--';
+  const countdownStr = countdown
+    ? `${countdown.hours}${t(language, 'prayer.hours')} ${countdown.minutes}${t(language, 'prayer.minutes')}`
+    : '';
 
   return (
     <View style={[styles.prayerBar, { backgroundColor: theme.prayerBar }]}>
       <Text style={[styles.prayerBarText, { color: theme.prayerBarText }]}>
-        {t(language, 'prayer.nextPrayer')}: {t(language, 'prayer.dhuhr')} — 12:08
+        {t(language, prayerNameKey)} {timeStr} — {countdownStr}
       </Text>
     </View>
   );
