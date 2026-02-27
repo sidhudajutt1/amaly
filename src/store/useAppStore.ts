@@ -1,0 +1,267 @@
+import { create } from 'zustand';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import type {
+  Language,
+  GrowthCategory,
+  CalculationMethod,
+  UserSettings,
+  UserProgress,
+  StreakData,
+  PrayerName,
+} from '../types';
+
+const STORAGE_KEY = '@niyyah_store';
+
+interface AppState {
+  settings: UserSettings;
+  streakData: StreakData;
+  todayProgress: UserProgress;
+  isLoading: boolean;
+
+  // Settings actions
+  setLanguage: (language: Language) => void;
+  setGrowthCategories: (categories: GrowthCategory[]) => void;
+  setNotificationTime: (time: string) => void;
+  setCalculationMethod: (method: CalculationMethod) => void;
+  setLocation: (lat: number, lng: number, name: string) => void;
+  setOnboardingCompleted: () => void;
+  setTheme: (theme: 'light' | 'dark' | 'auto') => void;
+  setQuranFontSize: (size: number) => void;
+  setTranslationFontSize: (size: number) => void;
+  toggleTransliteration: () => void;
+
+  // Progress actions
+  markReflectionViewed: () => void;
+  markNiyyahCompleted: () => void;
+  markPrayerCompleted: (prayer: PrayerName) => void;
+  markTafsirRead: () => void;
+
+  // Persistence
+  hydrate: () => Promise<void>;
+  persist: () => Promise<void>;
+}
+
+const defaultSettings: UserSettings = {
+  language: 'en',
+  growthCategories: [],
+  notificationTime: '05:30',
+  calculationMethod: 'MuslimWorldLeague',
+  onboardingCompleted: false,
+  theme: 'auto',
+  quranFontSize: 28,
+  translationFontSize: 16,
+  showTransliteration: true,
+};
+
+const defaultStreak: StreakData = {
+  currentStreak: 0,
+  longestStreak: 0,
+  totalReflections: 0,
+  totalNiyyahsCompleted: 0,
+  totalTafsirRead: 0,
+  categoryProgress: {
+    sabr: 0,
+    shukr: 0,
+    family: 0,
+    worship: 0,
+    character: 0,
+    knowledge: 0,
+    generosity: 0,
+    tawakkul: 0,
+    justice: 0,
+    death_remembrance: 0,
+  },
+};
+
+const todayDate = () => new Date().toISOString().split('T')[0];
+
+const defaultProgress = (): UserProgress => ({
+  date: todayDate(),
+  reflectionViewed: false,
+  niyyahCompleted: false,
+  prayersCompleted: [],
+  tafsirRead: false,
+});
+
+export const useAppStore = create<AppState>((set, get) => ({
+  settings: defaultSettings,
+  streakData: defaultStreak,
+  todayProgress: defaultProgress(),
+  isLoading: true,
+
+  setLanguage: (language) => {
+    set((state) => ({ settings: { ...state.settings, language } }));
+    get().persist();
+  },
+
+  setGrowthCategories: (categories) => {
+    set((state) => ({ settings: { ...state.settings, growthCategories: categories } }));
+    get().persist();
+  },
+
+  setNotificationTime: (time) => {
+    set((state) => ({ settings: { ...state.settings, notificationTime: time } }));
+    get().persist();
+  },
+
+  setCalculationMethod: (method) => {
+    set((state) => ({ settings: { ...state.settings, calculationMethod: method } }));
+    get().persist();
+  },
+
+  setLocation: (lat, lng, name) => {
+    set((state) => ({
+      settings: { ...state.settings, locationLat: lat, locationLng: lng, locationName: name },
+    }));
+    get().persist();
+  },
+
+  setOnboardingCompleted: () => {
+    set((state) => ({ settings: { ...state.settings, onboardingCompleted: true } }));
+    get().persist();
+  },
+
+  setTheme: (theme) => {
+    set((state) => ({ settings: { ...state.settings, theme } }));
+    get().persist();
+  },
+
+  setQuranFontSize: (size) => {
+    set((state) => ({ settings: { ...state.settings, quranFontSize: size } }));
+    get().persist();
+  },
+
+  setTranslationFontSize: (size) => {
+    set((state) => ({ settings: { ...state.settings, translationFontSize: size } }));
+    get().persist();
+  },
+
+  toggleTransliteration: () => {
+    set((state) => ({
+      settings: { ...state.settings, showTransliteration: !state.settings.showTransliteration },
+    }));
+    get().persist();
+  },
+
+  markReflectionViewed: () => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+
+    if (progress.date !== today) {
+      progress = defaultProgress();
+    }
+
+    if (!progress.reflectionViewed) {
+      const newStreak = {
+        ...state.streakData,
+        totalReflections: state.streakData.totalReflections + 1,
+        currentStreak: state.streakData.currentStreak + 1,
+        longestStreak: Math.max(
+          state.streakData.longestStreak,
+          state.streakData.currentStreak + 1
+        ),
+      };
+      set({
+        todayProgress: { ...progress, reflectionViewed: true },
+        streakData: newStreak,
+      });
+      get().persist();
+    }
+  },
+
+  markNiyyahCompleted: () => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+
+    if (progress.date !== today) {
+      progress = defaultProgress();
+    }
+
+    if (!progress.niyyahCompleted) {
+      set({
+        todayProgress: { ...progress, niyyahCompleted: true },
+        streakData: {
+          ...state.streakData,
+          totalNiyyahsCompleted: state.streakData.totalNiyyahsCompleted + 1,
+        },
+      });
+      get().persist();
+    }
+  },
+
+  markPrayerCompleted: (prayer) => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+
+    if (progress.date !== today) {
+      progress = defaultProgress();
+    }
+
+    if (!progress.prayersCompleted.includes(prayer)) {
+      set({
+        todayProgress: {
+          ...progress,
+          prayersCompleted: [...progress.prayersCompleted, prayer],
+        },
+      });
+      get().persist();
+    }
+  },
+
+  markTafsirRead: () => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+
+    if (progress.date !== today) {
+      progress = defaultProgress();
+    }
+
+    if (!progress.tafsirRead) {
+      set({
+        todayProgress: { ...progress, tafsirRead: true },
+        streakData: {
+          ...state.streakData,
+          totalTafsirRead: state.streakData.totalTafsirRead + 1,
+        },
+      });
+      get().persist();
+    }
+  },
+
+  hydrate: async () => {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEY);
+      if (data) {
+        const parsed = JSON.parse(data);
+        set({
+          settings: { ...defaultSettings, ...parsed.settings },
+          streakData: { ...defaultStreak, ...parsed.streakData },
+          todayProgress: parsed.todayProgress?.date === todayDate()
+            ? parsed.todayProgress
+            : defaultProgress(),
+          isLoading: false,
+        });
+      } else {
+        set({ isLoading: false });
+      }
+    } catch {
+      set({ isLoading: false });
+    }
+  },
+
+  persist: async () => {
+    try {
+      const { settings, streakData, todayProgress } = get();
+      await AsyncStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ settings, streakData, todayProgress })
+      );
+    } catch {
+      // Silently fail — will retry on next action
+    }
+  },
+}));

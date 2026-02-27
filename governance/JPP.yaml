@@ -1,0 +1,145 @@
+# Jurisprudence Policy Pack (JPP) — Niyyah App
+# This is the operating standard for all Islamic content decisions.
+# Changes require Board (Scholar Gate) approval.
+
+version: "1.0.0"
+last_updated: "2026-02-28"
+approved_by: "Lead + Board"
+
+# === THEOLOGICAL POSTURE ===
+posture:
+  madhhab: "neutral"
+  sectarian_content: "prohibited"
+  political_content: "prohibited"
+  vulgar_content: "prohibited"
+  non_islamic_content: "prohibited"
+  non_sharia_content: "strictly_prohibited"
+  fatwa_generation: "prohibited"
+  tone: "respectful, humble, non-prescriptive, balanced"
+
+# === QURAN POLICY ===
+quran:
+  script: "uthmani"
+  text_editable: false
+  text_display: "arabic_always_first_and_largest"
+  translations_allowed:
+    - name: "Sahih International"
+      language: "English"
+      status: "approved"
+    - name: "Fateh Muhammad Jalandhry"
+      language: "Urdu"
+      status: "approved"
+    - name: "King Fahd Complex Tafsir"
+      language: "Arabic"
+      status: "pending_review"
+  tafsir_allowed:
+    - name: "Ibn Kathir (abridged)"
+      status: "pending_review"
+  word_by_word_source: "corpus.quran.com"
+  no_truncation: true
+  no_verse_misnumbering: true
+  clear_distinction_quran_vs_translation: true
+
+# === HADITH POLICY ===
+hadith:
+  collections_allowed:
+    - "Sahih al-Bukhari (Darussalam)"
+    - "Sahih Muslim (Darussalam)"
+    - "Jami at-Tirmidhi (Darussalam)"
+    - "Sunan Abu Dawood (Darussalam)"
+    - "Sunan an-Nasai (Darussalam)"
+    - "Sunan Ibn Majah (Darussalam)"
+  numbering_system: "Darussalam"
+  grading_reference: "Darussalam grading"
+  grading_display: "mandatory"
+  sahih_and_hasan_in_primary: true
+  weak_hadith: "labeled_clearly_if_shown"
+  fabricated_hadith: "never_displayed"
+  misattribution: "critical_violation"
+  clear_separation_text_vs_commentary: true
+
+# === REFLECTIONS POLICY ===
+reflections:
+  must_cite_source: true
+  minimum_citation: "ayah_reference_and_hadith_book_plus_number"
+  no_fatwa_claims: true
+  no_sectarian_content: true
+  no_political_content: true
+  no_false_attribution: true
+  false_attribution_to_prophet: "critical_violation"
+  tone: "respectful, humble, non-prescriptive"
+  scholar_review_required_for_bulk: true
+  unverified_inspirational_quotes: "prohibited"
+
+# === DUAS POLICY ===
+duas:
+  source: "Hisnul Muslim, Sa'id Al-Qahtani"
+  edition: "verified_print_edition"
+  no_altered_text: true
+  transliteration_reviewed: true
+  diacritics_required: true
+
+# === PRAYER POLICY ===
+prayer:
+  calculation_library: "adhan-js"
+  default_method: "user_selected_during_setup"
+  method_selection_transparent: true
+  high_latitude_adjustments: true
+  user_can_change_method: true
+  forced_notifications: "prohibited"
+  notification_during_prayer: "prohibited"
+
+# === 99 NAMES POLICY ===
+names_of_allah:
+  source: "classical_islamic_sources"
+  cross_referenced: true
+  consistent_with_quran_and_sunnah: true
+
+# === UI ETHICS POLICY ===
+ui_ethics:
+  dark_patterns: "prohibited"
+  addictive_gamification: "prohibited"
+  manipulative_notifications: "prohibited"
+  modesty_in_visuals: "required"
+  arabic_typography_dignity: "required"
+  rtl_correctness: "required"
+  inappropriate_imagery: "prohibited"
+  exploitative_notification_tactics: "prohibited"
+
+# === REVENUE POLICY ===
+revenue:
+  model: "sadaqah_voluntary"
+  ads: "none_ever"
+  pressure_tactics: "prohibited"
+  ramadan_exploitation: "prohibited"
+  spiritual_upsell_pressure: "prohibited"
+  transparency: "required"
+  subscription_clarity: "required"
+  classification: "fully_halal"
+
+# === MARKETING POLICY ===
+marketing:
+  no_politics: true
+  no_sectarian_messaging: true
+  no_fear_based_marketing: true
+  no_vulgar_content: true
+  sharia_compliant_only: true
+  no_false_claims: true
+  no_exploitation_of_religious_vulnerability: true
+
+# === DATA PRIVACY POLICY ===
+privacy:
+  no_sale_of_user_religious_data: true
+  no_profiling_for_exploitative_ads: true
+  analytics_respect_privacy: true
+  minimal_data_collection: true
+
+# === GOVERNANCE POLICY ===
+governance:
+  shariah_review_board: true
+  content_audit_schedule: "quarterly"
+  correction_mechanism: "documented"
+  user_reporting_system: true
+  change_tracking_for_religious_data: true
+  version_control_for_islamic_databases: true
+  scholar_review_log: true

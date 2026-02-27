@@ -1,0 +1,1 @@
+{"issue_id":"SGV-000","date":"2026-02-28","module":"governance","agent":"Lead","severity":"INFO","type":"initialization","description":"Issue & Ruling Ledger initialized. Append-only log of all Shariah governance findings.","evidence":"governance/IRL.jsonl created","decision":"N/A","approver":"Lead","rationale_tag":"system_init","resolution":"N/A","resolved_date":"2026-02-28"}
