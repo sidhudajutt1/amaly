@@ -39,7 +39,7 @@ function PrayerBar() {
   return (
     <View style={[styles.prayerBar, { backgroundColor: theme.prayerBar }]}>
       <Text style={[styles.prayerBarText, { color: theme.prayerBarText }]}>
-        {t(language, prayerNameKey)} {timeStr} — {countdownStr}
+        {`${t(language, prayerNameKey)} ${timeStr} — ${countdownStr}`}
       </Text>
     </View>
   );

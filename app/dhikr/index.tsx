@@ -5,6 +5,7 @@ import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { getArabicFontFamily } from '../../src/theme/typography';
 
 const DHIKR_PRESETS = [
   { id: 'subhanallah', ar: 'سُبْحَانَ ٱللَّهِ', en: 'SubhanAllah', target: 33 },
@@ -50,11 +51,11 @@ export default function DhikrScreen() {
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={[styles.backText, { color: theme.primary }]}>
-            {language === 'ar' || language === 'ur' ? '→' : '←'} {t(language, 'common.back')}
+            {`${language === 'ar' || language === 'ur' ? '→' : '←'} ${t(language, 'common.back')}`}
           </Text>
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.text }]}>
-          📿 {t(language, 'ibadah.dhikr')}
+          {`📿 ${t(language, 'ibadah.dhikr')}`}
         </Text>
         <View style={{ width: 60 }} />
       </View>
@@ -82,7 +83,7 @@ export default function DhikrScreen() {
 
       {/* Main Counter */}
       <View style={styles.counterArea}>
-        <Text style={[styles.arabicDhikr, { color: theme.textArabic }]}>
+        <Text style={[styles.arabicDhikr, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>
           {current.ar}
         </Text>
         <Text style={[styles.enDhikr, { color: theme.textSecondary }]}>
@@ -144,7 +145,7 @@ export default function DhikrScreen() {
           onPress={handleNext}
         >
           <Text style={[styles.controlText, { color: '#fff' }]}>
-            {t(language, 'common.next')} →
+            {`${t(language, 'common.next')} →`}
           </Text>
         </TouchableOpacity>
       </View>

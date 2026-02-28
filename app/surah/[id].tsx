@@ -6,12 +6,13 @@ import { t } from '../../src/i18n';
 import { surahs } from '../../src/data/surahs';
 import { getSurahData, isSurahAvailable, type AyahData } from '../../src/data/quranText';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { getQuranFontFamily, getTranslationFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
 
-function Bismillah({ theme }: { theme: Record<string, string> }) {
+function Bismillah({ theme, language }: { theme: Record<string, string>; language: Language }) {
   return (
     <View style={[styles.bismillahContainer, { borderColor: theme.border }]}>
-      <Text style={[styles.bismillahText, { color: theme.textArabic }]}>
+      <Text style={[styles.bismillahText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language) }]}>
         بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِيمِ
       </Text>
     </View>
@@ -35,13 +36,13 @@ function AyahCard({ ayah, language, theme, quranFontSize, translationFontSize }:
       <View style={[styles.ayahNumberBadge, { backgroundColor: theme.primaryLight }]}>
         <Text style={[styles.ayahNumber, { color: theme.primary }]}>{ayah.number}</Text>
       </View>
-      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize }]}>
+      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, fontFamily: getQuranFontFamily(language) }]}>
         {ayah.textAr}
       </Text>
       <View style={styles.divider}>
         <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
       </View>
-      <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize }]}>
+      <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize, fontFamily: getTranslationFontFamily(language) }]}>
         {getTranslation()}
       </Text>
     </View>
@@ -74,14 +75,14 @@ export default function SurahReaderScreen() {
       <View style={[styles.header, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={[styles.backText, { color: theme.primary }]}>
-            {language === 'ar' || language === 'ur' ? '→' : '←'} {t(language, 'common.back')}
+            {`${language === 'ar' || language === 'ur' ? '→' : '←'} ${t(language, 'common.back')}`}
           </Text>
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={[styles.headerArabic, { color: theme.textArabic }]}>{surahMeta.nameAr}</Text>
           <Text style={[styles.headerEnglish, { color: theme.text }]}>{surahMeta.nameEn}</Text>
           <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>
-            {surahMeta.nameTranslation} • {surahMeta.ayahCount} {t(language, 'quran.ayahs')}
+            {`${surahMeta.nameTranslation} • ${surahMeta.ayahCount} ${t(language, 'quran.ayahs')}`}
           </Text>
         </View>
         <View style={styles.headerSpacer} />
@@ -91,7 +92,7 @@ export default function SurahReaderScreen() {
         <FlatList
           data={surahData.ayahs}
           keyExtractor={(item) => `${surahNumber}-${item.number}`}
-          ListHeaderComponent={surahNumber !== 1 && surahNumber !== 9 ? <Bismillah theme={theme} /> : null}
+          ListHeaderComponent={surahNumber !== 1 && surahNumber !== 9 ? <Bismillah theme={theme} language={language} /> : null}
           renderItem={({ item }) => (
             <AyahCard
               ayah={item}

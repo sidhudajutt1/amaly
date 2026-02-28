@@ -34,11 +34,11 @@ export default function NamesOfAllahScreen() {
       <View style={[styles.header, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={[styles.backText, { color: theme.primary }]}>
-            {language === 'ar' || language === 'ur' ? '→' : '←'} {t(language, 'common.back')}
+            {`${language === 'ar' || language === 'ur' ? '→' : '←'} ${t(language, 'common.back')}`}
           </Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
-          ✨ {t(language, 'ibadah.namesOfAllah')}
+          {`✨ ${t(language, 'ibadah.namesOfAllah')}`}
         </Text>
         <View style={{ width: 60 }} />
       </View>

@@ -35,7 +35,7 @@ function SettingRow({ label, value, onPress, theme }: {
     >
       <Text style={[styles.rowLabel, { color: theme.text }]}>{label}</Text>
       {value && (
-        <Text style={[styles.rowValue, { color: theme.textSecondary }]}>{value} ›</Text>
+        <Text style={[styles.rowValue, { color: theme.textSecondary }]}>{`${value} ›`}</Text>
       )}
     </TouchableOpacity>
   );
@@ -117,12 +117,12 @@ export default function SettingsScreen() {
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={[styles.backText, { color: theme.primary }]}>
-            {language === 'ar' || language === 'ur' ? '→' : '←'} {t(language, 'common.back')}
+            {`${language === 'ar' || language === 'ur' ? '→' : '←'} ${t(language, 'common.back')}`}
           </Text>
         </TouchableOpacity>
       </View>
       <Text style={[styles.title, { color: theme.text }]}>
-        ⚙️ {t(language, 'settings.title')}
+        {`⚙️ ${t(language, 'settings.title')}`}
       </Text>
 
       {/* Language */}

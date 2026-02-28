@@ -39,8 +39,7 @@ export default function PrayerScreen() {
             {t(language, `prayer.${nextPrayer.name}`)}
           </Text>
           <Text style={[styles.countdownTime, { color: theme.primary }]}>
-            {countdown.hours > 0 ? `${countdown.hours}${t(language, 'prayer.hours')} ` : ''}
-            {countdown.minutes}{t(language, 'prayer.minutes')}
+            {`${countdown.hours > 0 ? `${countdown.hours}${t(language, 'prayer.hours')} ` : ''}${countdown.minutes}${t(language, 'prayer.minutes')}`}
           </Text>
         </View>
       )}

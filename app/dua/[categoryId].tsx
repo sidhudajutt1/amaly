@@ -7,6 +7,7 @@ import { t } from '../../src/i18n';
 import { duaCategories } from '../../src/data/duaCategories';
 import { duas, type DuaData } from '../../src/data/duas';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { getArabicFontFamily, getTranslationFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
 
 function DuaCard({ dua, language, theme, showTransliteration }: {
@@ -26,7 +27,7 @@ function DuaCard({ dua, language, theme, showTransliteration }: {
   return (
     <View style={[styles.duaCard, { backgroundColor: theme.surface, borderColor: isDone ? theme.success : theme.border }]}>
       {/* Arabic */}
-      <Text style={[styles.arabicText, { color: theme.textArabic }]}>
+      <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>
         {dua.textAr}
       </Text>
 
@@ -38,7 +39,7 @@ function DuaCard({ dua, language, theme, showTransliteration }: {
       )}
 
       {/* Translation */}
-      <Text style={[styles.translationText, { color: theme.text }]}>
+      <Text style={[styles.translationText, { color: theme.text, fontFamily: getTranslationFontFamily(language) }]}>
         {getTranslation()}
       </Text>
 
@@ -90,7 +91,7 @@ export default function DuaReaderScreen() {
       <View style={[styles.header, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={[styles.backText, { color: theme.primary }]}>
-            {language === 'ar' || language === 'ur' ? '→' : '←'} {t(language, 'common.back')}
+            {`${language === 'ar' || language === 'ur' ? '→' : '←'} ${t(language, 'common.back')}`}
           </Text>
         </TouchableOpacity>
         <View style={styles.headerCenter}>

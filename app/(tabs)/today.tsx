@@ -4,6 +4,7 @@ import { useAppStore } from '../../src/store/useAppStore';
 import { t } from '../../src/i18n';
 import { useTheme } from '../../src/hooks/useTheme';
 import { fontSizes, spacing, borderRadius, lineHeights } from '../../src/theme';
+import { getQuranFontFamily, getArabicFontFamily } from '../../src/theme/typography';
 
 const SAMPLE_REFLECTION = {
   ayahAr: 'وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ',
@@ -49,7 +50,7 @@ export default function TodayScreen() {
 
       {/* Quran Ayah Card */}
       <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
-        <Text style={[styles.arabicText, { color: theme.textArabic }]}>
+        <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language) }]}>
           {SAMPLE_REFLECTION.ayahAr}
         </Text>
         <Text style={[styles.translationText, { color: theme.text, textAlign }]}>
@@ -67,9 +68,9 @@ export default function TodayScreen() {
       {/* Hadith Card */}
       <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.primary, textAlign }]}>
-          📖 {t(language, 'today.fromSunnah')}
+          {`📖 ${t(language, 'today.fromSunnah')}`}
         </Text>
-        <Text style={[styles.hadithArabic, { color: theme.textArabic }]}>
+        <Text style={[styles.hadithArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>
           {SAMPLE_REFLECTION.hadithAr}
         </Text>
         <Text style={[styles.translationText, { color: theme.text, textAlign }]}>
@@ -87,7 +88,7 @@ export default function TodayScreen() {
       {/* Reflection Card */}
       <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.primary, textAlign }]}>
-          💭 {t(language, 'today.reflection')}
+          {`💭 ${t(language, 'today.reflection')}`}
         </Text>
         <Text style={[styles.reflectionText, { color: theme.text, textAlign }]}>
           {language === 'ur'
@@ -101,7 +102,7 @@ export default function TodayScreen() {
       {/* Today's Niyyah Card */}
       <View style={[styles.niyyahCard, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}>
         <Text style={[styles.niyyahTitle, { color: theme.primary, textAlign }]}>
-          🎯 {t(language, 'today.todaysNiyyah')}
+          {`🎯 ${t(language, 'today.todaysNiyyah')}`}
         </Text>
         <Text style={[styles.niyyahText, { color: theme.text, textAlign }]}>
           {language === 'ur'
@@ -138,7 +139,7 @@ export default function TodayScreen() {
         </TouchableOpacity>
         <TouchableOpacity style={[styles.actionButton, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <Text style={[styles.actionButtonText, { color: theme.primary }]}>
-            {t(language, 'today.readTafsir')} ▸
+            {`${t(language, 'today.readTafsir')} ▸`}
           </Text>
         </TouchableOpacity>
       </View>

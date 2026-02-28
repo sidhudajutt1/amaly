@@ -34,7 +34,7 @@ function SurahCard({ surah, theme, language, onPress }: {
       <View style={styles.surahInfo}>
         <Text style={[styles.surahNameEn, { color: theme.text }]}>{surah.nameEn}</Text>
         <Text style={[styles.surahMeaning, { color: theme.textSecondary }]}>
-          {surah.nameTranslation} • {surah.ayahCount} {t(language, 'quran.ayahs')}
+          {`${surah.nameTranslation} • ${surah.ayahCount} ${t(language, 'quran.ayahs')}`}
         </Text>
       </View>
       <View style={styles.surahArabic}>

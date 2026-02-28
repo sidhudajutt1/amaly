@@ -29,10 +29,10 @@ function CollectionCard({ collection, theme, language }: {
         <Text style={[styles.compiler, { color: theme.textSecondary }]}>{collection.compiler}</Text>
         <View style={styles.statsRow}>
           <Text style={[styles.stat, { color: theme.textTertiary }]}>
-            {collection.totalHadiths.toLocaleString()} {t(language, 'hadith.hadithNumber')}s
+            {`${collection.totalHadiths.toLocaleString()} ${t(language, 'hadith.hadithNumber')}s`}
           </Text>
           <Text style={[styles.stat, { color: theme.textTertiary }]}>
-            {collection.totalBooks} {t(language, 'hadith.book')}s
+            {`${collection.totalBooks} ${t(language, 'hadith.book')}s`}
           </Text>
         </View>
       </View>
@@ -48,10 +48,10 @@ export default function HadithScreen() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.text }]}>
-          📚 {t(language, 'hadith.collections')}
+          {`📚 ${t(language, 'hadith.collections')}`}
         </Text>
         <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-          {t(language, 'hadith.collections')} — 6 {t(language, 'hadith.book')}s
+          {`${t(language, 'hadith.collections')} — 6 ${t(language, 'hadith.book')}s`}
         </Text>
       </View>
       <FlatList

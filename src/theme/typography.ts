@@ -1,6 +1,8 @@
 import { Platform } from 'react-native';
+import type { Language } from '../types';
 
 export const fonts = {
+  quranMushaf: 'AmiriQuran',
   arabic: {
     regular: Platform.select({
       ios: 'Geeza Pro',
@@ -14,11 +16,8 @@ export const fonts = {
     }),
   },
   urdu: {
-    regular: Platform.select({
-      ios: 'Noto Nastaliq Urdu',
-      android: 'noto-nastaliq-urdu',
-      default: 'serif',
-    }),
+    regular: 'NotoNastaliqUrdu',
+    bold: 'NotoNastaliqUrduBold',
   },
   latin: {
     regular: Platform.select({
@@ -38,6 +37,34 @@ export const fonts = {
     }),
   },
 };
+
+/**
+ * Returns the correct font family for Quran Arabic text based on user language:
+ * - Urdu users: Amiri Quran (Mushaf-style, closer to Indo-Pak Naskh)
+ * - Arabic users: System Naskh (standard digital Arabic)
+ * - Others: Amiri Quran (Mushaf-style for the beautiful calligraphic look)
+ */
+export function getQuranFontFamily(language: Language): string {
+  if (language === 'ar') return fonts.arabic.regular || 'serif';
+  return fonts.quranMushaf;
+}
+
+/**
+ * Returns the correct font for dua/hadith Arabic text (non-Quran sacred text)
+ */
+export function getArabicFontFamily(language: Language): string {
+  if (language === 'ur') return fonts.urdu.regular;
+  return fonts.arabic.regular || 'serif';
+}
+
+/**
+ * Returns the correct font for translation text
+ */
+export function getTranslationFontFamily(language: Language): string | undefined {
+  if (language === 'ur') return fonts.urdu.regular;
+  if (language === 'ar') return fonts.arabic.regular || undefined;
+  return undefined;
+}
 
 export const fontSizes = {
   quranArabic: 28,

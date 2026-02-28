@@ -71,7 +71,7 @@ export default function IbadahScreen() {
     >
       {/* Quick Access Grid */}
       <Text style={[styles.sectionTitle, { color: theme.text }]}>
-        🤲 {t(language, 'tabs.ibadah')}
+        {`🤲 ${t(language, 'tabs.ibadah')}`}
       </Text>
       <View style={styles.quickGrid}>
         <QuickAccessCard
@@ -106,7 +106,7 @@ export default function IbadahScreen() {
         {t(language, 'ibadah.duas')}
       </Text>
       <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
-        {t(language, 'ibadah.source')}: Hisnul Muslim
+        {`${t(language, 'ibadah.source')}: Hisnul Muslim`}
       </Text>
 
       {duaCategories.map((cat) => (
