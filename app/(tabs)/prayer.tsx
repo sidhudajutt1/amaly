@@ -6,6 +6,9 @@ import { usePrayerTimes } from '../../src/hooks/usePrayerTimes';
 import { formatTime } from '../../src/services/prayerService';
 import { t } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { useLocation } from '../../src/hooks/useLocation';
+import { toHijri, formatHijriDate, isRamadan, getRamadanDay } from '../../src/services/hijriService';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { PrayerName } from '../../src/types';
 
 const PRAYER_ORDER: (PrayerName | 'sunrise')[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
@@ -17,6 +20,12 @@ export default function PrayerScreen() {
   const locationName = useAppStore((s) => s.settings.locationName);
   const { theme } = useTheme();
   const { prayerTimes, nextPrayer, countdown, currentPrayer } = usePrayerTimes();
+  const { locationName: detectedLocation } = useLocation();
+  const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
+  const now = new Date();
+  const hijri = toHijri(now, hijriAdjustment);
+  const hijriStr = formatHijriDate(hijri, language);
+  const ramadanDay = getRamadanDay(hijri);
 
   const textAlign = language === 'ar' || language === 'ur' ? 'right' as const : 'left' as const;
 
@@ -26,7 +35,7 @@ export default function PrayerScreen() {
       <View style={styles.locationRow}>
         <Ionicons name="location-outline" size={16} color={theme.textSecondary} />
         <Text style={[styles.locationText, { color: theme.textSecondary }]}>
-          {locationName || 'Makkah, Saudi Arabia'}
+          {detectedLocation}
         </Text>
       </View>
 
@@ -106,16 +115,24 @@ export default function PrayerScreen() {
         );
       })}
 
-      {/* Hijri Date */}
+      {/* Hijri + Gregorian Date */}
       <View style={[styles.hijriCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Text style={[styles.hijriText, { color: theme.textSecondary }]}>
-          {new Date().toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
+        <Text style={[styles.hijriDateText, { color: theme.text }]}>
+          {hijriStr}
+        </Text>
+        <Text style={[styles.gregorianDateText, { color: theme.textTertiary }]}>
+          {now.toLocaleDateString(language === 'ar' ? 'ar-SA' : language === 'ur' ? 'ur-PK' : 'en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
           })}
         </Text>
+        {ramadanDay !== null && (
+          <View style={[styles.ramadanInfo, { borderTopColor: theme.border }]}>
+            <MaterialCommunityIcons name="moon-waning-crescent" size={14} color={theme.primary} />
+            <Text style={[styles.ramadanLabel, { color: theme.primary }]}>
+              {`${t(language, 'ramadan.day')} ${ramadanDay} ${t(language, 'ramadan.ofRamadan')}`}
+            </Text>
+          </View>
+        )}
       </View>
 
       <View style={{ height: spacing.xxl }} />
@@ -174,5 +191,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
   },
-  hijriText: { fontSize: fontSizes.bodySmall },
+  hijriDateText: { fontSize: fontSizes.body, fontWeight: '600', marginBottom: spacing.xs },
+  gregorianDateText: { fontSize: fontSizes.bodySmall },
+  ramadanInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.sm,
+    paddingTop: spacing.sm,
+    borderTopWidth: 1,
+  },
+  ramadanLabel: { fontSize: fontSizes.caption, fontWeight: '600' },
 });

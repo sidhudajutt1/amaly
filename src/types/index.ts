@@ -160,6 +160,8 @@ export interface UserSettings {
   quranFontSize: number;
   translationFontSize: number;
   showTransliteration: boolean;
+  locationAutoDetect?: boolean;
+  hijriAdjustment: number;
 }
 
 export interface StreakData {
@@ -180,4 +182,10 @@ export interface SupportTier {
   descriptionEn: string;
   descriptionAr: string;
   descriptionUr: string;
+}
+
+export interface HijriDate {
+  day: number;
+  month: number;
+  year: number;
 }

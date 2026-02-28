@@ -6,6 +6,9 @@ import { t } from '../../src/i18n';
 import { useTheme } from '../../src/hooks/useTheme';
 import { fontSizes, spacing, borderRadius, lineHeights } from '../../src/theme';
 import { getQuranFontFamily, getArabicFontFamily } from '../../src/theme/typography';
+import { useLocation } from '../../src/hooks/useLocation';
+import { toHijri, formatHijriDate, isRamadan, getRamadanDay, getRamadanThird, getIslamicEvent } from '../../src/services/hijriService';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const SAMPLE_REFLECTION = {
   ayahAr: 'وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ',
@@ -21,6 +24,14 @@ export default function TodayScreen() {
   const markReflectionViewed = useAppStore((s) => s.markReflectionViewed);
   const markNiyyahCompleted = useAppStore((s) => s.markNiyyahCompleted);
   const { theme } = useTheme();
+  const { locationName } = useLocation();
+  const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
+  const now = new Date();
+  const hijri = toHijri(now, hijriAdjustment);
+  const hijriStr = formatHijriDate(hijri, language);
+  const ramadanDay = getRamadanDay(hijri);
+  const ramadanThird = getRamadanThird(hijri);
+  const islamicEvent = getIslamicEvent(hijri);
 
   const textAlign = language === 'ar' || language === 'ur' ? 'right' as const : 'left' as const;
 
@@ -29,6 +40,41 @@ export default function TodayScreen() {
       style={[styles.container, { backgroundColor: theme.background }]}
       contentContainerStyle={styles.content}
     >
+      {/* Date Header */}
+      <View style={styles.dateHeader}>
+        <Text style={[styles.locationLabel, { color: theme.textSecondary }]}>
+          {locationName}
+        </Text>
+        <Text style={[styles.hijriDate, { color: theme.text }]}>
+          {hijriStr}
+        </Text>
+        <Text style={[styles.gregorianDate, { color: theme.textTertiary }]}>
+          {now.toLocaleDateString(language === 'ar' ? 'ar-SA' : language === 'ur' ? 'ur-PK' : 'en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+          })}
+        </Text>
+        {ramadanDay !== null && (
+          <View style={[styles.ramadanBadge, { backgroundColor: theme.primaryLight }]}>
+            <MaterialCommunityIcons name="moon-waning-crescent" size={16} color={theme.primary} />
+            <Text style={[styles.ramadanText, { color: theme.primary }]}>
+              {`${t(language, 'ramadan.day')} ${ramadanDay} ${t(language, 'ramadan.ofRamadan')}`}
+            </Text>
+          </View>
+        )}
+        {ramadanThird && (
+          <Text style={[styles.ramadanThirdText, { color: theme.textSecondary }]}>
+            {language === 'ar' ? ramadanThird.nameAr : language === 'ur' ? ramadanThird.nameUr : ramadanThird.nameEn}
+          </Text>
+        )}
+        {islamicEvent && !ramadanDay && (
+          <View style={[styles.eventBadge, { backgroundColor: theme.primaryLight }]}>
+            <Text style={[styles.eventText, { color: theme.primary }]}>
+              {language === 'ar' ? islamicEvent.nameAr : language === 'ur' ? islamicEvent.nameUr : islamicEvent.nameEn}
+            </Text>
+          </View>
+        )}
+      </View>
+
       {/* Streak Counter + Settings */}
       <View style={[styles.streakRow, { borderBottomColor: theme.border }]}>
         <Ionicons name="flame" size={24} color={theme.streak} style={{ marginEnd: spacing.sm }} />
@@ -267,6 +313,51 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     fontSize: fontSizes.body,
+    fontWeight: '600',
+  },
+  dateHeader: {
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  locationLabel: {
+    fontSize: fontSizes.caption,
+    marginBottom: spacing.xs,
+  },
+  hijriDate: {
+    fontSize: fontSizes.heading2,
+    fontWeight: '700',
+    marginBottom: spacing.xs,
+  },
+  gregorianDate: {
+    fontSize: fontSizes.bodySmall,
+    marginBottom: spacing.sm,
+  },
+  ramadanBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    marginTop: spacing.xs,
+  },
+  ramadanText: {
+    fontSize: fontSizes.bodySmall,
+    fontWeight: '600',
+  },
+  ramadanThirdText: {
+    fontSize: fontSizes.caption,
+    marginTop: spacing.xs,
+    fontStyle: 'italic',
+  },
+  eventBadge: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    marginTop: spacing.xs,
+  },
+  eventText: {
+    fontSize: fontSizes.bodySmall,
     fontWeight: '600',
   },
 });

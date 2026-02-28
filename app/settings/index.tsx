@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
+import { useLocation } from '../../src/hooks/useLocation';
 import { t, languageNames } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import type { Language, CalculationMethod } from '../../src/types';
@@ -118,6 +119,11 @@ export default function SettingsScreen() {
   const toggleTransliteration = useAppStore((s) => s.toggleTransliteration);
   const setQuranFontSize = useAppStore((s) => s.setQuranFontSize);
 
+  const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
+  const setHijriAdjustment = useAppStore((s) => s.setHijriAdjustment);
+  const { locationName, isDetecting, detectLocation, locationAutoDetect } = useLocation();
+  const setLocationAutoDetect = useAppStore((s) => s.setLocationAutoDetect);
+
   const { theme } = useTheme();
 
   const currentMethodLabel = CALC_METHODS.find((m) => m.id === calcMethod)?.label || calcMethod;
@@ -170,6 +176,44 @@ export default function SettingsScreen() {
         ]}
         selected={themeMode}
         onSelect={(id) => setTheme(id as 'light' | 'dark' | 'auto')}
+        theme={theme}
+      />
+
+      {/* Location */}
+      <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
+        {t(language, 'location.autoDetect')}
+      </Text>
+      <ToggleRow
+        label={t(language, 'location.autoDetect')}
+        value={locationAutoDetect ?? true}
+        onToggle={async () => {
+          if (!locationAutoDetect || locationAutoDetect === undefined) {
+            await detectLocation();
+          }
+          setLocationAutoDetect(!locationAutoDetect);
+        }}
+        theme={theme}
+      />
+      <View style={[styles.row, { borderColor: theme.border }]}>
+        <Text style={[styles.rowLabel, { color: theme.text }]}>
+          {isDetecting ? t(language, 'location.detecting') : locationName}
+        </Text>
+      </View>
+
+      {/* Hijri Adjustment */}
+      <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
+        {t(language, 'hijri.adjustment')}
+      </Text>
+      <SegmentedControl
+        options={[
+          { id: '-2', label: '-2' },
+          { id: '-1', label: '-1' },
+          { id: '0', label: t(language, 'hijri.noChange') },
+          { id: '1', label: '+1' },
+          { id: '2', label: '+2' },
+        ]}
+        selected={String(hijriAdjustment)}
+        onSelect={(id) => setHijriAdjustment(Number(id))}
         theme={theme}
       />
 

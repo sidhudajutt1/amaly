@@ -8,6 +8,7 @@ import type {
   UserProgress,
   StreakData,
   PrayerName,
+  HijriDate,
 } from '../types';
 
 const STORAGE_KEY = '@niyyah_store';
@@ -29,6 +30,8 @@ interface AppState {
   setQuranFontSize: (size: number) => void;
   setTranslationFontSize: (size: number) => void;
   toggleTransliteration: () => void;
+  setLocationAutoDetect: (autoDetect: boolean) => void;
+  setHijriAdjustment: (adjustment: number) => void;
 
   // Progress actions
   markReflectionViewed: () => void;
@@ -51,6 +54,8 @@ const defaultSettings: UserSettings = {
   quranFontSize: 28,
   translationFontSize: 16,
   showTransliteration: true,
+  locationAutoDetect: true,
+  hijriAdjustment: 0,
 };
 
 const defaultStreak: StreakData = {
@@ -140,6 +145,16 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((state) => ({
       settings: { ...state.settings, showTransliteration: !state.settings.showTransliteration },
     }));
+    get().persist();
+  },
+
+  setLocationAutoDetect: (autoDetect) => {
+    set((state) => ({ settings: { ...state.settings, locationAutoDetect: autoDetect } }));
+    get().persist();
+  },
+
+  setHijriAdjustment: (adjustment) => {
+    set((state) => ({ settings: { ...state.settings, hijriAdjustment: adjustment } }));
     get().persist();
   },
 
