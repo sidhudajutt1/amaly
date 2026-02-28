@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../../src/store/useAppStore';
@@ -9,6 +10,7 @@ import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import { useLocation } from '../../src/hooks/useLocation';
 import { toHijri, formatHijriDate, isRamadan, getRamadanDay } from '../../src/services/hijriService';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { CircularProgress } from '../../src/components/CircularProgress';
 import type { PrayerName } from '../../src/types';
 
 const PRAYER_ORDER: (PrayerName | 'sunrise')[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
@@ -29,6 +31,23 @@ export default function PrayerScreen() {
 
   const textAlign = language === 'ar' || language === 'ur' ? 'right' as const : 'left' as const;
 
+  const countdownProgress = useMemo(() => {
+    if (!prayerTimes || !nextPrayer || !currentPrayer) return 0;
+    const prayerOrder = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
+    const currentIdx = prayerOrder.indexOf(currentPrayer as any);
+    const nextIdx = prayerOrder.indexOf(nextPrayer.name as any);
+    if (currentIdx < 0 || nextIdx < 0) return 0;
+
+    const currentTime = prayerTimes[prayerOrder[currentIdx] as keyof typeof prayerTimes];
+    const nextTime = nextPrayer.time;
+    if (!currentTime || !nextTime) return 0;
+
+    const total = nextTime.getTime() - currentTime.getTime();
+    const elapsed = new Date().getTime() - currentTime.getTime();
+    if (total <= 0) return 0;
+    return Math.min(Math.max(elapsed / total, 0), 1);
+  }, [prayerTimes, nextPrayer, currentPrayer]);
+
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
       {/* Location */}
@@ -42,15 +61,30 @@ export default function PrayerScreen() {
       {/* Next Prayer Countdown */}
       {nextPrayer && countdown && (
         <View style={[styles.countdownCard, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}>
-          <Text style={[styles.countdownLabel, { color: theme.textSecondary }]}>
-            {t(language, 'prayer.nextPrayer')}
-          </Text>
-          <Text style={[styles.countdownPrayer, { color: theme.primary }]}>
-            {t(language, `prayer.${nextPrayer.name}`)}
-          </Text>
-          <Text style={[styles.countdownTime, { color: theme.primary }]}>
-            {`${countdown.hours > 0 ? `${countdown.hours}${t(language, 'prayer.hours')} ` : ''}${countdown.minutes}${t(language, 'prayer.minutes')}`}
-          </Text>
+          <View style={styles.countdownRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.countdownLabel, { color: theme.textSecondary }]}>
+                {t(language, 'prayer.nextPrayer')}
+              </Text>
+              <Text style={[styles.countdownPrayer, { color: theme.primary }]}>
+                {t(language, `prayer.${nextPrayer.name}`)}
+              </Text>
+              <Text style={[styles.countdownTimeText, { color: theme.text }]}>
+                {formatTime(nextPrayer.time)}
+              </Text>
+            </View>
+            <CircularProgress
+              size={80}
+              strokeWidth={6}
+              progress={countdownProgress}
+              color={theme.primary}
+              backgroundColor={theme.border}
+            >
+              <Text style={[styles.countdownInner, { color: theme.primary }]}>
+                {`${countdown.hours > 0 ? `${countdown.hours}h` : ''}${countdown.minutes}m`}
+              </Text>
+            </CircularProgress>
+          </View>
         </View>
       )}
 
@@ -155,12 +189,13 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     marginBottom: spacing.lg,
-    alignItems: 'center',
     borderWidth: 2,
   },
+  countdownRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   countdownLabel: { fontSize: fontSizes.bodySmall, marginBottom: spacing.xs },
   countdownPrayer: { fontSize: fontSizes.heading1, fontWeight: '800', marginBottom: spacing.xs },
-  countdownTime: { fontSize: fontSizes.heading2, fontWeight: '600' },
+  countdownTimeText: { fontSize: fontSizes.bodySmall, marginTop: spacing.xs },
+  countdownInner: { fontSize: fontSizes.caption, fontWeight: '700', textAlign: 'center' },
   prayerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

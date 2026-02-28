@@ -8,6 +8,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useLocation } from '../../src/hooks/useLocation';
 import { usePrayerTimes } from '../../src/hooks/usePrayerTimes';
 import { formatTime } from '../../src/services/prayerService';
+import { CircularProgress } from '../../src/components/CircularProgress';
 import { toHijri, formatHijriDate, getRamadanDay, getRamadanThird, getIslamicEvent, isRamadan } from '../../src/services/hijriService';
 import { generateDailyGoals, getGoalsSummary, getStreakMilestone } from '../../src/services/goalsService';
 import { fontSizes, spacing, borderRadius, lineHeights } from '../../src/theme';
@@ -58,7 +59,7 @@ export default function TodayScreen() {
   const markStreakCelebrationShown = useAppStore((s) => s.markStreakCelebrationShown);
   const { theme } = useTheme();
   const { locationName } = useLocation();
-  const { nextPrayer, countdown } = usePrayerTimes();
+  const { prayerTimes, nextPrayer, countdown, currentPrayer } = usePrayerTimes();
 
   const now = new Date();
   const hijri = toHijri(now, hijriAdjustment);
@@ -77,6 +78,19 @@ export default function TodayScreen() {
   const streakMilestone = getStreakMilestone(streakData.currentStreak);
   const showCelebration = streakMilestone !== null && !todayProgress.streakCelebrationShown && streakData.currentStreak > 0;
   const [celebrationVisible, setCelebrationVisible] = useState(showCelebration);
+
+  const countdownProgress = useMemo(() => {
+    if (!prayerTimes || !nextPrayer || !currentPrayer) return 0;
+    const prayerOrder = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
+    const currentIdx = prayerOrder.indexOf(currentPrayer as any);
+    if (currentIdx < 0) return 0;
+    const currentTime = prayerTimes[prayerOrder[currentIdx] as keyof typeof prayerTimes];
+    if (!currentTime) return 0;
+    const total = nextPrayer.time.getTime() - currentTime.getTime();
+    const elapsed = new Date().getTime() - currentTime.getTime();
+    if (total <= 0) return 0;
+    return Math.min(Math.max(elapsed / total, 0), 1);
+  }, [prayerTimes, nextPrayer, currentPrayer]);
 
   const textAlign = language === 'ar' || language === 'ur' ? 'right' as const : 'left' as const;
 
@@ -218,12 +232,17 @@ export default function TodayScreen() {
               {t(language, `prayer.${nextPrayer.name}`)}
             </Text>
           </View>
-          <Text style={[styles.nextPrayerTime, { color: theme.primary }]}>
-            {formatTime(nextPrayer.time)}
-          </Text>
-          <Text style={[styles.nextPrayerCountdown, { color: theme.textSecondary }]}>
-            {`${countdown.hours > 0 ? `${countdown.hours}h ` : ''}${countdown.minutes}m`}
-          </Text>
+          <CircularProgress
+            size={48}
+            strokeWidth={4}
+            progress={countdownProgress}
+            color={theme.primary}
+            backgroundColor={theme.border}
+          >
+            <Text style={[styles.miniCountdown, { color: theme.primary }]}>
+              {`${countdown.hours > 0 ? `${countdown.hours}h` : ''}${countdown.minutes}m`}
+            </Text>
+          </CircularProgress>
         </TouchableOpacity>
       )}
 
@@ -446,8 +465,7 @@ const styles = StyleSheet.create({
   nextPrayerCard: { flexDirection: 'row', alignItems: 'center', padding: spacing.md, borderRadius: borderRadius.md, borderWidth: 1, marginBottom: spacing.md },
   nextPrayerLabel: { fontSize: fontSizes.caption },
   nextPrayerName: { fontSize: fontSizes.body, fontWeight: '700' },
-  nextPrayerTime: { fontSize: fontSizes.body, fontWeight: '700', marginEnd: spacing.sm },
-  nextPrayerCountdown: { fontSize: fontSizes.caption },
+  miniCountdown: { fontSize: 10, fontWeight: '700' },
 
   chipsSection: { marginBottom: spacing.lg },
   chipsSectionTitle: { fontSize: fontSizes.caption, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, marginBottom: spacing.sm },
