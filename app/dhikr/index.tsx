@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Vibration, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -54,9 +55,12 @@ export default function DhikrScreen() {
             {`${language === 'ar' || language === 'ur' ? '→' : '←'} ${t(language, 'common.back')}`}
           </Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>
-          {`📿 ${t(language, 'ibadah.dhikr')}`}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <MaterialCommunityIcons name="counter" size={20} color={theme.text} />
+          <Text style={[styles.headerTitle, { color: theme.text }]}>
+            {t(language, 'ibadah.dhikr')}
+          </Text>
+        </View>
         <View style={{ width: 60 }} />
       </View>
 

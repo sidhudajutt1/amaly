@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { usePrayerTimes } from '../../src/hooks/usePrayerTimes';
@@ -23,7 +24,7 @@ export default function PrayerScreen() {
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
       {/* Location */}
       <View style={styles.locationRow}>
-        <Text style={[styles.locationIcon]}>📍</Text>
+        <Ionicons name="location-outline" size={16} color={theme.textSecondary} />
         <Text style={[styles.locationText, { color: theme.textSecondary }]}>
           {locationName || 'Makkah, Saudi Arabia'}
         </Text>
@@ -77,7 +78,7 @@ export default function PrayerScreen() {
                 {t(language, `prayer.${name}`)}
               </Text>
               {isCurrent && (
-                <Text style={[styles.currentBadge, { color: theme.primary }]}>●</Text>
+                <Ionicons name="radio-button-on" size={8} color={theme.primary} />
               )}
             </View>
             <View style={styles.prayerActions}>
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: spacing.md,
   },
-  locationIcon: { fontSize: 16, marginRight: spacing.xs },
+  locationIcon: { fontSize: 16, marginEnd: spacing.xs },
   locationText: { fontSize: fontSizes.bodySmall },
   countdownCard: {
     borderRadius: borderRadius.lg,
@@ -158,14 +159,14 @@ const styles = StyleSheet.create({
   prayerActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   prayerTime: { fontSize: fontSizes.body, fontWeight: '600' },
   prayedButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  prayedText: { fontSize: 16, fontWeight: '700' },
+  prayedText: { fontSize: 18, fontWeight: '700' },
   hijriCard: {
     borderRadius: borderRadius.md,
     padding: spacing.md,

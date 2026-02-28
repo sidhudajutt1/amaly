@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -27,16 +28,30 @@ function SettingRow({ label, value, onPress, theme }: {
   onPress?: () => void;
   theme: Record<string, string>;
 }) {
+  const content = (
+    <>
+      <Text style={[styles.rowLabel, { color: onPress ? theme.text : theme.textTertiary }]}>{label}</Text>
+      {value ? (
+        <Text style={[styles.rowValue, { color: theme.textSecondary }]}>{`${value} ›`}</Text>
+      ) : null}
+    </>
+  );
+
+  if (!onPress) {
+    return (
+      <View style={[styles.row, { borderColor: theme.border }]}>
+        {content}
+      </View>
+    );
+  }
+
   return (
     <TouchableOpacity
       style={[styles.row, { borderColor: theme.border }]}
       onPress={onPress}
-      activeOpacity={onPress ? 0.6 : 1}
+      activeOpacity={0.6}
     >
-      <Text style={[styles.rowLabel, { color: theme.text }]}>{label}</Text>
-      {value && (
-        <Text style={[styles.rowValue, { color: theme.textSecondary }]}>{`${value} ›`}</Text>
-      )}
+      {content}
     </TouchableOpacity>
   );
 }
@@ -121,9 +136,12 @@ export default function SettingsScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-      <Text style={[styles.title, { color: theme.text }]}>
-        {`⚙️ ${t(language, 'settings.title')}`}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: spacing.lg }}>
+        <Ionicons name="settings-outline" size={24} color={theme.text} />
+        <Text style={[styles.title, { color: theme.text, marginBottom: 0 }]}>
+          {t(language, 'settings.title')}
+        </Text>
+      </View>
 
       {/* Language */}
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>

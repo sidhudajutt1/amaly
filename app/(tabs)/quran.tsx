@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: spacing.md,
+    marginEnd: spacing.md,
   },
   surahNumberText: {
     fontSize: fontSizes.bodySmall,

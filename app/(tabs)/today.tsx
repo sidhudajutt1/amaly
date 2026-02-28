@@ -1,4 +1,5 @@
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { t } from '../../src/i18n';
@@ -30,7 +31,7 @@ export default function TodayScreen() {
     >
       {/* Streak Counter + Settings */}
       <View style={[styles.streakRow, { borderBottomColor: theme.border }]}>
-        <Text style={[styles.streakIcon]}>🔥</Text>
+        <Ionicons name="flame" size={24} color={theme.streak} style={{ marginEnd: spacing.sm }} />
         <Text style={[styles.streakNumber, { color: theme.streak }]}>
           {streakData.currentStreak}
         </Text>
@@ -39,7 +40,7 @@ export default function TodayScreen() {
         </Text>
         <View style={{ flex: 1 }} />
         <TouchableOpacity onPress={() => router.push('/settings')}>
-          <Text style={{ fontSize: 22 }}>⚙️</Text>
+          <Ionicons name="settings-outline" size={22} color={theme.textSecondary} />
         </TouchableOpacity>
       </View>
 
@@ -67,9 +68,12 @@ export default function TodayScreen() {
 
       {/* Hadith Card */}
       <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.primary, textAlign }]}>
-          {`📖 ${t(language, 'today.fromSunnah')}`}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: spacing.md }}>
+          <Ionicons name="book-outline" size={18} color={theme.primary} />
+          <Text style={[styles.sectionTitle, { color: theme.primary, textAlign, marginBottom: 0 }]}>
+            {t(language, 'today.fromSunnah')}
+          </Text>
+        </View>
         <Text style={[styles.hadithArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>
           {SAMPLE_REFLECTION.hadithAr}
         </Text>
@@ -87,9 +91,12 @@ export default function TodayScreen() {
 
       {/* Reflection Card */}
       <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.primary, textAlign }]}>
-          {`💭 ${t(language, 'today.reflection')}`}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: spacing.md }}>
+          <Ionicons name="chatbubble-ellipses-outline" size={18} color={theme.primary} />
+          <Text style={[styles.sectionTitle, { color: theme.primary, textAlign, marginBottom: 0 }]}>
+            {t(language, 'today.reflection')}
+          </Text>
+        </View>
         <Text style={[styles.reflectionText, { color: theme.text, textAlign }]}>
           {language === 'ur'
             ? 'صبر کا مطلب بے حس ہونا نہیں ہے۔ نبی کریم ﷺ نے اپنے بیٹے ابراہیم کی وفات پر آنسو بہائے۔ صبر کا مطلب ہے دل ٹوٹے ہونے کے باوجود اللہ کی حکمت پر بھروسہ کرنا۔'
@@ -101,9 +108,12 @@ export default function TodayScreen() {
 
       {/* Today's Niyyah Card */}
       <View style={[styles.niyyahCard, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}>
-        <Text style={[styles.niyyahTitle, { color: theme.primary, textAlign }]}>
-          {`🎯 ${t(language, 'today.todaysNiyyah')}`}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: spacing.md }}>
+          <Ionicons name="flag-outline" size={18} color={theme.primary} />
+          <Text style={[styles.niyyahTitle, { color: theme.primary, textAlign, marginBottom: 0 }]}>
+            {t(language, 'today.todaysNiyyah')}
+          </Text>
+        </View>
         <Text style={[styles.niyyahText, { color: theme.text, textAlign }]}>
           {language === 'ur'
             ? 'اگر آج کوئی بات آپ کی مرضی کے خلاف ہو تو ردعمل سے پہلے رک کر دل میں کہیں "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ"'
@@ -165,13 +175,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   streakIcon: {
-    fontSize: 24,
-    marginRight: spacing.sm,
+    marginEnd: spacing.sm,
   },
   streakNumber: {
     fontSize: fontSizes.streak,
     fontWeight: '800',
-    marginRight: spacing.xs,
+    marginEnd: spacing.xs,
   },
   streakLabel: {
     fontSize: fontSizes.body,

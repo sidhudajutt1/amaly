@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -44,9 +45,12 @@ function DuaCard({ dua, language, theme, showTransliteration }: {
       </Text>
 
       {/* Source */}
-      <Text style={[styles.source, { color: theme.textTertiary }]}>
-        📖 {dua.source}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: spacing.sm }}>
+        <Ionicons name="book-outline" size={14} color={theme.textTertiary} />
+        <Text style={[styles.source, { color: theme.textTertiary, marginBottom: 0 }]}>
+          {dua.source}
+        </Text>
+      </View>
 
       {/* Counter */}
       {dua.repetitions > 1 && (
@@ -95,7 +99,7 @@ export default function DuaReaderScreen() {
           </Text>
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Text style={[styles.headerIcon]}>{category?.icon || '🤲'}</Text>
+          <MaterialCommunityIcons name="book-open-page-variant-outline" size={24} color={theme.primary} />
           <Text style={[styles.headerTitle, { color: theme.text }]}>{catName}</Text>
           <Text style={[styles.headerCount, { color: theme.textSecondary }]}>
             {categoryDuas.length} {language === 'ar' ? 'دعاء' : language === 'ur' ? 'دعائیں' : 'duas'}
@@ -121,9 +125,9 @@ export default function DuaReaderScreen() {
         />
       ) : (
         <View style={styles.emptyState}>
-          <Text style={[styles.emptyIcon]}>📖</Text>
+          <Ionicons name="book-outline" size={48} color={theme.textSecondary} />
           <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-            Duas loading in next update.{'\n'}Try Morning or Evening Adhkar.
+            {language === 'ar' ? 'الأدعية قريباً.\nجرّب أذكار الصباح أو المساء.' : language === 'ur' ? 'دعائیں اگلی تازہ کاری میں۔\nصبح یا شام کے اذکار آزمائیں۔' : 'Duas loading in next update.\nTry Morning or Evening Adhkar.'}
           </Text>
         </View>
       )}

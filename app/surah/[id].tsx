@@ -1,4 +1,5 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -36,13 +37,13 @@ function AyahCard({ ayah, language, theme, quranFontSize, translationFontSize }:
       <View style={[styles.ayahNumberBadge, { backgroundColor: theme.primaryLight }]}>
         <Text style={[styles.ayahNumber, { color: theme.primary }]}>{ayah.number}</Text>
       </View>
-      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, fontFamily: getQuranFontFamily(language) }]}>
+      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, lineHeight: quranFontSize * 1.8, fontFamily: getQuranFontFamily(language) }]}>
         {ayah.textAr}
       </Text>
       <View style={styles.divider}>
         <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
       </View>
-      <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize, fontFamily: getTranslationFontFamily(language) }]}>
+      <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize, lineHeight: Math.round(translationFontSize * 1.6), fontFamily: getTranslationFontFamily(language) }]}>
         {getTranslation()}
       </Text>
     </View>
@@ -107,20 +108,19 @@ export default function SurahReaderScreen() {
         />
       ) : (
         <View style={styles.comingSoon}>
-          <Text style={[styles.comingSoonEmoji]}>📖</Text>
+          <MaterialCommunityIcons name="book-open-page-variant-outline" size={48} color={theme.textSecondary} />
           <Text style={[styles.comingSoonTitle, { color: theme.text }]}>
             {surahMeta.nameEn}
           </Text>
           <Text style={[styles.comingSoonText, { color: theme.textSecondary }]}>
-            Full text loading in next update.{'\n'}
-            Al-Fatihah is available now.
+            {language === 'ar' ? 'النص الكامل قريباً.\nسورة الفاتحة متاحة الآن.' : language === 'ur' ? 'مکمل متن اگلی تازہ کاری میں۔\nسورۃ الفاتحہ ابھی دستیاب ہے۔' : 'Full text loading in next update.\nAl-Fatihah is available now.'}
           </Text>
           <TouchableOpacity
             style={[styles.goToFatihah, { backgroundColor: theme.primary }]}
             onPress={() => router.replace('/surah/1')}
           >
             <Text style={[styles.goToFatihahText, { color: '#fff' }]}>
-              Read Al-Fatihah
+              {language === 'ar' ? 'اقرأ الفاتحة' : language === 'ur' ? 'الفاتحہ پڑھیں' : 'Read Al-Fatihah'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -173,14 +173,11 @@ const styles = StyleSheet.create({
   ayahNumber: { fontSize: fontSizes.caption, fontWeight: '700' },
   arabicText: {
     textAlign: 'right',
-    lineHeight: 48,
     marginBottom: spacing.sm,
   },
   divider: { alignItems: 'center', marginVertical: spacing.sm },
   dividerLine: { height: 1, width: '60%' },
-  translationText: {
-    lineHeight: 26,
-  },
+  translationText: {},
   comingSoon: {
     flex: 1,
     justifyContent: 'center',

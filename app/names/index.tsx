@@ -1,4 +1,5 @@
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -37,9 +38,12 @@ export default function NamesOfAllahScreen() {
             {`${language === 'ar' || language === 'ur' ? '→' : '←'} ${t(language, 'common.back')}`}
           </Text>
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.text }]}>
-          {`✨ ${t(language, 'ibadah.namesOfAllah')}`}
-        </Text>
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+          <MaterialCommunityIcons name="star-crescent" size={20} color={theme.primary} />
+          <Text style={[styles.title, { color: theme.text, flex: 0 }]}>
+            {t(language, 'ibadah.namesOfAllah')}
+          </Text>
+        </View>
         <View style={{ width: 60 }} />
       </View>
 

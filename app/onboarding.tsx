@@ -7,6 +7,7 @@ import {
   ScrollView,
   I18nManager,
 } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../src/store/useAppStore';
 import { useTheme } from '../src/hooks/useTheme';
@@ -14,20 +15,23 @@ import { t, languageNames, isRTL } from '../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../src/theme';
 import type { Language, GrowthCategory } from '../src/types';
 
+type IconFamily = 'ionicons' | 'material';
+
 const GROWTH_CATEGORIES: {
   id: GrowthCategory;
-  icon: string;
+  iconName: string;
+  iconFamily: IconFamily;
 }[] = [
-  { id: 'sabr', icon: '🪨' },
-  { id: 'shukr', icon: '🙏' },
-  { id: 'family', icon: '👨‍👩‍👧‍👦' },
-  { id: 'worship', icon: '🕌' },
-  { id: 'character', icon: '🌟' },
-  { id: 'knowledge', icon: '📚' },
-  { id: 'generosity', icon: '🤲' },
-  { id: 'tawakkul', icon: '💚' },
-  { id: 'justice', icon: '⚖️' },
-  { id: 'death_remembrance', icon: '🕊️' },
+  { id: 'sabr', iconName: 'shield-outline', iconFamily: 'material' },
+  { id: 'shukr', iconName: 'hand-heart', iconFamily: 'material' },
+  { id: 'family', iconName: 'people-outline', iconFamily: 'ionicons' },
+  { id: 'worship', iconName: 'mosque', iconFamily: 'material' },
+  { id: 'character', iconName: 'star-outline', iconFamily: 'ionicons' },
+  { id: 'knowledge', iconName: 'library-outline', iconFamily: 'ionicons' },
+  { id: 'generosity', iconName: 'hand-heart-outline', iconFamily: 'material' },
+  { id: 'tawakkul', iconName: 'heart-outline', iconFamily: 'ionicons' },
+  { id: 'justice', iconName: 'scale-balance', iconFamily: 'material' },
+  { id: 'death_remembrance', iconName: 'dove', iconFamily: 'material' },
 ];
 
 export default function OnboardingScreen() {
@@ -152,7 +156,13 @@ export default function OnboardingScreen() {
                   ]}
                   onPress={() => toggleCategory(cat.id)}
                 >
-                  <Text style={styles.categoryIcon}>{cat.icon}</Text>
+                  <View style={styles.categoryIcon}>
+                    {cat.iconFamily === 'ionicons' ? (
+                      <Ionicons name={cat.iconName as any} size={28} color={theme.primary} />
+                    ) : (
+                      <MaterialCommunityIcons name={cat.iconName as any} size={28} color={theme.primary} />
+                    )}
+                  </View>
                   <Text style={[styles.categoryName, { color: theme.text, textAlign }]}>
                     {t(lang, `categories.${cat.id}`)}
                   </Text>
@@ -193,7 +203,7 @@ export default function OnboardingScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.centerContent}>
-        <Text style={[styles.doneIcon]}>✨</Text>
+        <Ionicons name="checkmark-circle" size={64} color={theme.primary} style={styles.doneIcon} />
         <Text style={[styles.doneTitle, { color: theme.text }]}>
           {t(lang, 'onboarding.allSet')}
         </Text>
@@ -320,7 +330,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   doneIcon: {
-    fontSize: 64,
     marginBottom: spacing.lg,
   },
   doneTitle: {

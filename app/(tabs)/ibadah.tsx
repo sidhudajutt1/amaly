@@ -1,4 +1,6 @@
+import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -9,7 +11,7 @@ import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import type { Language } from '../../src/types';
 
 function QuickAccessCard({ icon, label, sublabel, theme, onPress }: {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   sublabel?: string;
   theme: Record<string, string>;
@@ -21,7 +23,7 @@ function QuickAccessCard({ icon, label, sublabel, theme, onPress }: {
       activeOpacity={0.7}
       onPress={onPress}
     >
-      <Text style={styles.quickIcon}>{icon}</Text>
+      <View style={styles.quickIconContainer}>{icon}</View>
       <Text style={[styles.quickLabel, { color: theme.text }]}>{label}</Text>
       {sublabel && <Text style={[styles.quickSublabel, { color: theme.textTertiary }]}>{sublabel}</Text>}
     </TouchableOpacity>
@@ -40,7 +42,7 @@ function DuaCategoryRow({ cat, language, theme }: {
       activeOpacity={0.7}
       onPress={() => router.push(`/dua/${cat.id}`)}
     >
-      <Text style={styles.duaIcon}>{cat.icon}</Text>
+      <Ionicons name="heart-outline" size={20} color={theme.primary} style={styles.duaIcon} />
       <View style={styles.duaInfo}>
         <Text style={[styles.duaName, { color: theme.text }]}>{name}</Text>
         <Text style={[styles.duaCount, { color: theme.textTertiary }]}>
@@ -70,32 +72,35 @@ export default function IbadahScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* Quick Access Grid */}
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>
-        {`🤲 ${t(language, 'tabs.ibadah')}`}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: spacing.sm }}>
+        <MaterialCommunityIcons name="hands-pray" size={20} color={theme.text} />
+        <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 0 }]}>
+          {t(language, 'tabs.ibadah')}
+        </Text>
+      </View>
       <View style={styles.quickGrid}>
         <QuickAccessCard
-          icon="🧭"
+          icon={<MaterialCommunityIcons name="compass-outline" size={32} color={theme.primary} />}
           label={t(language, 'ibadah.qibla')}
           sublabel={`${qiblaDir}° • ${distKm} km`}
           theme={theme}
         />
         <QuickAccessCard
-          icon="📿"
+          icon={<MaterialCommunityIcons name="counter" size={32} color={theme.primary} />}
           label={t(language, 'ibadah.dhikr')}
           sublabel={t(language, 'ibadah.counter')}
           theme={theme}
           onPress={() => router.push('/dhikr')}
         />
         <QuickAccessCard
-          icon="✨"
+          icon={<MaterialCommunityIcons name="star-crescent" size={32} color={theme.primary} />}
           label={t(language, 'ibadah.namesOfAllah')}
           sublabel="99"
           theme={theme}
           onPress={() => router.push('/names')}
         />
         <QuickAccessCard
-          icon="🕋"
+          icon={<MaterialCommunityIcons name="book-open-outline" size={32} color={theme.primary} />}
           label={t(language, 'ibadah.prayerGuide')}
           theme={theme}
         />
@@ -137,7 +142,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexBasis: '46%',
   },
-  quickIcon: { fontSize: 32, marginBottom: spacing.sm },
+  quickIconContainer: { marginBottom: spacing.sm },
   quickLabel: { fontSize: fontSizes.body, fontWeight: '700', textAlign: 'center' },
   quickSublabel: { fontSize: fontSizes.caption, textAlign: 'center', marginTop: 2 },
   duaRow: {
@@ -148,7 +153,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     borderWidth: 1,
   },
-  duaIcon: { fontSize: 24, marginRight: spacing.md },
+  duaIcon: { marginEnd: spacing.md },
   duaInfo: { flex: 1 },
   duaName: { fontSize: fontSizes.body, fontWeight: '600', marginBottom: 2 },
   duaCount: { fontSize: fontSizes.caption },

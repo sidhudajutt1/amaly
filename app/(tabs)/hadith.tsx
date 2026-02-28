@@ -1,4 +1,5 @@
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
@@ -19,20 +20,21 @@ function CollectionCard({ collection, theme, language }: {
 }) {
   return (
     <TouchableOpacity
-      style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
+      style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border, opacity: 0.5 }]}
       activeOpacity={0.7}
+      disabled
     >
-      <Text style={styles.icon}>{collection.icon}</Text>
+      <MaterialCommunityIcons name="book-open-variant" size={28} color={theme.primary} style={styles.icon} />
       <View style={styles.cardContent}>
         <Text style={[styles.nameAr, { color: theme.textArabic }]}>{collection.nameAr}</Text>
         <Text style={[styles.nameEn, { color: theme.text }]}>{getName(collection, language)}</Text>
         <Text style={[styles.compiler, { color: theme.textSecondary }]}>{collection.compiler}</Text>
         <View style={styles.statsRow}>
           <Text style={[styles.stat, { color: theme.textTertiary }]}>
-            {`${collection.totalHadiths.toLocaleString()} ${t(language, 'hadith.hadithNumber')}s`}
+            {`${collection.totalHadiths.toLocaleString()} ${t(language, 'hadith.hadithNumber')}`}
           </Text>
           <Text style={[styles.stat, { color: theme.textTertiary }]}>
-            {`${collection.totalBooks} ${t(language, 'hadith.book')}s`}
+            {`${collection.totalBooks} ${t(language, 'hadith.book')}`}
           </Text>
         </View>
       </View>
@@ -47,11 +49,14 @@ export default function HadithScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>
-          {`📚 ${t(language, 'hadith.collections')}`}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: spacing.xs }}>
+          <Ionicons name="library-outline" size={20} color={theme.text} />
+          <Text style={[styles.title, { color: theme.text, marginBottom: 0 }]}>
+            {t(language, 'hadith.collections')}
+          </Text>
+        </View>
         <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-          {`${t(language, 'hadith.collections')} — 6 ${t(language, 'hadith.book')}s`}
+          {`${t(language, 'hadith.collections')} — 6 ${t(language, 'hadith.book')}`}
         </Text>
       </View>
       <FlatList
@@ -81,7 +86,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     borderWidth: 1,
   },
-  icon: { fontSize: 32, marginRight: spacing.md, marginTop: 4 },
+  icon: { marginEnd: spacing.md, marginTop: 4 },
   cardContent: { flex: 1 },
   nameAr: { fontSize: fontSizes.heading3, textAlign: 'right', marginBottom: 2 },
   nameEn: { fontSize: fontSizes.body, fontWeight: '700', marginBottom: 2 },

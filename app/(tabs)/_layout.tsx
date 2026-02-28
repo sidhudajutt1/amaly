@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppStore } from '../../src/store/useAppStore';
 import { t } from '../../src/i18n';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -9,18 +10,21 @@ import { formatTime } from '../../src/services/prayerService';
 import { fontSizes, spacing } from '../../src/theme';
 
 function TabIcon({ name, focused, color }: { name: string; focused: boolean; color: string }) {
-  const icons: Record<string, string> = {
-    today: '🌅',
-    quran: '📖',
-    hadith: '📚',
-    ibadah: '🤲',
-    prayer: '🕌',
-  };
-  return (
-    <Text style={{ fontSize: focused ? 24 : 20, opacity: focused ? 1 : 0.6 }}>
-      {icons[name] || '●'}
-    </Text>
-  );
+  const size = focused ? 24 : 22;
+  switch (name) {
+    case 'today':
+      return <Ionicons name={focused ? 'sunny' : 'sunny-outline'} size={size} color={color} />;
+    case 'quran':
+      return <MaterialCommunityIcons name={focused ? 'book-open-page-variant' : 'book-open-page-variant-outline'} size={size} color={color} />;
+    case 'hadith':
+      return <Ionicons name={focused ? 'library' : 'library-outline'} size={size} color={color} />;
+    case 'ibadah':
+      return <MaterialCommunityIcons name={focused ? 'hands-pray' : 'hands-pray'} size={size} color={color} />;
+    case 'prayer':
+      return <MaterialCommunityIcons name={focused ? 'mosque' : 'mosque'} size={size} color={color} />;
+    default:
+      return <Ionicons name="ellipse" size={size} color={color} />;
+  }
 }
 
 function PrayerBar() {
