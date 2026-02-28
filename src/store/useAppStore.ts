@@ -10,6 +10,7 @@ import type {
   PrayerName,
   HijriDate,
   GoalConfig,
+  ReciterId,
 } from '../types';
 import { DEFAULT_GOAL_CONFIG } from '../services/goalsService';
 
@@ -35,6 +36,7 @@ interface AppState {
   toggleTransliteration: () => void;
   setLocationAutoDetect: (autoDetect: boolean) => void;
   setHijriAdjustment: (adjustment: number) => void;
+  setReciter: (reciter: ReciterId) => void;
 
   // Progress actions
   markReflectionViewed: () => void;
@@ -66,6 +68,7 @@ const defaultSettings: UserSettings = {
   theme: 'auto',
   quranFontSize: 28,
   translationFontSize: 16,
+  selectedReciter: 'alafasy',
   showTransliteration: true,
   locationAutoDetect: true,
   hijriAdjustment: 0,
@@ -176,6 +179,11 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setHijriAdjustment: (adjustment) => {
     set((state) => ({ settings: { ...state.settings, hijriAdjustment: adjustment } }));
+    get().persist();
+  },
+
+  setReciter: (reciter) => {
+    set((state) => ({ settings: { ...state.settings, selectedReciter: reciter } }));
     get().persist();
   },
 

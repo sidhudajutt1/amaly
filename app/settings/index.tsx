@@ -6,7 +6,16 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { useLocation } from '../../src/hooks/useLocation';
 import { t, languageNames } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
-import type { Language, CalculationMethod } from '../../src/types';
+import type { Language, CalculationMethod, ReciterId } from '../../src/types';
+
+const RECITERS: { id: ReciterId; name: string; nameAr: string }[] = [
+  { id: 'alafasy', name: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
+  { id: 'husary', name: 'Mahmoud Khalil Al-Husary', nameAr: 'محمود خليل الحصري' },
+  { id: 'minshawi', name: 'Mohamed Siddiq Al-Minshawi', nameAr: 'محمد صديق المنشاوي' },
+  { id: 'abdulbasit', name: 'Abdul Basit Abdul Samad', nameAr: 'عبد الباسط عبد الصمد' },
+  { id: 'sudais', name: 'Abdul Rahman Al-Sudais', nameAr: 'عبد الرحمن السديس' },
+  { id: 'shuraim', name: 'Saud Al-Shuraim', nameAr: 'سعود الشريم' },
+];
 
 const CALC_METHODS: { id: CalculationMethod; label: string }[] = [
   { id: 'UmmAlQura', label: 'Umm al-Qura (Makkah)' },
@@ -112,12 +121,16 @@ export default function SettingsScreen() {
   const calcMethod = useAppStore((s) => s.settings.calculationMethod);
   const showTransliteration = useAppStore((s) => s.settings.showTransliteration);
   const quranFontSize = useAppStore((s) => s.settings.quranFontSize);
+  const translationFontSize = useAppStore((s) => s.settings.translationFontSize);
+  const selectedReciter = useAppStore((s) => s.settings.selectedReciter);
 
   const setLanguage = useAppStore((s) => s.setLanguage);
   const setTheme = useAppStore((s) => s.setTheme);
   const setCalculationMethod = useAppStore((s) => s.setCalculationMethod);
   const toggleTransliteration = useAppStore((s) => s.toggleTransliteration);
   const setQuranFontSize = useAppStore((s) => s.setQuranFontSize);
+  const setTranslationFontSize = useAppStore((s) => s.setTranslationFontSize);
+  const setReciter = useAppStore((s) => s.setReciter);
 
   const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
   const setHijriAdjustment = useAppStore((s) => s.setHijriAdjustment);
@@ -251,6 +264,26 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
       </View>
+      <View style={[styles.row, { borderColor: theme.border }]}>
+        <Text style={[styles.rowLabel, { color: theme.text }]}>
+          {language === 'ar' ? 'حجم خط الترجمة' : language === 'ur' ? 'ترجمہ فونٹ سائز' : 'Translation Font Size'}
+        </Text>
+        <View style={styles.fontSizeControls}>
+          <TouchableOpacity
+            onPress={() => setTranslationFontSize(Math.max(12, translationFontSize - 2))}
+            style={[styles.fontBtn, { borderColor: theme.border }]}
+          >
+            <Text style={[styles.fontBtnText, { color: theme.text }]}>A-</Text>
+          </TouchableOpacity>
+          <Text style={[styles.fontSizeValue, { color: theme.text }]}>{translationFontSize}</Text>
+          <TouchableOpacity
+            onPress={() => setTranslationFontSize(Math.min(28, translationFontSize + 2))}
+            style={[styles.fontBtn, { borderColor: theme.border }]}
+          >
+            <Text style={[styles.fontBtnText, { color: theme.text }]}>A+</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       <ToggleRow
         label={t(language, 'settings.showTransliteration')}
         value={showTransliteration}
@@ -258,10 +291,36 @@ export default function SettingsScreen() {
         theme={theme}
       />
 
+      {/* Reciter */}
+      <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
+        {language === 'ar' ? 'القارئ' : language === 'ur' ? 'قاری' : 'Reciter'}
+      </Text>
+      {RECITERS.map((reciter) => (
+        <TouchableOpacity
+          key={reciter.id}
+          style={[styles.row, { borderColor: theme.border }]}
+          onPress={() => setReciter(reciter.id)}
+          activeOpacity={0.6}
+        >
+          <Text style={[styles.rowLabel, { color: theme.text }]}>
+            {language === 'ar' || language === 'ur' ? reciter.nameAr : reciter.name}
+          </Text>
+          {selectedReciter === reciter.id && (
+            <Ionicons name="checkmark-circle" size={22} color={theme.primary} />
+          )}
+        </TouchableOpacity>
+      ))}
+
       {/* About */}
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
         {t(language, 'settings.about')}
       </Text>
+      <SettingRow
+        label={language === 'ar' ? 'الإشعارات' : language === 'ur' ? 'اطلاعات' : 'Notifications'}
+        value=""
+        onPress={() => router.push('/notifications')}
+        theme={theme}
+      />
       <SettingRow label={t(language, 'settings.privacyPolicy')} value="" theme={theme} />
       <SettingRow label={t(language, 'settings.reportIssue')} value="" theme={theme} />
       <View style={[styles.row, { borderColor: theme.border }]}>

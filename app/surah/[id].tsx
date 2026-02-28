@@ -56,6 +56,7 @@ export default function SurahReaderScreen() {
   const language = useAppStore((s) => s.settings.language);
   const quranFontSize = useAppStore((s) => s.settings.quranFontSize);
   const translationFontSize = useAppStore((s) => s.settings.translationFontSize);
+  const markQuranVersesRead = useAppStore((s) => s.markQuranVersesRead);
   const { theme } = useTheme();
 
   const surahMeta = surahs.find((s) => s.number === surahNumber);
@@ -103,6 +104,22 @@ export default function SurahReaderScreen() {
               translationFontSize={translationFontSize}
             />
           )}
+          ListFooterComponent={
+            <View style={styles.readFooter}>
+              <TouchableOpacity
+                style={[styles.markReadBtn, { backgroundColor: theme.primary }]}
+                onPress={() => {
+                  markQuranVersesRead(surahData?.ayahs.length ?? 0);
+                  router.back();
+                }}
+              >
+                <Ionicons name="checkmark-circle" size={20} color="#fff" />
+                <Text style={styles.markReadText}>
+                  {language === 'ar' ? 'تم القراءة' : language === 'ur' ? 'پڑھ لیا' : 'Mark as Read'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          }
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
@@ -193,4 +210,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
   },
   goToFatihahText: { fontSize: fontSizes.body, fontWeight: '700' },
+  readFooter: { alignItems: 'center', paddingVertical: 24 },
+  markReadBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 },
+  markReadText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });

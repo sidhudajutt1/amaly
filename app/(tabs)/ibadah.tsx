@@ -84,6 +84,7 @@ export default function IbadahScreen() {
           label={t(language, 'ibadah.qibla')}
           sublabel={`${qiblaDir}° • ${distKm} km`}
           theme={theme}
+          onPress={() => router.push('/qibla')}
         />
         <QuickAccessCard
           icon={<MaterialCommunityIcons name="counter" size={32} color={theme.primary} />}
@@ -105,6 +106,24 @@ export default function IbadahScreen() {
           theme={theme}
         />
       </View>
+
+      {/* Zakat Calculator */}
+      <TouchableOpacity
+        style={[styles.duaRow, { backgroundColor: theme.surface, borderColor: theme.border, marginTop: spacing.md }]}
+        activeOpacity={0.7}
+        onPress={() => router.push('/zakat')}
+      >
+        <MaterialCommunityIcons name="hand-coin" size={20} color={theme.primary} style={styles.duaIcon} />
+        <View style={styles.duaInfo}>
+          <Text style={[styles.duaName, { color: theme.text }]}>
+            {language === 'ar' ? 'حاسبة الزكاة' : language === 'ur' ? 'زکوٰۃ کیلکولیٹر' : 'Zakat Calculator'}
+          </Text>
+          <Text style={[styles.duaCount, { color: theme.textTertiary }]}>
+            {language === 'ar' ? 'احسب زكاتك' : language === 'ur' ? 'اپنی زکوٰۃ حساب کریں' : 'Calculate your obligatory Zakat'}
+          </Text>
+        </View>
+        <Text style={[styles.duaArrow, { color: theme.textTertiary }]}>›</Text>
+      </TouchableOpacity>
 
       {/* Dua Categories */}
       <Text style={[styles.sectionTitle, { color: theme.text, marginTop: spacing.lg }]}>

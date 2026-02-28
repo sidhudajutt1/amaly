@@ -47,6 +47,9 @@ export default function RootLayout() {
         <Stack.Screen name="dhikr" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="calendar" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="goals" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="zakat" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="qibla" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="notifications" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </SafeAreaProvider>
   );

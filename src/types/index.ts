@@ -166,6 +166,7 @@ export interface UserSettings {
   theme: 'light' | 'dark' | 'auto';
   quranFontSize: number;
   translationFontSize: number;
+  selectedReciter: ReciterId;
   showTransliteration: boolean;
   locationAutoDetect?: boolean;
   hijriAdjustment: number;
@@ -209,6 +210,8 @@ export interface DailyGoal {
   completed: number;
   isCompleted: boolean;
 }
+
+export type ReciterId = 'alafasy' | 'husary' | 'minshawi' | 'abdulbasit' | 'sudais' | 'shuraim';
 
 export interface GoalConfig {
   prayerGoalEnabled: boolean;
