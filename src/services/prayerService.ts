@@ -150,3 +150,24 @@ export function getDistanceToMakkah(lat: number, lng: number): number {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return Math.round(R * c);
 }
+
+export function calculateQiyamTime(maghrib: Date, fajr: Date): Date {
+  let fajrMs = fajr.getTime();
+  const maghribMs = maghrib.getTime();
+  if (fajrMs < maghribMs) {
+    fajrMs += 24 * 60 * 60 * 1000;
+  }
+  const nightDuration = fajrMs - maghribMs;
+  const lastThirdStart = maghribMs + (nightDuration * 2 / 3);
+  return new Date(lastThirdStart);
+}
+
+export function getRamadanTimes(prayerTimes: AppPrayerTimes): {
+  suhoorEnd: Date;
+  iftarTime: Date;
+} {
+  return {
+    suhoorEnd: prayerTimes.fajr,
+    iftarTime: prayerTimes.maghrib,
+  };
+}

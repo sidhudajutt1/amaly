@@ -7,6 +7,7 @@ import { t } from '../../src/i18n';
 import { useTheme } from '../../src/hooks/useTheme';
 import { usePrayerTimes } from '../../src/hooks/usePrayerTimes';
 import { formatTime } from '../../src/services/prayerService';
+import { toHijri, isRamadan } from '../../src/services/hijriService';
 import { fontSizes, spacing } from '../../src/theme';
 
 function TabIcon({ name, focused, color }: { name: string; focused: boolean; color: string }) {
@@ -29,8 +30,29 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
 
 function PrayerBar() {
   const language = useAppStore((s) => s.settings.language);
+  const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
   const { theme } = useTheme();
-  const { nextPrayer, countdown } = usePrayerTimes();
+  const { prayerTimes, nextPrayer, countdown } = usePrayerTimes();
+
+  const hijri = toHijri(new Date(), hijriAdjustment);
+  const inRamadan = isRamadan(hijri);
+
+  if (inRamadan && prayerTimes) {
+    const fajrTime = formatTime(prayerTimes.fajr);
+    const maghribTime = formatTime(prayerTimes.maghrib);
+
+    return (
+      <View style={[styles.prayerBar, styles.ramadanBar, { backgroundColor: theme.prayerBar }]}>
+        <Text style={[styles.prayerBarText, { color: theme.prayerBarText }]}>
+          {`${t(language, 'ramadan.suhoor')} ${fajrTime}`}
+        </Text>
+        <MaterialCommunityIcons name="moon-waning-crescent" size={14} color={theme.prayerBarText} />
+        <Text style={[styles.prayerBarText, { color: theme.prayerBarText }]}>
+          {`${t(language, 'ramadan.iftar')} ${maghribTime}`}
+        </Text>
+      </View>
+    );
+  }
 
   const prayerNameKey = nextPrayer
     ? `prayer.${nextPrayer.name}` as const
@@ -136,5 +158,10 @@ const styles = StyleSheet.create({
   prayerBarText: {
     fontSize: fontSizes.prayerBar,
     fontWeight: '600',
+  },
+  ramadanBar: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 12,
   },
 });

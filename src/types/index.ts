@@ -62,6 +62,13 @@ export interface UserProgress {
   niyyahCompleted: boolean;
   prayersCompleted: PrayerName[];
   tafsirRead: boolean;
+  quranVersesRead: number;
+  morningAdhkarDone: boolean;
+  eveningAdhkarDone: boolean;
+  fastingDone: boolean;
+  sadaqahDone: boolean;
+  customGoalsCompleted: string[];
+  streakCelebrationShown: boolean;
 }
 
 export type PrayerName = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
@@ -188,4 +195,29 @@ export interface HijriDate {
   day: number;
   month: number;
   year: number;
+}
+
+export type GoalType = 'prayer' | 'quran' | 'dhikr' | 'fasting' | 'sadaqah' | 'custom';
+
+export interface DailyGoal {
+  id: string;
+  type: GoalType;
+  titleEn: string;
+  titleAr: string;
+  titleUr: string;
+  target: number;
+  completed: number;
+  isCompleted: boolean;
+}
+
+export interface GoalConfig {
+  prayerGoalEnabled: boolean;
+  quranGoalEnabled: boolean;
+  quranVersesPerDay: number;
+  dhikrGoalEnabled: boolean;
+  morningAdhkarEnabled: boolean;
+  eveningAdhkarEnabled: boolean;
+  fastingGoalEnabled: boolean;
+  sadaqahGoalEnabled: boolean;
+  customGoals: { titleEn: string; titleAr: string; titleUr: string }[];
 }

@@ -9,7 +9,9 @@ import type {
   StreakData,
   PrayerName,
   HijriDate,
+  GoalConfig,
 } from '../types';
+import { DEFAULT_GOAL_CONFIG } from '../services/goalsService';
 
 const STORAGE_KEY = '@niyyah_store';
 
@@ -18,6 +20,7 @@ interface AppState {
   streakData: StreakData;
   todayProgress: UserProgress;
   isLoading: boolean;
+  goalConfig: GoalConfig;
 
   // Settings actions
   setLanguage: (language: Language) => void;
@@ -38,6 +41,16 @@ interface AppState {
   markNiyyahCompleted: () => void;
   markPrayerCompleted: (prayer: PrayerName) => void;
   markTafsirRead: () => void;
+
+  // Goals actions
+  setGoalConfig: (config: GoalConfig) => void;
+  markQuranVersesRead: (count: number) => void;
+  markMorningAdhkar: () => void;
+  markEveningAdhkar: () => void;
+  markFasting: () => void;
+  markSadaqah: () => void;
+  markCustomGoal: (goalId: string) => void;
+  markStreakCelebrationShown: () => void;
 
   // Persistence
   hydrate: () => Promise<void>;
@@ -86,6 +99,13 @@ const defaultProgress = (): UserProgress => ({
   niyyahCompleted: false,
   prayersCompleted: [],
   tafsirRead: false,
+  quranVersesRead: 0,
+  morningAdhkarDone: false,
+  eveningAdhkarDone: false,
+  fastingDone: false,
+  sadaqahDone: false,
+  customGoalsCompleted: [],
+  streakCelebrationShown: false,
 });
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -93,6 +113,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   streakData: defaultStreak,
   todayProgress: defaultProgress(),
   isLoading: true,
+  goalConfig: DEFAULT_GOAL_CONFIG,
 
   setLanguage: (language) => {
     set((state) => ({ settings: { ...state.settings, language } }));
@@ -155,6 +176,11 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setHijriAdjustment: (adjustment) => {
     set((state) => ({ settings: { ...state.settings, hijriAdjustment: adjustment } }));
+    get().persist();
+  },
+
+  setGoalConfig: (config) => {
+    set({ goalConfig: config });
     get().persist();
   },
 
@@ -247,6 +273,86 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
+  markQuranVersesRead: (count) => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+    if (progress.date !== today) progress = defaultProgress();
+    set({
+      todayProgress: { ...progress, quranVersesRead: progress.quranVersesRead + count },
+    });
+    get().persist();
+  },
+
+  markMorningAdhkar: () => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+    if (progress.date !== today) progress = defaultProgress();
+    if (!progress.morningAdhkarDone) {
+      set({ todayProgress: { ...progress, morningAdhkarDone: true } });
+      get().persist();
+    }
+  },
+
+  markEveningAdhkar: () => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+    if (progress.date !== today) progress = defaultProgress();
+    if (!progress.eveningAdhkarDone) {
+      set({ todayProgress: { ...progress, eveningAdhkarDone: true } });
+      get().persist();
+    }
+  },
+
+  markFasting: () => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+    if (progress.date !== today) progress = defaultProgress();
+    if (!progress.fastingDone) {
+      set({ todayProgress: { ...progress, fastingDone: true } });
+      get().persist();
+    }
+  },
+
+  markSadaqah: () => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+    if (progress.date !== today) progress = defaultProgress();
+    if (!progress.sadaqahDone) {
+      set({ todayProgress: { ...progress, sadaqahDone: true } });
+      get().persist();
+    }
+  },
+
+  markCustomGoal: (goalId) => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+    if (progress.date !== today) progress = defaultProgress();
+    if (!progress.customGoalsCompleted.includes(goalId)) {
+      set({
+        todayProgress: {
+          ...progress,
+          customGoalsCompleted: [...progress.customGoalsCompleted, goalId],
+        },
+      });
+      get().persist();
+    }
+  },
+
+  markStreakCelebrationShown: () => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+    if (progress.date !== today) progress = defaultProgress();
+    set({ todayProgress: { ...progress, streakCelebrationShown: true } });
+    get().persist();
+  },
+
   hydrate: async () => {
     try {
       const data = await AsyncStorage.getItem(STORAGE_KEY);
@@ -258,6 +364,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           todayProgress: parsed.todayProgress?.date === todayDate()
             ? parsed.todayProgress
             : defaultProgress(),
+          goalConfig: parsed.goalConfig ? { ...DEFAULT_GOAL_CONFIG, ...parsed.goalConfig } : DEFAULT_GOAL_CONFIG,
           isLoading: false,
         });
       } else {
@@ -270,10 +377,10 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   persist: async () => {
     try {
-      const { settings, streakData, todayProgress } = get();
+      const { settings, streakData, todayProgress, goalConfig } = get();
       await AsyncStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ settings, streakData, todayProgress })
+        JSON.stringify({ settings, streakData, todayProgress, goalConfig })
       );
     } catch {
       // Silently fail — will retry on next action
