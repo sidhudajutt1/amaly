@@ -11,7 +11,9 @@ import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
+import { Ionicons } from '@expo/vector-icons';
 import { surahs, type SurahMeta } from '../../src/data/surahs';
+import { isSurahAvailable } from '../../src/data/quranText';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import type { Language } from '../../src/types';
 
@@ -38,7 +40,14 @@ function SurahCard({ surah, theme, language, onPress }: {
         </Text>
       </View>
       <View style={styles.surahArabic}>
-        <Text style={[styles.surahNameAr, { color: theme.textArabic }]}>{surah.nameAr}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={[styles.surahNameAr, { color: theme.textArabic }]}>{surah.nameAr}</Text>
+          {isSurahAvailable(surah.number) && (
+            <View style={[styles.availableBadge, { backgroundColor: theme.primary }]}>
+              <Ionicons name="book" size={10} color="#fff" />
+            </View>
+          )}
+        </View>
         <Text style={[styles.surahType, { color: theme.textTertiary }]}>
           {surah.revelationType === 'meccan' ? t(language, 'quran.meccan') : t(language, 'quran.medinan')}
         </Text>
@@ -151,5 +160,13 @@ const styles = StyleSheet.create({
   },
   surahType: {
     fontSize: fontSizes.caption,
+  },
+  availableBadge: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
   },
 });

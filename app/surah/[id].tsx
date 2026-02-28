@@ -5,7 +5,7 @@ import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
 import { surahs } from '../../src/data/surahs';
-import { getSurahData, isSurahAvailable, type AyahData } from '../../src/data/quranText';
+import { getSurahData, isSurahAvailable, getAvailableSurahNumbers, type AyahData } from '../../src/data/quranText';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import { getQuranFontFamily, getTranslationFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
@@ -130,16 +130,23 @@ export default function SurahReaderScreen() {
             {surahMeta.nameEn}
           </Text>
           <Text style={[styles.comingSoonText, { color: theme.textSecondary }]}>
-            {language === 'ar' ? 'النص الكامل قريباً.\nسورة الفاتحة متاحة الآن.' : language === 'ur' ? 'مکمل متن اگلی تازہ کاری میں۔\nسورۃ الفاتحہ ابھی دستیاب ہے۔' : 'Full text loading in next update.\nAl-Fatihah is available now.'}
+            {language === 'ar' ? `${getAvailableSurahNumbers().length} سورة متاحة. المزيد قريباً.` : language === 'ur' ? `${getAvailableSurahNumbers().length} سورتیں دستیاب ہیں۔ مزید جلد آ رہی ہیں۔` : `${getAvailableSurahNumbers().length} surahs available now. More coming soon.`}
           </Text>
-          <TouchableOpacity
-            style={[styles.goToFatihah, { backgroundColor: theme.primary }]}
-            onPress={() => router.replace('/surah/1')}
-          >
-            <Text style={[styles.goToFatihahText, { color: '#fff' }]}>
-              {language === 'ar' ? 'اقرأ الفاتحة' : language === 'ur' ? 'الفاتحہ پڑھیں' : 'Read Al-Fatihah'}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.availableList}>
+            {getAvailableSurahNumbers().slice(0, 6).map((num) => {
+              const s = surahs.find((x) => x.number === num);
+              if (!s) return null;
+              return (
+                <TouchableOpacity
+                  key={num}
+                  style={[styles.availableChip, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}
+                  onPress={() => router.replace(`/surah/${num}`)}
+                >
+                  <Text style={[styles.availableChipText, { color: theme.primary }]}>{s.nameEn}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
       )}
     </View>
@@ -204,12 +211,9 @@ const styles = StyleSheet.create({
   comingSoonEmoji: { fontSize: 48, marginBottom: spacing.md },
   comingSoonTitle: { fontSize: fontSizes.heading2, fontWeight: '700', marginBottom: spacing.sm },
   comingSoonText: { fontSize: fontSizes.body, textAlign: 'center', lineHeight: 24, marginBottom: spacing.lg },
-  goToFatihah: {
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.md,
-  },
-  goToFatihahText: { fontSize: fontSizes.body, fontWeight: '700' },
+  availableList: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 16 },
+  availableChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },
+  availableChipText: { fontSize: 13, fontWeight: '600' },
   readFooter: { alignItems: 'center', paddingVertical: 24 },
   markReadBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 },
   markReadText: { color: '#fff', fontSize: 16, fontWeight: '700' },

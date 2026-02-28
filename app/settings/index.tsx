@@ -329,6 +329,12 @@ export default function SettingsScreen() {
         </Text>
         <Text style={[styles.rowValue, { color: theme.textTertiary }]}>1.0.0</Text>
       </View>
+      <View style={[styles.row, { borderColor: theme.border }]}>
+        <Text style={[styles.rowLabel, { color: theme.textTertiary }]}>
+          {language === 'ar' ? 'متوافق مع الشريعة الإسلامية' : language === 'ur' ? 'شریعت اسلامیہ کے مطابق' : 'Shariah Compliant'}
+        </Text>
+        <Ionicons name="shield-checkmark" size={16} color={theme.primary} />
+      </View>
 
       <View style={{ height: spacing.xxl * 2 }} />
     </ScrollView>

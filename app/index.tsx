@@ -1,33 +1,34 @@
 import { useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { Redirect } from 'expo-router';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
 import { useAppStore } from '../src/store/useAppStore';
-import { colors } from '../src/theme';
 
 export default function Index() {
   const isLoading = useAppStore((s) => s.isLoading);
   const onboardingCompleted = useAppStore((s) => s.settings.onboardingCompleted);
 
-  if (isLoading) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color={colors.light.primary} />
-      </View>
-    );
-  }
+  useEffect(() => {
+    if (!isLoading) {
+      if (onboardingCompleted) {
+        router.replace('/(tabs)/today');
+      } else {
+        router.replace('/onboarding');
+      }
+    }
+  }, [isLoading, onboardingCompleted]);
 
-  if (!onboardingCompleted) {
-    return <Redirect href="/onboarding" />;
-  }
-
-  return <Redirect href="/(tabs)/today" />;
+  return (
+    <View style={styles.container}>
+      <Text style={styles.appName}>نية</Text>
+      <Text style={styles.appNameLatin}>Niyyah</Text>
+      <ActivityIndicator size="large" color="#1B6B4A" style={styles.spinner} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.light.background,
-  },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F5F0' },
+  appName: { fontSize: 48, fontWeight: '300', color: '#1B6B4A', marginBottom: 4 },
+  appNameLatin: { fontSize: 20, fontWeight: '300', letterSpacing: 3, color: '#1B6B4A', marginBottom: 32 },
+  spinner: { marginTop: 16 },
 });
