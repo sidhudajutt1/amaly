@@ -104,6 +104,7 @@ export default function IbadahScreen() {
           icon={<MaterialCommunityIcons name="book-open-outline" size={32} color={theme.primary} />}
           label={t(language, 'ibadah.prayerGuide')}
           theme={theme}
+          onPress={() => router.push('/prayer-guide')}
         />
       </View>
 

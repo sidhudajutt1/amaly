@@ -13,6 +13,7 @@ import { toHijri, formatHijriDate, getRamadanDay, getRamadanThird, getIslamicEve
 import { generateDailyGoals, getGoalsSummary, getStreakMilestone } from '../../src/services/goalsService';
 import { fontSizes, spacing, borderRadius, lineHeights } from '../../src/theme';
 import { getQuranFontFamily, getArabicFontFamily } from '../../src/theme/typography';
+import { getDailyReflection } from '../../src/data/dailyReflections';
 import type { Language, GoalType } from '../../src/types';
 
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -25,13 +26,6 @@ const QUICK_SURAHS = [
   { id: 56, nameKey: 'surah.alWaqiah' },
   { id: 0, nameKey: 'surah.ayatAlKursi' },
 ];
-
-const SAMPLE_REFLECTION = {
-  ayahAr: 'وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ',
-  ayahRef: 'Surah Hud 11:115',
-  hadithAr: 'إِنَّمَا الصَّبْرُ عِنْدَ الصَّدْمَةِ الْأُولَى',
-  hadithSource: 'Sahih al-Bukhari 1283',
-};
 
 function getGoalIcon(type: GoalType): { name: string; family: 'ionicons' | 'material' } {
   switch (type) {
@@ -92,6 +86,7 @@ export default function TodayScreen() {
     return Math.min(Math.max(elapsed / total, 0), 1);
   }, [prayerTimes, nextPrayer, currentPrayer]);
 
+  const reflection = useMemo(() => getDailyReflection(now), [now.toDateString()]);
   const textAlign = language === 'ar' || language === 'ur' ? 'right' as const : 'left' as const;
 
   const todayIdx = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -327,17 +322,13 @@ export default function TodayScreen() {
       {/* Quran Ayah Card */}
       <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
         <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language) }]}>
-          {SAMPLE_REFLECTION.ayahAr}
+          {reflection.ayahAr}
         </Text>
         <Text style={[styles.translationText, { color: theme.text, textAlign }]}>
-          {language === 'ur'
-            ? 'اور صبر کرو کیونکہ بے شک اللہ نیکی کرنے والوں کا اجر ضائع نہیں کرتا'
-            : language === 'ar'
-            ? 'أمر بالصبر مع وعد بأن الله لا يضيع ثواب من أحسن عملاً'
-            : '"And be patient, for indeed Allah does not allow to be lost the reward of those who do good."'}
+          {language === 'ur' ? reflection.ayahUr : language === 'ar' ? reflection.ayahAr : reflection.ayahEn}
         </Text>
         <Text style={[styles.reference, { color: theme.textTertiary, textAlign }]}>
-          — {SAMPLE_REFLECTION.ayahRef}
+          {`\u2014 ${reflection.ayahRef}`}
         </Text>
       </View>
 
@@ -350,17 +341,13 @@ export default function TodayScreen() {
           </Text>
         </View>
         <Text style={[styles.hadithArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>
-          {SAMPLE_REFLECTION.hadithAr}
+          {reflection.hadithAr}
         </Text>
         <Text style={[styles.translationText, { color: theme.text, textAlign }]}>
-          {language === 'ur'
-            ? 'صبر تو پہلے صدمے کے وقت ہوتا ہے'
-            : language === 'ar'
-            ? 'إنما الصبر الحقيقي هو عند أول صدمة'
-            : '"Patience is at the first stroke of calamity."'}
+          {language === 'ur' ? reflection.hadithUr : language === 'ar' ? reflection.hadithAr : reflection.hadithEn}
         </Text>
         <Text style={[styles.reference, { color: theme.textTertiary, textAlign }]}>
-          — {SAMPLE_REFLECTION.hadithSource}
+          {`\u2014 ${reflection.hadithSource}`}
         </Text>
       </View>
 
@@ -373,11 +360,7 @@ export default function TodayScreen() {
           </Text>
         </View>
         <Text style={[styles.niyyahText, { color: theme.text, textAlign }]}>
-          {language === 'ur'
-            ? 'اگر آج کوئی بات آپ کی مرضی کے خلاف ہو تو ردعمل سے پہلے رک کر دل میں کہیں "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ"'
-            : language === 'ar'
-            ? 'إذا لم تسر الأمور كما تريد اليوم، توقف قبل أن تتفاعل وقل "إنا لله وإنا إليه راجعون" في نفسك.'
-            : 'If something doesn\'t go your way today, before reacting, pause and say "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ" silently to yourself.'}
+          {language === 'ur' ? reflection.niyyahUr : language === 'ar' ? reflection.niyyahAr : reflection.niyyahEn}
         </Text>
         <TouchableOpacity
           style={[styles.niyyahButton, { backgroundColor: todayProgress.niyyahCompleted ? theme.success : theme.primary }]}

@@ -50,6 +50,8 @@ export default function RootLayout() {
         <Stack.Screen name="zakat" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="qibla" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="notifications" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="hadith/[collectionId]" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="prayer-guide" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </SafeAreaProvider>
   );
