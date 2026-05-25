@@ -1,239 +1,148 @@
 /**
- * Indo-Pak script Quran text (used for Urdu-language users).
- * Source: naveed-ahmad/Quran-text (GitHub) - Indo-Pak Unicode encoding.
- * Font: PDMS Saleem QuranFont
+ * Indo-Pak script Quran text loader for Urdu-language users.
+ * Source: Quran.com API v4 (text_indopak field) — all 114 surahs.
+ * Font:   PDMS Saleem QuranFont (PDMSSaleemQuran)
+ *
+ * Uses a static require() map for Metro bundler compatibility.
+ * Each surah is loaded once and cached in memory.
  */
-const indoPakText: Record<number, Record<number, string>> = {};
 
-// Surah 1 - Al-Fatihah
-indoPakText[1] = {
-  1: 'بِسۡمِ اللهِ الرَّحۡمٰنِ الرَّحِيۡمِ',
-  2: 'اَلۡحَمۡدُ لِلّٰهِ رَبِّ الۡعٰلَمِيۡنَۙ',
-  3: 'الرَّحۡمٰنِ الرَّحِيۡمِۙ',
-  4: 'مٰلِكِ يَوۡمِ الدِّيۡنِؕ',
-  5: 'اِيَّاكَ نَعۡبُدُ وَاِيَّاكَ نَسۡتَعِيۡنُؕ',
-  6: 'اِهۡدِنَا الصِّرَاطَ الۡمُسۡتَقِيۡمَۙ',
-  7: 'صِرَاطَ الَّذِيۡنَ اَنۡعَمۡتَ عَلَيۡهِمۡ ۙ غَيۡرِ الۡمَغۡضُوۡبِ عَلَيۡهِمۡ وَلَا الضَّآلِّيۡنَ',
+type SurahLoader = () => Record<string, string>;
+
+// Static map required by Metro bundler — dynamic require() is not resolvable at build time.
+const SURAH_LOADERS: Record<number, SurahLoader> = {
+  1: () => require('../../assets/indopak-text/1.json'),
+  2: () => require('../../assets/indopak-text/2.json'),
+  3: () => require('../../assets/indopak-text/3.json'),
+  4: () => require('../../assets/indopak-text/4.json'),
+  5: () => require('../../assets/indopak-text/5.json'),
+  6: () => require('../../assets/indopak-text/6.json'),
+  7: () => require('../../assets/indopak-text/7.json'),
+  8: () => require('../../assets/indopak-text/8.json'),
+  9: () => require('../../assets/indopak-text/9.json'),
+  10: () => require('../../assets/indopak-text/10.json'),
+  11: () => require('../../assets/indopak-text/11.json'),
+  12: () => require('../../assets/indopak-text/12.json'),
+  13: () => require('../../assets/indopak-text/13.json'),
+  14: () => require('../../assets/indopak-text/14.json'),
+  15: () => require('../../assets/indopak-text/15.json'),
+  16: () => require('../../assets/indopak-text/16.json'),
+  17: () => require('../../assets/indopak-text/17.json'),
+  18: () => require('../../assets/indopak-text/18.json'),
+  19: () => require('../../assets/indopak-text/19.json'),
+  20: () => require('../../assets/indopak-text/20.json'),
+  21: () => require('../../assets/indopak-text/21.json'),
+  22: () => require('../../assets/indopak-text/22.json'),
+  23: () => require('../../assets/indopak-text/23.json'),
+  24: () => require('../../assets/indopak-text/24.json'),
+  25: () => require('../../assets/indopak-text/25.json'),
+  26: () => require('../../assets/indopak-text/26.json'),
+  27: () => require('../../assets/indopak-text/27.json'),
+  28: () => require('../../assets/indopak-text/28.json'),
+  29: () => require('../../assets/indopak-text/29.json'),
+  30: () => require('../../assets/indopak-text/30.json'),
+  31: () => require('../../assets/indopak-text/31.json'),
+  32: () => require('../../assets/indopak-text/32.json'),
+  33: () => require('../../assets/indopak-text/33.json'),
+  34: () => require('../../assets/indopak-text/34.json'),
+  35: () => require('../../assets/indopak-text/35.json'),
+  36: () => require('../../assets/indopak-text/36.json'),
+  37: () => require('../../assets/indopak-text/37.json'),
+  38: () => require('../../assets/indopak-text/38.json'),
+  39: () => require('../../assets/indopak-text/39.json'),
+  40: () => require('../../assets/indopak-text/40.json'),
+  41: () => require('../../assets/indopak-text/41.json'),
+  42: () => require('../../assets/indopak-text/42.json'),
+  43: () => require('../../assets/indopak-text/43.json'),
+  44: () => require('../../assets/indopak-text/44.json'),
+  45: () => require('../../assets/indopak-text/45.json'),
+  46: () => require('../../assets/indopak-text/46.json'),
+  47: () => require('../../assets/indopak-text/47.json'),
+  48: () => require('../../assets/indopak-text/48.json'),
+  49: () => require('../../assets/indopak-text/49.json'),
+  50: () => require('../../assets/indopak-text/50.json'),
+  51: () => require('../../assets/indopak-text/51.json'),
+  52: () => require('../../assets/indopak-text/52.json'),
+  53: () => require('../../assets/indopak-text/53.json'),
+  54: () => require('../../assets/indopak-text/54.json'),
+  55: () => require('../../assets/indopak-text/55.json'),
+  56: () => require('../../assets/indopak-text/56.json'),
+  57: () => require('../../assets/indopak-text/57.json'),
+  58: () => require('../../assets/indopak-text/58.json'),
+  59: () => require('../../assets/indopak-text/59.json'),
+  60: () => require('../../assets/indopak-text/60.json'),
+  61: () => require('../../assets/indopak-text/61.json'),
+  62: () => require('../../assets/indopak-text/62.json'),
+  63: () => require('../../assets/indopak-text/63.json'),
+  64: () => require('../../assets/indopak-text/64.json'),
+  65: () => require('../../assets/indopak-text/65.json'),
+  66: () => require('../../assets/indopak-text/66.json'),
+  67: () => require('../../assets/indopak-text/67.json'),
+  68: () => require('../../assets/indopak-text/68.json'),
+  69: () => require('../../assets/indopak-text/69.json'),
+  70: () => require('../../assets/indopak-text/70.json'),
+  71: () => require('../../assets/indopak-text/71.json'),
+  72: () => require('../../assets/indopak-text/72.json'),
+  73: () => require('../../assets/indopak-text/73.json'),
+  74: () => require('../../assets/indopak-text/74.json'),
+  75: () => require('../../assets/indopak-text/75.json'),
+  76: () => require('../../assets/indopak-text/76.json'),
+  77: () => require('../../assets/indopak-text/77.json'),
+  78: () => require('../../assets/indopak-text/78.json'),
+  79: () => require('../../assets/indopak-text/79.json'),
+  80: () => require('../../assets/indopak-text/80.json'),
+  81: () => require('../../assets/indopak-text/81.json'),
+  82: () => require('../../assets/indopak-text/82.json'),
+  83: () => require('../../assets/indopak-text/83.json'),
+  84: () => require('../../assets/indopak-text/84.json'),
+  85: () => require('../../assets/indopak-text/85.json'),
+  86: () => require('../../assets/indopak-text/86.json'),
+  87: () => require('../../assets/indopak-text/87.json'),
+  88: () => require('../../assets/indopak-text/88.json'),
+  89: () => require('../../assets/indopak-text/89.json'),
+  90: () => require('../../assets/indopak-text/90.json'),
+  91: () => require('../../assets/indopak-text/91.json'),
+  92: () => require('../../assets/indopak-text/92.json'),
+  93: () => require('../../assets/indopak-text/93.json'),
+  94: () => require('../../assets/indopak-text/94.json'),
+  95: () => require('../../assets/indopak-text/95.json'),
+  96: () => require('../../assets/indopak-text/96.json'),
+  97: () => require('../../assets/indopak-text/97.json'),
+  98: () => require('../../assets/indopak-text/98.json'),
+  99: () => require('../../assets/indopak-text/99.json'),
+  100: () => require('../../assets/indopak-text/100.json'),
+  101: () => require('../../assets/indopak-text/101.json'),
+  102: () => require('../../assets/indopak-text/102.json'),
+  103: () => require('../../assets/indopak-text/103.json'),
+  104: () => require('../../assets/indopak-text/104.json'),
+  105: () => require('../../assets/indopak-text/105.json'),
+  106: () => require('../../assets/indopak-text/106.json'),
+  107: () => require('../../assets/indopak-text/107.json'),
+  108: () => require('../../assets/indopak-text/108.json'),
+  109: () => require('../../assets/indopak-text/109.json'),
+  110: () => require('../../assets/indopak-text/110.json'),
+  111: () => require('../../assets/indopak-text/111.json'),
+  112: () => require('../../assets/indopak-text/112.json'),
+  113: () => require('../../assets/indopak-text/113.json'),
+  114: () => require('../../assets/indopak-text/114.json'),
 };
 
-// Surah 67 - Al-Mulk
-indoPakText[67] = {
-  1: 'تَبٰرَكَ الَّذِىۡ بِيَدِهِ الۡمُلۡكُ وَهُوَ عَلٰى كُلِّ شَىۡءٍ قَدِيۡرُۙ ',
-  2: 'اۨلَّذِىۡ خَلَقَ الۡمَوۡتَ وَالۡحَيٰوةَ لِيَبۡلُوَكُمۡ اَيُّكُمۡ اَحۡسَنُ عَمَلًا ؕ وَهُوَ الۡعَزِيۡزُ الۡغَفُوۡرُۙ',
-  3: 'الَّذِىۡ خَلَقَ سَبۡعَ سَمٰوٰتٍ طِبَاقًا​ ؕ مَا تَرٰى فِىۡ خَلۡقِ الرَّحۡمٰنِ مِنۡ تَفٰوُتٍ​ ؕ فَارۡجِعِ الۡبَصَرَۙ هَلۡ تَرٰى مِنۡ فُطُوۡرٍ',
-  4: 'ثُمَّ ارۡجِعِ الۡبَصَرَ كَرَّتَيۡنِ يَنۡقَلِبۡ اِلَيۡكَ الۡبَصَرُ خَاسِئًا وَّهُوَ حَسِيۡرٌ',
-  5: 'وَلَـقَدۡ زَيَّـنَّا السَّمَآءَ الدُّنۡيَا بِمَصَابِيۡحَ وَجَعَلۡنٰهَا رُجُوۡمًا لِّلشَّيٰطِيۡنِ​ وَاَعۡتَدۡنَا لَهُمۡ عَذَابَ السَّعِيۡرِ',
-  6: 'وَلِلَّذِيۡنَ كَفَرُوۡا بِرَبِّهِمۡ عَذَابُ جَهَنَّمَ​ؕ وَبِئۡسَ الۡمَصِيۡرُ ',
-  7: 'اِذَاۤ اُلۡقُوۡا فِيۡهَا سَمِعُوۡا لَهَا شَهِيۡقًا وَّهِىَ تَفُوۡرُۙ',
-  8: 'تَكَادُ تَمَيَّزُ مِنَ الۡغَيۡظِ​ؕ كُلَّمَاۤ اُلۡقِىَ فِيۡهَا فَوۡجٌ سَاَلَهُمۡ خَزَنَـتُهَاۤ اَلَمۡ يَاۡتِكُمۡ نَذِيۡرٌ',
-  9: 'قَالُوۡا بَلٰى قَدۡ جَآءَنَا نَذِيۡرٌ  ۙ فَكَذَّبۡنَا وَقُلۡنَا مَا نَزَّلَ اللّٰهُ مِنۡ شَىۡءٍ ۖۚ اِنۡ اَنۡتُمۡ اِلَّا فِىۡ ضَلٰلٍ كَبِيۡرٍ',
-  10: 'وَقَالُوۡا لَوۡ كُنَّا نَسۡمَعُ اَوۡ نَعۡقِلُ مَا كُنَّا فِىۡۤ اَصۡحٰبِ السَّعِيۡرِ ',
-  11: 'فَاعۡتَرَفُوۡا بِذَنۡۢبِهِمۡ​ۚ فَسُحۡقًا لِّاَصۡحٰبِ السَّعِيۡرِ',
-  12: 'اِنَّ الَّذِيۡنَ يَخۡشَوۡنَ رَبَّهُمۡ بِالۡغَيۡبِ لَهُمۡ مَّغۡفِرَةٌ وَّاَجۡرٌ كَبِيۡرٌ',
-  13: 'وَاَسِرُّوۡا قَوۡلَـكُمۡ اَوِ اجۡهَرُوۡا بِهٖؕ اِنَّهٗ عَلِيۡمٌۢ بِذَاتِ الصُّدُوۡرِ ',
-  14: 'اَلَا يَعۡلَمُ مَنۡ خَلَقَؕ وَهُوَ اللَّطِيۡفُ الۡخَبِيۡرُ',
-  15: 'هُوَ الَّذِىۡ جَعَلَ لَـكُمُ الۡاَرۡضَ ذَلُوۡلًا فَامۡشُوۡا فِىۡ مَنَاكِبِهَا وَكُلُوۡا مِنۡ رِّزۡقِهٖ​ؕ وَاِلَيۡهِ النُّشُوۡرُ',
-  16: 'ءَاَمِنۡتُمۡ مَّنۡ فِىۡ السَّمَآءِ اَنۡ يَّخۡسِفَ بِكُمُ الۡاَرۡضَ فَاِذَا هِىَ تَمُوۡرُۙ',
-  17: 'اَمۡ اَمِنۡتُمۡ مَّنۡ فِى السَّمَآءِ اَنۡ يُّرۡسِلَ عَلَيۡكُمۡ حَاصِبًا​ ؕ فَسَتَعۡلَمُوۡنَ كَيۡفَ نَذِيۡرِ',
-  18: 'وَلَـقَدۡ كَذَّبَ الَّذِيۡنَ مِنۡ قَبۡلِهِمۡ فَكَيۡفَ كَانَ نَكِيۡرِ',
-  19: 'اَوَلَمۡ يَرَوۡا اِلَى الطَّيۡرِ فَوۡقَهُمۡ صٰٓفّٰتٍ وَّيَقۡبِضۡنَؕ ۘ مَا يُمۡسِكُهُنَّ اِلَّا الرَّحۡمٰنُ​ؕ اِنَّهٗ بِكُلِّ شَىۡءٍۢ بَصِيۡرٌ',
-  20: 'اَمَّنۡ هٰذَا الَّذِىۡ هُوَ جُنۡدٌ لَّكُمۡ يَنۡصُرُكُمۡ مِّنۡ دُوۡنِ الرَّحۡمٰنِ​ؕ اِنِ الۡكٰفِرُوۡنَ اِلَّا فِىۡ غُرُوۡرٍ​ۚ',
-  21: 'اَمَّنۡ هٰذَا الَّذِىۡ يَرۡزُقُكُمۡ اِنۡ اَمۡسَكَ رِزۡقَهٗ​ ۚ بَلۡ لَّجُّوۡا فِىۡ عُتُوٍّ وَّنُفُوۡرٍ',
-  22: 'اَفَمَنۡ يَّمۡشِىۡ مُكِبًّا عَلٰى وَجۡهِهٖۤ اَهۡدٰٓى اَمَّنۡ يَّمۡشِىۡ سَوِيًّا عَلٰى صِرَاطٍ مُّسۡتَقِيۡمٍ',
-  23: 'قُلۡ هُوَ الَّذِىۡۤ اَنۡشَاَكُمۡ وَجَعَلَ لَـكُمُ السَّمۡعَ وَالۡاَبۡصَارَ وَ الۡاَفۡـــِٕدَةَ ​ ؕ قَلِيۡلًا مَّا تَشۡكُرُوۡنَ',
-  24: 'قُلۡ هُوَ الَّذِىۡ ذَرَاَكُمۡ فِى الۡاَرۡضِ وَاِلَيۡهِ تُحۡشَرُوۡنَ',
-  25: 'وَيَقُوۡلُوۡنَ مَتٰى هٰذَا الۡوَعۡدُ اِنۡ كُنۡتُمۡ صٰدِقِيۡنَ',
-  26: 'قُلۡ اِنَّمَا الۡعِلۡمُ عِنۡدَ اللّٰهِ وَاِنَّمَاۤ اَنَا نَذِيۡرٌ مُّبِيۡنٌ ',
-  27: 'فَلَمَّا رَاَوۡهُ زُلۡفَةً سِیْٓــَٔتۡ وُجُوۡهُ الَّذِيۡنَ كَفَرُوۡا وَقِيۡلَ هٰذَا الَّذِىۡ كُنۡتُمۡ بِهٖ تَدَّعُوۡنَ',
-  28: 'قُلۡ اَرَءَيۡتُمۡ اِنۡ اَهۡلَـكَنِىَ اللّٰهُ وَمَنۡ مَّعِىَ اَوۡ رَحِمَنَا ۙ فَمَنۡ يُّجِيۡرُ الۡكٰفِرِيۡنَ مِنۡ عَذَابٍ اَلِيۡمٍ',
-  29: 'قُلۡ هُوَ الرَّحۡمٰنُ اٰمَنَّا بِهٖ وَعَلَيۡهِ تَوَكَّلۡنَا​ۚ فَسَتَعۡلَمُوۡنَ مَنۡ هُوَ فِىۡ ضَلٰلٍ مُّبِيۡنٍ',
-  30: 'قُلۡ اَرَءَيۡتُمۡ اِنۡ اَصۡبَحَ مَآؤُكُمۡ غَوۡرًا فَمَنۡ يَّاۡتِيۡكُمۡ بِمَآءٍ مَّعِيۡنٍ',
-};
+const cache: Record<number, Record<string, string>> = {};
 
-// Surah 93 - Ad-Duha
-indoPakText[93] = {
-  1: 'وَالضُّحٰىۙ',
-  2: 'وَالَّيۡلِ اِذَا سَجٰىۙ',
-  3: 'مَا وَدَّعَكَ رَبُّكَ وَمَا قَلٰىؕ',
-  4: 'وَلَـلۡاٰخِرَةُ خَيۡرٌ لَّكَ مِنَ الۡاُوۡلٰىؕ',
-  5: 'وَلَسَوۡفَ يُعۡطِيۡكَ رَبُّكَ فَتَرۡضٰىؕ',
-  6: 'اَلَمۡ يَجِدۡكَ يَتِيۡمًا فَاٰوٰى',
-  7: 'وَوَجَدَكَ ضَآ لًّا فَهَدٰى',
-  8: 'وَوَجَدَكَ عَآٮِٕلًا فَاَغۡنٰىؕ',
-  9: 'فَاَمَّا الۡيَتِيۡمَ فَلَا تَقۡهَرۡؕ',
-  10: 'وَاَمَّا السَّآٮِٕلَ فَلَا تَنۡهَرۡؕ',
-  11: 'وَاَمَّا بِنِعۡمَةِ رَبِّكَ فَحَدِّثۡ',
-};
-
-// Surah 94 - Ash-Sharh
-indoPakText[94] = {
-  1: 'اَلَمۡ نَشۡرَحۡ لَـكَ صَدۡرَكَۙ',
-  2: 'وَوَضَعۡنَا عَنۡكَ وِزۡرَكَۙ',
-  3: 'الَّذِىۡۤ اَنۡقَضَ ظَهۡرَكَۙ',
-  4: 'وَرَفَعۡنَا لَـكَ ذِكۡرَكَؕ',
-  5: 'فَاِنَّ مَعَ الۡعُسۡرِ يُسۡرًا ۙ',
-  6: 'اِنَّ مَعَ الۡعُسۡرِ يُسۡرًا ؕ',
-  7: 'فَاِذَا فَرَغۡتَ فَانۡصَبۡۙ',
-  8: 'وَاِلٰى رَبِّكَ فَارۡغَب',
-};
-
-// Surah 95 - At-Tin
-indoPakText[95] = {
-  1: 'وَالتِّيۡنِ وَالزَّيۡتُوۡنِۙ',
-  2: 'وَطُوۡرِ سِيۡنِيۡنَۙ',
-  3: 'وَهٰذَا الۡبَلَدِ الۡاَمِيۡنِۙ',
-  4: 'لَقَدۡ خَلَقۡنَا الۡاِنۡسَانَ فِىۡۤ اَحۡسَنِ تَقۡوِيۡمٍ',
-  5: 'ثُمَّ رَدَدۡنٰهُ اَسۡفَلَ سَافِلِيۡنَۙ',
-  6: 'اِلَّا الَّذِيۡنَ اٰمَنُوۡا وَعَمِلُوا الصّٰلِحٰتِ فَلَهُمۡ اَجۡرٌ غَيۡرُ مَمۡنُوۡنٍؕ',
-  7: 'فَمَا يُكَذِّبُكَ بَعۡدُ بِالدِّيۡنِ',
-  8: 'اَلَيۡسَ اللّٰهُ بِاَحۡكَمِ الۡحٰكِمِيۡنَ',
-};
-
-// Surah 97 - Al-Qadr
-indoPakText[97] = {
-  1: 'اِنَّاۤ اَنۡزَلۡنٰهُ فِىۡ لَيۡلَةِ الۡقَدۡرِۖ ۚ',
-  2: 'وَمَاۤ اَدۡرٰٮكَ مَا لَيۡلَةُ الۡقَدۡرِؕ',
-  3: 'لَيۡلَةُ الۡقَدۡرِ ۙ خَيۡرٌ مِّنۡ اَلۡفِ شَهۡرٍؕ',
-  4: 'تَنَزَّلُ الۡمَلٰٓٮِٕكَةُ وَالرُّوۡحُ فِيۡهَا بِاِذۡنِ رَبِّهِمۡ​ۚ مِّنۡ كُلِّ اَمۡرٍۛۙ',
-  5: 'سَلٰمٌ ۛهِىَ حَتّٰى مَطۡلَعِ الۡفَجۡرِ',
-};
-
-// Surah 99 - Az-Zalzalah
-indoPakText[99] = {
-  1: 'اِذَا زُلۡزِلَتِ الۡاَرۡضُ زِلۡزَالَهَا ۙ',
-  2: 'وَاَخۡرَجَتِ الۡاَرۡضُ اَثۡقَالَهَا ۙ',
-  3: 'وَقَالَ الۡاِنۡسَانُ مَا لَهَا​ ۚ',
-  4: 'يَوۡمَٮِٕذٍ تُحَدِّثُ اَخۡبَارَهَا ۙ',
-  5: 'بِاَنَّ رَبَّكَ اَوۡحٰى لَهَا ؕ',
-  6: 'يَوۡمَٮِٕذٍ يَّصۡدُرُ النَّاسُ اَشۡتَاتًا  ۙ لِّيُرَوۡا اَعۡمَالَهُمۡؕ ',
-  7: 'فَمَنۡ يَّعۡمَلۡ مِثۡقَالَ ذَرَّةٍ خَيۡرًا يَّرَهٗ ؕ',
-  8: 'وَمَنۡ يَّعۡمَلۡ مِثۡقَالَ ذَرَّةٍ شَرًّا يَّرَهٗ',
-};
-
-// Surah 102 - At-Takathur
-indoPakText[102] = {
-  1: 'اَلۡهٰٮكُمُ التَّكَاثُرُۙ',
-  2: 'حَتّٰى زُرۡتُمُ الۡمَقَابِرَؕ',
-  3: 'كَلَّا سَوۡفَ تَعۡلَمُوۡنَۙ',
-  4: 'ثُمَّ كَلَّا سَوۡفَ تَعۡلَمُوۡنَؕ',
-  5: 'كَلَّا لَوۡ تَعۡلَمُوۡنَ عِلۡمَ الۡيَقِيۡنِؕ',
-  6: 'لَتَرَوُنَّ الۡجَحِيۡمَۙ',
-  7: 'ثُمَّ لَتَرَوُنَّهَا عَيۡنَ الۡيَقِيۡنِۙ',
-  8: 'ثُمَّ لَـتُسۡـَٔـلُنَّ يَوۡمَٮِٕذٍ عَنِ النَّعِيۡمِ',
-};
-
-// Surah 103 - Al-Asr
-indoPakText[103] = {
-  1: 'وَالۡعَصۡرِۙ',
-  2: 'اِنَّ الۡاِنۡسَانَ لَفِىۡ خُسۡرٍۙ',
-  3: 'اِلَّا الَّذِيۡنَ اٰمَنُوۡا وَ عَمِلُوا الصّٰلِحٰتِ وَتَوَاصَوۡا بِالۡحَقِّ  ۙ وَتَوَاصَوۡا بِالصَّبۡرِ',
-};
-
-// Surah 104 - Al-Humazah
-indoPakText[104] = {
-  1: 'وَيۡلٌ لِّـكُلِّ هُمَزَةٍ لُّمَزَةِ ۙ',
-  2: 'اۨلَّذِىۡ جَمَعَ مَالًا وَّعَدَّدَهٗ ۙ',
-  3: 'يَحۡسَبُ اَنَّ مَالَهٗۤ اَخۡلَدَهٗ​ ۚ',
-  4: 'كَلَّا​ لَيُنۡۢبَذَنَّ فِى الۡحُطَمَةِ  ۖ',
-  5: 'وَمَاۤ اَدۡرٰٮكَ مَا الۡحُطَمَةُ ؕ',
-  6: 'نَارُ اللّٰهِ الۡمُوۡقَدَةُ ۙ',
-  7: 'الَّتِىۡ تَطَّلِعُ عَلَى الۡاَفۡـــِٕدَةِ ؕ',
-  8: 'اِنَّهَا عَلَيۡهِمۡ مُّؤۡصَدَةٌۙ',
-  9: 'فِىۡ عَمَدٍ مُّمَدَّدَةٍ',
-};
-
-// Surah 105 - Al-Fil
-indoPakText[105] = {
-  1: 'اَلَمۡ تَرَ كَيۡفَ فَعَلَ رَبُّكَ بِاَصۡحٰبِ الۡفِيۡلِؕ',
-  2: 'اَلَمۡ يَجۡعَلۡ كَيۡدَهُمۡ فِىۡ تَضۡلِيۡلٍۙ',
-  3: 'وَّاَرۡسَلَ عَلَيۡهِمۡ طَيۡرًا اَبَابِيۡلَۙ',
-  4: 'تَرۡمِيۡهِمۡ بِحِجَارَةٍ مِّنۡ سِجِّيۡلٍۙ',
-  5: 'فَجَعَلَهُمۡ كَعَصۡفٍ مَّاۡكُوۡلٍ',
-};
-
-// Surah 106 - Quraysh
-indoPakText[106] = {
-  1: 'لِاِيۡلٰفِ قُرَيۡشٍۙ',
-  2: 'اٖلٰفِهِمۡ رِحۡلَةَ الشِّتَآءِ وَالصَّيۡفِ​ۚ',
-  3: 'فَلۡيَـعۡبُدُوۡا رَبَّ هٰذَا الۡبَيۡتِۙ',
-  4: 'الَّذِىۡۤ اَطۡعَمَهُمۡ مِّنۡ جُوۡعٍ  ۙ وَّاٰمَنَهُمۡ مِّنۡ خَوۡفٍ',
-};
-
-// Surah 107 - Al-Ma'un
-indoPakText[107] = {
-  1: 'اَرَءَيۡتَ الَّذِىۡ يُكَذِّبُ بِالدِّيۡنِؕ',
-  2: 'فَذٰلِكَ الَّذِىۡ يَدُعُّ الۡيَتِيۡمَۙ',
-  3: 'وَ لَا يَحُضُّ عَلٰى طَعَامِ الۡمِسۡكِيۡنِؕ',
-  4: 'فَوَيۡلٌ لِّلۡمُصَلِّيۡنَۙ',
-  5: 'الَّذِيۡنَ هُمۡ عَنۡ صَلَاتِهِمۡ سَاهُوۡنَۙ',
-  6: 'الَّذِيۡنَ هُمۡ يُرَآءُوۡنَۙ',
-  7: 'وَيَمۡنَعُوۡنَ الۡمَاعُوۡنَ',
-};
-
-// Surah 108 - Al-Kawthar
-indoPakText[108] = {
-  1: 'اِنَّاۤ اَعۡطَيۡنٰكَ الۡكَوۡثَرَؕ',
-  2: 'فَصَلِّ لِرَبِّكَ وَانۡحَرۡ ؕ',
-  3: 'اِنَّ شَانِئَكَ هُوَ الۡاَبۡتَرُ',
-};
-
-// Surah 109 - Al-Kafirun
-indoPakText[109] = {
-  1: 'قُلۡ يٰۤاَيُّهَا الۡكٰفِرُوۡنَۙ',
-  2: 'لَاۤ اَعۡبُدُ مَا تَعۡبُدُوۡنَۙ',
-  3: 'وَلَاۤ اَنۡـتُمۡ عٰبِدُوۡنَ مَاۤ اَعۡبُدُ​ ۚ',
-  4: 'وَلَاۤ اَنَا عَابِدٌ مَّا عَبَدۡتُّمۡۙ',
-  5: 'وَ لَاۤ اَنۡـتُمۡ عٰبِدُوۡنَ مَاۤ اَعۡبُدُ ؕ',
-  6: 'لَـكُمۡ دِيۡنُكُمۡ وَلِىَ دِيۡنِ',
-};
-
-// Surah 110 - An-Nasr
-indoPakText[110] = {
-  1: 'اِذَا جَآءَ نَصۡرُ اللّٰهِ وَالۡفَتۡحُۙ',
-  2: 'وَرَاَيۡتَ النَّاسَ يَدۡخُلُوۡنَ فِىۡ دِيۡنِ اللّٰهِ اَفۡوَاجًا ۙ',
-  3: 'فَسَبِّحۡ بِحَمۡدِ رَبِّكَ وَاسۡتَغۡفِرۡهُ​ ؕ اِنَّهٗ كَانَ تَوَّابًا',
-};
-
-// Surah 111 - Al-Masad
-indoPakText[111] = {
-  1: 'تَبَّتۡ يَدَاۤ اَبِىۡ لَهَبٍ وَّتَبَّؕ',
-  2: 'مَاۤ اَغۡنٰى عَنۡهُ مَالُهٗ وَمَا كَسَبَؕ',
-  3: 'سَيَصۡلٰى نَارًا ذَاتَ لَهَبٍۖۚ',
-  4: 'وَّامۡرَاَ تُهٗ ؕ حَمَّالَةَ الۡحَطَبِ​ۚ',
-  5: 'فِىۡ جِيۡدِهَا حَبۡلٌ مِّنۡ مَّسَدٍ',
-};
-
-// Surah 112 - Al-Ikhlas
-indoPakText[112] = {
-  1: 'قُلۡ هُوَ اللّٰهُ اَحَدٌ​ ۚ',
-  2: 'اَللّٰهُ الصَّمَدُ​ ۚ',
-  3: 'لَمۡ يَلِدۡ  ۙ وَلَمۡ يُوۡلَدۡ ۙ',
-  4: 'وَلَمۡ يَكُنۡ لَّهٗ كُفُوًا اَحَدٌ',
-};
-
-// Surah 113 - Al-Falaq
-indoPakText[113] = {
-  1: 'قُلۡ اَعُوۡذُ بِرَبِّ الۡفَلَقِۙ',
-  2: 'مِنۡ شَرِّ مَا خَلَقَۙ',
-  3: 'وَمِنۡ شَرِّ غَاسِقٍ اِذَا وَقَبَۙ',
-  4: 'وَمِنۡ شَرِّ النَّفّٰثٰتِ فِى الۡعُقَدِۙ',
-  5: 'وَمِنۡ شَرِّ حَاسِدٍ اِذَا حَسَدَ',
-};
-
-// Surah 114 - An-Nas
-indoPakText[114] = {
-  1: 'قُلۡ اَعُوۡذُ بِرَبِّ النَّاسِۙ',
-  2: 'مَلِكِ النَّاسِۙ',
-  3: 'اِلٰهِ النَّاسِۙ',
-  4: 'مِنۡ شَرِّ الۡوَسۡوَاسِ ۙ الۡخَـنَّاسِ ۙ',
-  5: 'الَّذِىۡ يُوَسۡوِسُ فِىۡ صُدُوۡرِ النَّاسِۙ',
-  6: 'مِنَ الۡجِنَّةِ وَالنَّاسِ',
-};
+function loadSurah(surahNumber: number): Record<string, string> | null {
+  if (cache[surahNumber]) return cache[surahNumber];
+  const loader = SURAH_LOADERS[surahNumber];
+  if (!loader) return null;
+  const data = loader();
+  cache[surahNumber] = data;
+  return data;
+}
 
 export function getIndoPakAyahText(surahNumber: number, ayahNumber: number): string | undefined {
-  return indoPakText[surahNumber]?.[ayahNumber];
+  const surah = loadSurah(surahNumber);
+  return surah?.[String(ayahNumber)];
 }
 
 export function hasIndoPakText(surahNumber: number): boolean {
-  return surahNumber in indoPakText;
+  return surahNumber >= 1 && surahNumber <= 114;
 }

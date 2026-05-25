@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Niyyah",
-    "slug": "niyyah",
+    "name": "Amaly",
+    "slug": "amaly",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "niyyah",
+    "scheme": "amaly",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -14,15 +14,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.atifjamil.niyyah",
+      "bundleIdentifier": "com.atifjamil.amaly",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Niyyah needs your location to calculate accurate prayer times and Qibla direction.",
-        "NSMotionUsageDescription": "Niyyah uses device sensors for the Qibla compass."
+        "NSLocationWhenInUseUsageDescription": "Amaly needs your location to calculate accurate prayer times and Qibla direction.",
+        "NSMotionUsageDescription": "Amaly uses device sensors for the Qibla compass."
       }
     },
     "android": {
-      "package": "com.atifjamil.niyyah",
+      "package": "com.atifjamil.amaly",
+      "versionCode": 1,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -49,7 +50,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Niyyah needs your location to calculate accurate prayer times and Qibla direction."
+          "locationWhenInUsePermission": "Amaly needs your location to calculate accurate prayer times and Qibla direction."
         }
       ]
     ],

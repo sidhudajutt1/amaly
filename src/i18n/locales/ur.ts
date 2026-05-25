@@ -2,7 +2,7 @@ import type { TranslationKeys } from './en';
 
 export const ur: TranslationKeys = {
   common: {
-    appName: 'نیت',
+    appName: 'عملی',
     loading: 'لوڈ ہو رہا ہے...',
     error: 'کچھ غلط ہو گیا',
     retry: 'دوبارہ کوشش کریں',
@@ -24,14 +24,17 @@ export const ur: TranslationKeys = {
     ibadah: 'عبادات',
     prayer: 'نماز',
   },
+  splash: {
+    tagline: 'اپنا دن ایک نیکی سے شروع کریں۔',
+  },
   onboarding: {
-    welcome: 'ہر دن\nنیت سے شروع کریں۔',
+    welcome: 'اپنا دن ایک نیک\nعمل سے شروع کرو۔',
     startJourney: 'اپنا سفر شروع کریں',
     chooseLanguage: 'اپنی زبان منتخب کریں',
     growthTitle: 'آپ اپنے ایمان کے\nکن شعبوں میں ترقی چاہتے ہیں؟',
     growthSubtitle: 'جتنے چاہیں منتخب کریں۔ آپ کسی بھی وقت تبدیل کر سکتے ہیں۔',
     notificationTitle: 'آپ اپنا روزانہ\nتأمل کب چاہتے ہیں؟',
-    notificationSubtitle: 'ہم فجر کے بعد تجویز کرتے ہیں — اپنا دن نیت سے شروع کریں۔',
+    notificationSubtitle: 'ہم فجر کے بعد تجویز کرتے ہیں — اپنے اعمال کو اپنا نور بناؤ۔',
     setTime: 'وقت مقرر کریں',
     allSet: 'آپ کا سفر اب شروع ہوتا ہے۔',
     firstReflection: 'یہ ہے آپ کا پہلا تأمل۔',

@@ -136,7 +136,7 @@ export default function SettingsScreen() {
 
   const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
   const setHijriAdjustment = useAppStore((s) => s.setHijriAdjustment);
-  const { locationName, isDetecting, detectLocation, locationAutoDetect } = useLocation();
+  const { locationName, locationDetected, isDetecting, permissionDenied, detectLocation, locationAutoDetect } = useLocation();
   const setLocationAutoDetect = useAppStore((s) => s.setLocationAutoDetect);
 
   const { theme } = useTheme();
@@ -244,11 +244,32 @@ export default function SettingsScreen() {
         }}
         theme={theme}
       />
-      <View style={[styles.row, { borderColor: theme.border }]}>
-        <Text style={[styles.rowLabel, { color: theme.text }]}>
-          {isDetecting ? t(language, 'location.detecting') : locationName}
-        </Text>
-      </View>
+      {isDetecting ? (
+        <View style={[styles.row, { borderColor: theme.border }]}>
+          <Text style={[styles.rowLabel, { color: theme.textSecondary }]}>
+            {t(language, 'location.detecting')}
+          </Text>
+        </View>
+      ) : locationDetected ? (
+        <View style={[styles.row, { borderColor: theme.border }]}>
+          <Text style={[styles.rowLabel, { color: theme.text }]}>{locationName}</Text>
+        </View>
+      ) : (
+        <TouchableOpacity
+          style={[styles.row, { borderColor: theme.primary, borderWidth: 1.5, borderRadius: borderRadius.sm }]}
+          onPress={detectLocation}
+          activeOpacity={0.7}
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.rowLabel, { color: theme.primary }]}>
+              {permissionDenied
+                ? (language === 'ar' ? 'الإذن مرفوض — تحقق من إعدادات الجهاز' : language === 'ur' ? 'اجازت نہیں — ڈیوائس کی ترتیبات دیکھیں' : 'Permission denied — check device settings')
+                : (language === 'ar' ? 'الموقع غير محدد — اضغط للكشف' : language === 'ur' ? 'مقام معلوم نہیں — دبائیں' : 'Location not detected — tap to detect')}
+            </Text>
+          </View>
+          {!permissionDenied && <Ionicons name="locate-outline" size={20} color={theme.primary} />}
+        </TouchableOpacity>
+      )}
 
       {/* Hijri Adjustment */}
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
@@ -271,11 +292,22 @@ export default function SettingsScreen() {
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
         {t(language, 'prayer.prayerTimes')}
       </Text>
-      <SettingRow
-        label={t(language, 'settings.calculationMethod')}
-        value={currentMethodLabel}
-        theme={theme}
-      />
+      <Text style={[styles.rowLabel, { color: theme.textSecondary, marginBottom: spacing.sm, paddingVertical: spacing.xs }]}>
+        {t(language, 'settings.calculationMethod')}
+      </Text>
+      {CALC_METHODS.map((method) => (
+        <TouchableOpacity
+          key={method.id}
+          style={[styles.row, { borderColor: theme.border }]}
+          onPress={() => setCalculationMethod(method.id)}
+          activeOpacity={0.6}
+        >
+          <Text style={[styles.rowLabel, { color: theme.text }]}>{method.label}</Text>
+          {calcMethod === method.id && (
+            <Ionicons name="checkmark-circle" size={22} color={theme.primary} />
+          )}
+        </TouchableOpacity>
+      ))}
 
       {/* Quran */}
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>

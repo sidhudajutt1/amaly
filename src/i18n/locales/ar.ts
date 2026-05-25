@@ -2,7 +2,7 @@ import type { TranslationKeys } from './en';
 
 export const ar: TranslationKeys = {
   common: {
-    appName: 'نية',
+    appName: 'عَمَلِي',
     loading: 'جارٍ التحميل...',
     error: 'حدث خطأ ما',
     retry: 'إعادة المحاولة',
@@ -24,14 +24,17 @@ export const ar: TranslationKeys = {
     ibadah: 'العبادة',
     prayer: 'الصلاة',
   },
+  splash: {
+    tagline: 'ابدأ يومك بعملٍ صالح.',
+  },
   onboarding: {
-    welcome: 'ابدأ كل يوم\nبنية.',
+    welcome: 'ابدأ يومك\nبعملٍ صالح.',
     startJourney: 'ابدأ رحلتك',
     chooseLanguage: 'اختر لغتك',
     growthTitle: 'ما هي مجالات إيمانك\nالتي تريد تطويرها؟',
     growthSubtitle: 'اختر ما تشاء. يمكنك تغييرها في أي وقت.',
     notificationTitle: 'متى تريد\nتأملك اليومي؟',
-    notificationSubtitle: 'ننصح بعد الفجر — ابدأ يومك بنية.',
+    notificationSubtitle: 'ننصح بعد الفجر — لتكن أعمالك نوراً لك.',
     setTime: 'تحديد الوقت',
     allSet: 'رحلتك تبدأ الآن.',
     firstReflection: 'إليك تأملك الأول.',

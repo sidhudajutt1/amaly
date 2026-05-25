@@ -140,10 +140,10 @@ export default function OnboardingScreen() {
       <View style={[styles.container, { backgroundColor: theme.background }]}>
         <ProgressDots current={0} total={TOTAL_STEPS} color={theme.primary} />
         <View style={styles.centerContent}>
-          <Text style={[styles.appName, { color: theme.primary }]}>نِيَّة</Text>
-          <Text style={[styles.appNameLatin, { color: theme.primary }]}>NIYYAH</Text>
+          <Text style={[styles.appName, { color: theme.primary }]}>عَمَلِي</Text>
+          <Text style={[styles.appNameLatin, { color: theme.primary }]}>AMALY</Text>
           <Text style={[styles.tagline, { color: theme.textSecondary }]}>
-            {lang === 'ar' ? 'ابدأ كل يوم بنية' : lang === 'ur' ? 'ہر دن نیت سے شروع کریں' : 'Begin every day\nwith intention.'}
+            {lang === 'ar' ? 'ابدأ يومك بعملٍ صالح' : lang === 'ur' ? 'اپنا دن ایک نیک عمل سے شروع کرو' : 'Begin your day\nwith a good deed.'}
           </Text>
 
           <View style={styles.langRow}>

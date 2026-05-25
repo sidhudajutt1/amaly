@@ -10,8 +10,9 @@ import { surahs } from '../../src/data/surahs';
 import { getSurahData, isSurahAvailable, getAvailableSurahNumbers, type AyahData } from '../../src/data/quranText';
 import { getIndoPakAyahText } from '../../src/data/quranTextIndoPak';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
-import { getQuranFontFamily, getTranslationFontFamily } from '../../src/theme/typography';
+import { getQuranFontFamily, getTranslationFontFamily, fonts } from '../../src/theme/typography';
 import { createAudioPlayer, type PlaybackState, type AudioPlayer } from '../../src/services/audioService';
+import { getTafsirForAyah } from '../../src/data/tafsirLoader';
 import type { Language, ReciterId } from '../../src/types';
 
 const BISMILLAH_INDOPAK = 'بِسۡمِ اللهِ الرَّحۡمٰنِ الرَّحِيۡمِ';
@@ -39,10 +40,20 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
   isBookmarked: boolean;
   onToggleBookmark: () => void;
 }) {
+  const [tafsirOpen, setTafsirOpen] = useState(false);
+
   const getTranslation = () => {
     if (language === 'ur') return ayah.translationUr;
     return ayah.translationEn;
   };
+
+  const indoPakText = language === 'ur' ? getIndoPakAyahText(surahNumber, ayah.number) : null;
+  const arabicDisplayText = indoPakText ?? ayah.textAr;
+  const arabicFontFamily = language === 'ur' ? fonts.quranIndoPak : fonts.quranMushaf;
+
+  const tafsir = tafsirOpen ? getTafsirForAyah(surahNumber, ayah.number) : undefined;
+  const tafsirText = tafsir ? (language === 'ur' && tafsir.ur ? tafsir.ur : tafsir.en) : '';
+  const hasTafsir = !!getTafsirForAyah(surahNumber, ayah.number);
 
   return (
     <View style={[styles.ayahCard, { backgroundColor: theme.surface, borderColor: isPlaying ? theme.primary : theme.border, borderWidth: isPlaying ? 2 : 1 }]}>
@@ -69,15 +80,42 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, lineHeight: quranFontSize * 1.8, fontFamily: getQuranFontFamily(language) }]}>
-        {language === 'ur' ? (getIndoPakAyahText(surahNumber, ayah.number) ?? ayah.textAr) : ayah.textAr}
+      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, lineHeight: quranFontSize * (language === 'ur' ? 2.0 : 1.8), fontFamily: arabicFontFamily }]}>
+        {arabicDisplayText}
       </Text>
       <View style={styles.divider}>
         <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
       </View>
-      <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize, lineHeight: Math.round(translationFontSize * 1.6), fontFamily: getTranslationFontFamily(language) }]}>
+      <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize, lineHeight: Math.round(translationFontSize * (language === 'ur' ? 2.0 : 1.6)), fontFamily: getTranslationFontFamily(language) }]}>
         {getTranslation()}
       </Text>
+
+      {hasTafsir && (
+        <TouchableOpacity
+          style={[styles.tafsirToggle, { borderColor: theme.border }]}
+          onPress={() => setTafsirOpen((o) => !o)}
+          activeOpacity={0.7}
+        >
+          <MaterialCommunityIcons name="book-open-page-variant" size={14} color={theme.primary} />
+          <Text style={[styles.tafsirToggleText, { color: theme.primary }]}>
+            {tafsirOpen
+              ? (language === 'ar' ? 'إخفاء التفسير' : language === 'ur' ? 'تفسیر چھپائیں' : 'Hide Tafsir')
+              : (language === 'ar' ? 'تفسير ابن كثير' : language === 'ur' ? 'تفسیر ابن کثیر' : 'Ibn Kathir Tafsir')}
+          </Text>
+          <Ionicons name={tafsirOpen ? 'chevron-up' : 'chevron-down'} size={14} color={theme.primary} />
+        </TouchableOpacity>
+      )}
+
+      {tafsirOpen && tafsirText ? (
+        <View style={[styles.tafsirBox, { backgroundColor: theme.background, borderColor: theme.border }]}>
+          <Text style={[styles.tafsirSource, { color: theme.textTertiary }]}>
+            {language === 'ar' ? 'تفسير ابن كثير' : language === 'ur' ? 'تفسیر ابن کثیر' : 'Tafsir Ibn Kathir'}
+          </Text>
+          <Text style={[styles.tafsirText, { color: theme.text, fontFamily: getTranslationFontFamily(language), lineHeight: fontSizes.body * (language === 'ur' ? 2.0 : 1.6) }]}>
+            {tafsirText}
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -127,6 +165,13 @@ function AudioControlBar({ playbackState, currentAyah, totalAyahs, surahName, on
             </TouchableOpacity>
           </View>
         </>
+      ) : playbackState === 'error' ? (
+        <View style={styles.audioInfo}>
+          <Ionicons name="wifi-outline" size={16} color={theme.error || '#C62828'} />
+          <Text style={[styles.audioText, { color: theme.error || '#C62828', flex: 1 }]}>
+            {language === 'ar' ? 'الصوت غير متاح — تحقق من اتصالك' : language === 'ur' ? 'آڈیو دستیاب نہیں — کنکشن چیک کریں' : 'Audio unavailable — check your connection'}
+          </Text>
+        </View>
       ) : (
         <TouchableOpacity onPress={onPlayAll} style={[styles.playAllBtn, { backgroundColor: theme.primary }]} accessibilityLabel="Play full surah" accessibilityRole="button">
           <Ionicons name="play" size={18} color="#fff" />
@@ -392,6 +437,31 @@ const styles = StyleSheet.create({
   divider: { alignItems: 'center', marginVertical: spacing.sm },
   dividerLine: { height: 1, width: '60%' },
   translationText: {},
+  tafsirToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: spacing.md,
+    paddingTop: spacing.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  tafsirToggleText: { fontSize: fontSizes.bodySmall, fontWeight: '600', flex: 1 },
+  tafsirBox: {
+    marginTop: spacing.sm,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+  },
+  tafsirSource: {
+    fontSize: fontSizes.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: spacing.xs,
+  },
+  tafsirText: {
+    fontSize: fontSizes.body,
+  },
   audioBar: {
     flexDirection: 'row',
     alignItems: 'center',

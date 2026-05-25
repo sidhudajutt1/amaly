@@ -19,7 +19,8 @@ import type {
 } from '../types';
 import { DEFAULT_GOAL_CONFIG } from '../services/goalsService';
 
-const STORAGE_KEY = '@niyyah_store';
+const STORAGE_KEY = '@amaly_store';
+const LEGACY_KEY = '@niyyah_store';
 
 const defaultNotificationPrefs: NotificationPrefs = {
   prayerAlerts: { fajr: true, dhuhr: true, asr: true, maghrib: true, isha: true },
@@ -456,7 +457,15 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   hydrate: async () => {
     try {
-      const data = await AsyncStorage.getItem(STORAGE_KEY);
+      let data = await AsyncStorage.getItem(STORAGE_KEY);
+      if (!data) {
+        const legacy = await AsyncStorage.getItem(LEGACY_KEY);
+        if (legacy) {
+          await AsyncStorage.setItem(STORAGE_KEY, legacy);
+          await AsyncStorage.removeItem(LEGACY_KEY);
+          data = legacy;
+        }
+      }
       if (data) {
         const parsed = JSON.parse(data);
         set({

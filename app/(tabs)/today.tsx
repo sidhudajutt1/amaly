@@ -392,13 +392,13 @@ export default function TodayScreen() {
         accessibilityLabel={`Quran verse: ${reflection.ayahRef}`}
       >
         <IslamicPattern width={SCREEN_WIDTH - spacing.md * 2} height={160} color={theme.primary} opacity={0.04} variant="arch" />
-        <Text style={[styles.bismillah, { color: theme.textArabic, fontFamily: getQuranFontFamily(language) }]}>
+        <Text style={[styles.bismillah, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.bismillah * 0.8 * (language === 'ur' ? 2.0 : lineHeights.arabic) }]}>
           {language === 'ur' ? 'بِسۡمِ اللهِ الرَّحۡمٰنِ الرَّحِيۡمِ' : 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ'}
         </Text>
-        <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language) }]}>
+        <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.quranArabic * (language === 'ur' ? 2.0 : lineHeights.arabic) }]}>
           {reflection.ayahAr}
         </Text>
-        <Text style={[styles.translationText, { color: theme.text, textAlign }]}>
+        <Text style={[styles.translationText, { color: theme.text, textAlign, lineHeight: fontSizes.translationDefault * (language === 'ur' ? 2.0 : lineHeights.latin) }]}>
           {language === 'ur' ? reflection.ayahUr : language === 'ar' ? reflection.ayahAr : reflection.ayahEn}
         </Text>
         <Text style={[styles.reference, { color: theme.textTertiary, textAlign }]}>
@@ -419,10 +419,10 @@ export default function TodayScreen() {
             {t(language, 'today.fromSunnah')}
           </Text>
         </View>
-        <Text style={[styles.hadithArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>
+        <Text style={[styles.hadithArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language), lineHeight: fontSizes.hadithArabic * (language === 'ur' ? 2.0 : lineHeights.arabic) }]}>
           {reflection.hadithAr}
         </Text>
-        <Text style={[styles.translationText, { color: theme.text, textAlign }]}>
+        <Text style={[styles.translationText, { color: theme.text, textAlign, lineHeight: fontSizes.translationDefault * (language === 'ur' ? 2.0 : lineHeights.latin) }]}>
           {language === 'ur' ? reflection.hadithUr : language === 'ar' ? reflection.hadithAr : reflection.hadithEn}
         </Text>
         <Text style={[styles.reference, { color: theme.textTertiary, textAlign }]}>

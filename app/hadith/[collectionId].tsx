@@ -6,7 +6,8 @@ import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
 import { hadithCollections } from '../../src/data/hadithCollections';
-import { hadiths, type HadithData } from '../../src/data/hadiths';
+import { type HadithData } from '../../src/data/hadiths';
+import { getHadithsByCollection } from '../../src/data/hadithsLoader';
 import { fontSizes, spacing, borderRadius, lineHeights } from '../../src/theme';
 import { getArabicFontFamily, getTranslationFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
@@ -95,7 +96,7 @@ export default function HadithReaderScreen() {
   const { theme } = useTheme();
 
   const collection = hadithCollections.find((c) => c.id === collectionId);
-  const collectionHadiths = hadiths.filter((h) => h.collectionId === collectionId);
+  const collectionHadiths = getHadithsByCollection(collectionId ?? '');
 
   const colName = collection
     ? language === 'ar' ? collection.nameAr : language === 'ur' ? collection.nameUr : collection.nameEn

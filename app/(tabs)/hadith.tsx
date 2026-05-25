@@ -5,7 +5,7 @@ import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
 import { hadithCollections, type HadithCollectionMeta } from '../../src/data/hadithCollections';
-import { hadiths } from '../../src/data/hadiths';
+import { getHadithsByCollection, hadithStats } from '../../src/data/hadithsLoader';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import { getArabicFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
@@ -21,7 +21,7 @@ function CollectionCard({ collection, theme, language }: {
   theme: Record<string, string>;
   language: Language;
 }) {
-  const availableCount = hadiths.filter((h) => h.collectionId === collection.id).length;
+  const availableCount = getHadithsByCollection(collection.id).length;
   const hasContent = availableCount > 0;
 
   return (
@@ -61,7 +61,7 @@ export default function HadithScreen() {
   const language = useAppStore((s) => s.settings.language);
   const { theme } = useTheme();
 
-  const totalAvailable = hadiths.length;
+  const totalAvailable = hadithStats.total;
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>

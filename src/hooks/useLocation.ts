@@ -43,10 +43,6 @@ export function useLocation() {
       const granted = await requestLocationPermission();
       if (!granted) {
         setPermissionDenied(true);
-        if (!locationLat) {
-          const def = getDefaultLocation();
-          setLocation(def.lat, def.lng, `${def.cityName}, ${def.countryName}`);
-        }
         setIsDetecting(false);
         return false;
       }
@@ -59,13 +55,9 @@ export function useLocation() {
         return true;
       }
     } catch {
-      // Silent fail
+      // Detection failed — do not silently assign Makkah
     }
 
-    if (!locationLat) {
-      const def = getDefaultLocation();
-      setLocation(def.lat, def.lng, `${def.cityName}, ${def.countryName}`);
-    }
     setIsDetecting(false);
     return false;
   }, [locationLat, setLocation, setLocationAutoDetect]);
@@ -80,7 +72,8 @@ export function useLocation() {
   return useMemo(() => ({
     lat: locationLat ?? 21.4225,
     lng: locationLng ?? 39.8262,
-    locationName: locationName ?? 'Makkah, Saudi Arabia',
+    locationName: locationName ?? null,
+    locationDetected: locationLat !== undefined,
     isDetecting,
     permissionDenied,
     detectLocation,

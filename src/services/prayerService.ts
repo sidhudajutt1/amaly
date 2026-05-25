@@ -30,6 +30,11 @@ function getAdhanMethod(method: AppCalcMethod): AdhanParams {
   return methods[method]();
 }
 
+function getMadhabForMethod(method: AppCalcMethod): typeof Madhab.Hanafi | typeof Madhab.Shafi {
+  const hanafiMethods: AppCalcMethod[] = ['Karachi', 'Turkey', 'MoonsightingCommittee'];
+  return hanafiMethods.includes(method) ? Madhab.Hanafi : Madhab.Shafi;
+}
+
 export function calculatePrayerTimes(
   lat: number,
   lng: number,
@@ -38,7 +43,7 @@ export function calculatePrayerTimes(
 ): AppPrayerTimes {
   const coordinates = new Coordinates(lat, lng);
   const params = getAdhanMethod(method);
-  params.madhab = Madhab.Shafi;
+  params.madhab = getMadhabForMethod(method);
   const prayers = new PrayerTimes(coordinates, date, params);
 
   return {

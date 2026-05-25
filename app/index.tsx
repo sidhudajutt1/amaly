@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { View, Text, Animated, StyleSheet, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useAppStore } from '../src/store/useAppStore';
+import { t } from '../src/i18n';
 
 const { width } = Dimensions.get('window');
 const MIN_SPLASH_MS = 1800;
@@ -9,6 +10,7 @@ const MIN_SPLASH_MS = 1800;
 export default function SplashScreen() {
   const isLoading = useAppStore((s) => s.isLoading);
   const onboardingCompleted = useAppStore((s) => s.settings.onboardingCompleted);
+  const language = useAppStore((s) => s.settings.language);
 
   const [minElapsed, setMinElapsed] = useState(false);
   const logoScale = useRef(new Animated.Value(0.6)).current;
@@ -51,15 +53,15 @@ export default function SplashScreen() {
       <Animated.View style={[styles.logoContainer, { opacity: logoOpacity, transform: [{ scale: logoScale }] }]}>
         <View style={styles.logoOuter}>
           <View style={styles.logoInner}>
-            <Text style={styles.logoArabic}>{'\u0646'}</Text>
+            <Text style={styles.logoArabic}>{'\u0639'}</Text>
           </View>
         </View>
       </Animated.View>
 
       <Animated.View style={{ opacity: nameOpacity, alignItems: 'center' }}>
-        <Text style={styles.appNameArabic}>{'\u0646\u0650\u064A\u0651\u0629'}</Text>
-        <Text style={styles.appNameLatin}>NIYYAH</Text>
-        <Text style={styles.tagline}>Your Daily Islamic Companion</Text>
+        <Text style={styles.appNameArabic}>{'\u0639\u064E\u0645\u064E\u0644\u0650\u064A'}</Text>
+        <Text style={styles.appNameLatin}>AMALY</Text>
+        <Text style={styles.tagline}>{t(language, 'splash.tagline')}</Text>
       </Animated.View>
 
       <View style={styles.dotsRow}>
