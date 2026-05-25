@@ -41,17 +41,17 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="surah/[id]" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="settings/index" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="dua/[categoryId]" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="names" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="dhikr" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="calendar" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="goals" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="zakat" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="qibla" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="notifications" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="names/index" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="dhikr/index" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="calendar/index" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="goals/index" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="zakat/index" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="qibla/index" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="notifications/index" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="hadith/[collectionId]" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="prayer-guide" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="prayer-guide/index" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </SafeAreaProvider>
   );

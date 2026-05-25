@@ -5,8 +5,8 @@ import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLocation } from '../../src/hooks/useLocation';
 import { t, languageNames } from '../../src/i18n';
-import { fontSizes, spacing, borderRadius } from '../../src/theme';
-import type { Language, CalculationMethod, ReciterId } from '../../src/types';
+import { fontSizes, spacing, borderRadius, colorThemeMeta, type ColorThemeName } from '../../src/theme';
+import type { Language, ColorTheme, CalculationMethod, ReciterId } from '../../src/types';
 
 const RECITERS: { id: ReciterId; name: string; nameAr: string }[] = [
   { id: 'alafasy', name: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
@@ -124,8 +124,10 @@ export default function SettingsScreen() {
   const translationFontSize = useAppStore((s) => s.settings.translationFontSize);
   const selectedReciter = useAppStore((s) => s.settings.selectedReciter);
 
+  const colorThemeId = useAppStore((s) => s.settings.colorTheme);
   const setLanguage = useAppStore((s) => s.setLanguage);
   const setTheme = useAppStore((s) => s.setTheme);
+  const setColorTheme = useAppStore((s) => s.setColorTheme);
   const setCalculationMethod = useAppStore((s) => s.setCalculationMethod);
   const toggleTransliteration = useAppStore((s) => s.toggleTransliteration);
   const setQuranFontSize = useAppStore((s) => s.setQuranFontSize);
@@ -191,6 +193,41 @@ export default function SettingsScreen() {
         onSelect={(id) => setTheme(id as 'light' | 'dark' | 'auto')}
         theme={theme}
       />
+
+      {/* Color Theme */}
+      <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
+        {language === 'ar' ? 'نمط الألوان' : language === 'ur' ? 'رنگ تھیم' : 'Color Theme'}
+      </Text>
+      <View style={styles.themeGrid}>
+        {(Object.keys(colorThemeMeta) as ColorThemeName[]).map((key) => {
+          const meta = colorThemeMeta[key];
+          const isSelected = (colorThemeId || 'emerald') === key;
+          return (
+            <TouchableOpacity
+              key={key}
+              style={[
+                styles.themeCard,
+                { backgroundColor: theme.surface, borderColor: isSelected ? theme.primary : theme.border },
+                isSelected && { borderWidth: 2.5 },
+              ]}
+              onPress={() => setColorTheme(key as ColorTheme)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.swatchRow}>
+                {meta.swatch.map((c, i) => (
+                  <View key={i} style={[styles.swatchDot, { backgroundColor: c }]} />
+                ))}
+              </View>
+              <Text style={[styles.themeCardLabel, { color: theme.text }]}>
+                {language === 'ar' ? meta.nameAr : language === 'ur' ? meta.nameUr : meta.nameEn}
+              </Text>
+              {isSelected && (
+                <Ionicons name="checkmark-circle" size={18} color={theme.primary} style={{ position: 'absolute', top: 6, right: 6 }} />
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
 
       {/* Location */}
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
@@ -387,4 +424,31 @@ const styles = StyleSheet.create({
   },
   fontBtnText: { fontSize: fontSizes.bodySmall, fontWeight: '700' },
   fontSizeValue: { fontSize: fontSizes.body, fontWeight: '600', minWidth: 30, textAlign: 'center' },
+  themeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  themeCard: {
+    width: '47%' as any,
+    borderWidth: 1,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: 'center',
+    position: 'relative' as const,
+  },
+  swatchRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 8,
+  },
+  swatchDot: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+  },
+  themeCardLabel: {
+    fontSize: fontSizes.bodySmall,
+    fontWeight: '600',
+  },
 });

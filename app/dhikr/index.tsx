@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, Vibration, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
@@ -7,6 +7,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import { getArabicFontFamily } from '../../src/theme/typography';
+import { hapticMedium, hapticSuccess } from '../../src/utils/haptics';
 
 const DHIKR_PRESETS = [
   { id: 'subhanallah', ar: 'سُبْحَانَ ٱللَّهِ', en: 'SubhanAllah', target: 33 },
@@ -30,9 +31,14 @@ export default function DhikrScreen() {
 
   const handleTap = () => {
     if (count < current.target) {
-      setCount((c) => c + 1);
+      const next = count + 1;
+      setCount(next);
       setTotalSession((t) => t + 1);
-      Vibration.vibrate(10);
+      if (next >= current.target) {
+        hapticSuccess();
+      } else {
+        hapticMedium();
+      }
     }
   };
 
@@ -100,7 +106,7 @@ export default function DhikrScreen() {
             styles.tapCircle,
             {
               backgroundColor: isDone ? theme.success : theme.primary,
-              shadowColor: isDone ? theme.success : theme.primary,
+              ...(Platform.OS !== 'web' && { shadowColor: isDone ? theme.success : theme.primary }),
             },
           ]}
           onPress={handleTap}
@@ -149,7 +155,7 @@ export default function DhikrScreen() {
           onPress={handleNext}
         >
           <Text style={[styles.controlText, { color: '#fff' }]}>
-            {`${t(language, 'common.next')} →`}
+            {language === 'ar' || language === 'ur' ? `← ${t(language, 'common.next')}` : `${t(language, 'common.next')} →`}
           </Text>
         </TouchableOpacity>
       </View>
@@ -196,9 +202,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    ...Platform.select({
+      web: { boxShadow: '0px 4px 8px rgba(0,0,0,0.3)' },
+      default: { shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
+    }),
     marginBottom: spacing.lg,
   },
   countText: { color: '#fff', fontSize: 48, fontWeight: '800' },

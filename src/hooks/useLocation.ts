@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Platform } from 'react-native';
 import { useAppStore } from '../store/useAppStore';
 import {
@@ -77,7 +77,7 @@ export function useLocation() {
     }
   }, [storeLoading, locationLat, locationAutoDetect, detectLocation]);
 
-  return {
+  return useMemo(() => ({
     lat: locationLat ?? 21.4225,
     lng: locationLng ?? 39.8262,
     locationName: locationName ?? 'Makkah, Saudi Arabia',
@@ -85,5 +85,5 @@ export function useLocation() {
     permissionDenied,
     detectLocation,
     locationAutoDetect: locationAutoDetect ?? true,
-  };
+  }), [locationLat, locationLng, locationName, isDetecting, permissionDenied, detectLocation, locationAutoDetect]);
 }

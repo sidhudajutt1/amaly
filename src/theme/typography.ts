@@ -1,68 +1,49 @@
-import { Platform } from 'react-native';
 import type { Language } from '../types';
 
 export const fonts = {
   quranMushaf: 'AmiriQuran',
+  quranIndoPak: 'PDMSSaleemQuran',
   arabic: {
-    regular: Platform.select({
-      ios: 'Geeza Pro',
-      android: 'noto-naskh-arabic',
-      default: 'serif',
-    }),
-    bold: Platform.select({
-      ios: 'Geeza Pro Bold',
-      android: 'noto-naskh-arabic',
-      default: 'serif',
-    }),
+    regular: 'Amiri',
+    bold: 'AmiriBold',
   },
   urdu: {
     regular: 'NotoNastaliqUrdu',
     bold: 'NotoNastaliqUrduBold',
   },
   latin: {
-    regular: Platform.select({
-      ios: 'System',
-      android: 'Roboto',
-      default: 'System',
-    }),
-    medium: Platform.select({
-      ios: 'System',
-      android: 'Roboto-Medium',
-      default: 'System',
-    }),
-    bold: Platform.select({
-      ios: 'System',
-      android: 'Roboto-Bold',
-      default: 'System',
-    }),
+    regular: undefined,
+    medium: undefined,
+    bold: undefined,
   },
 };
 
 /**
- * Returns the correct font family for Quran Arabic text based on user language:
- * - Urdu users: Amiri Quran (Mushaf-style, closer to Indo-Pak Naskh)
- * - Arabic users: System Naskh (standard digital Arabic)
- * - Others: Amiri Quran (Mushaf-style for the beautiful calligraphic look)
+ * Quran Arabic text:
+ * - Urdu users: PDMS Saleem (Indo-Pak Naskh — thick calligraphy matching Pakistani/Indian Qurans)
+ * - Arabic users: AmiriQuran (Middle Eastern Mushaf style)
+ * - English/other: AmiriQuran
  */
 export function getQuranFontFamily(language: Language): string {
-  if (language === 'ar') return fonts.arabic.regular || 'serif';
+  if (language === 'ur') return fonts.quranIndoPak;
   return fonts.quranMushaf;
 }
 
 /**
- * Returns the correct font for dua/hadith Arabic text (non-Quran sacred text)
+ * Dua / hadith / adhkar Arabic text:
+ * - Urdu users: PDMS Saleem (consistent Indo-Pak look across all Arabic sacred text)
+ * - Others: Amiri Naskh
  */
 export function getArabicFontFamily(language: Language): string {
-  if (language === 'ur') return fonts.urdu.regular;
-  return fonts.arabic.regular || 'serif';
+  if (language === 'ur') return fonts.quranIndoPak;
+  return fonts.arabic.regular;
 }
 
 /**
- * Returns the correct font for translation text
+ * Translation text font: Nastaliq for Urdu, system for others.
  */
 export function getTranslationFontFamily(language: Language): string | undefined {
   if (language === 'ur') return fonts.urdu.regular;
-  if (language === 'ar') return fonts.arabic.regular || undefined;
   return undefined;
 }
 

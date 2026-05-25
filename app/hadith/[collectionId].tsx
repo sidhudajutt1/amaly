@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -16,16 +17,16 @@ const GRADE_COLORS: Record<string, string> = {
   daif: '#C62828',
 };
 
-function HadithCard({ hadith, language, theme, showTransliteration }: {
+function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked, onToggleBookmark }: {
   hadith: HadithData;
   language: Language;
   theme: Record<string, string>;
   showTransliteration: boolean;
+  isBookmarked: boolean;
+  onToggleBookmark: () => void;
 }) {
-  const getTranslation = () => {
-    if (language === 'ur') return hadith.translationUr;
-    return hadith.translationEn;
-  };
+  const isRTL = language === 'ar' || language === 'ur';
+  const translation = language === 'ur' ? hadith.translationUr : hadith.translationEn;
 
   return (
     <View style={[styles.hadithCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
@@ -35,20 +36,51 @@ function HadithCard({ hadith, language, theme, showTransliteration }: {
         </View>
         <View style={{ flex: 1, marginStart: spacing.sm }}>
           <Text style={[styles.bookName, { color: theme.textSecondary }]}>{hadith.bookName}</Text>
-          <Text style={[styles.narratorText, { color: theme.textTertiary }]}>{hadith.narrator}</Text>
         </View>
         <View style={[styles.gradeBadge, { backgroundColor: `${GRADE_COLORS[hadith.grade]}15` }]}>
           <Text style={[styles.gradeText, { color: GRADE_COLORS[hadith.grade] }]}>{hadith.gradeLabel}</Text>
         </View>
+        <TouchableOpacity
+          onPress={onToggleBookmark}
+          style={[styles.bookmarkBtn, { backgroundColor: isBookmarked ? theme.primary : theme.primaryLight, marginStart: 8 }]}
+          accessibilityLabel={isBookmarked ? 'Remove bookmark' : 'Bookmark hadith'}
+          accessibilityRole="button"
+        >
+          <Ionicons name={isBookmarked ? 'bookmark' : 'bookmark-outline'} size={16} color={isBookmarked ? '#fff' : theme.primary} />
+        </TouchableOpacity>
+      </View>
+
+      <View style={[styles.narratorRow, { borderColor: theme.borderLight }]}>
+        <Ionicons name="person-outline" size={13} color={theme.textSecondary} />
+        <Text style={[styles.narratorText, { color: theme.textSecondary }]}>{hadith.narrator}</Text>
       </View>
 
       <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>
         {hadith.textAr}
       </Text>
 
-      <Text style={[styles.translationText, { color: theme.text, fontFamily: getTranslationFontFamily(language) }]}>
-        {getTranslation()}
-      </Text>
+      <View style={styles.ornamentRow}>
+        <View style={[styles.ornamentLine, { backgroundColor: theme.border }]} />
+        <Text style={[styles.ornamentDot, { color: theme.primary }]}>{'\u066D'}</Text>
+        <View style={[styles.ornamentLine, { backgroundColor: theme.border }]} />
+      </View>
+
+      <View style={[styles.translationSection, { backgroundColor: theme.surfaceElevated, borderStartColor: theme.primary }]}>
+        <Text style={[styles.translationLabel, { color: theme.textTertiary }]}>
+          {language === 'ar' ? 'الترجمة' : language === 'ur' ? 'ترجمہ' : 'Translation'}
+        </Text>
+        <Text style={[
+          styles.translationText,
+          {
+            color: theme.text,
+            fontFamily: getTranslationFontFamily(language),
+            textAlign: isRTL ? 'right' : 'left',
+            lineHeight: language === 'ur' ? 20 * 2.0 : 20 * 1.6,
+          },
+        ]}>
+          {translation}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -57,6 +89,9 @@ export default function HadithReaderScreen() {
   const { collectionId } = useLocalSearchParams<{ collectionId: string }>();
   const language = useAppStore((s) => s.settings.language);
   const showTransliteration = useAppStore((s) => s.settings.showTransliteration);
+  const bookmarks = useAppStore((s) => s.bookmarks);
+  const addBookmark = useAppStore((s) => s.addBookmark);
+  const removeBookmark = useAppStore((s) => s.removeBookmark);
   const { theme } = useTheme();
 
   const collection = hadithCollections.find((c) => c.id === collectionId);
@@ -65,6 +100,24 @@ export default function HadithReaderScreen() {
   const colName = collection
     ? language === 'ar' ? collection.nameAr : language === 'ur' ? collection.nameUr : collection.nameEn
     : collectionId ?? '';
+
+  const isHadithBookmarked = useCallback((hadithId: string) => {
+    return bookmarks.some((b) => b.type === 'hadith' && b.hadithId === hadithId);
+  }, [bookmarks]);
+
+  const toggleBookmark = useCallback((hadith: HadithData) => {
+    const existing = bookmarks.find((b) => b.type === 'hadith' && b.hadithId === hadith.id);
+    if (existing) {
+      removeBookmark(existing.id);
+    } else {
+      addBookmark({
+        type: 'hadith',
+        hadithId: hadith.id,
+        collectionId: hadith.collectionId,
+        label: `${collection?.nameEn ?? collectionId} #${hadith.hadithNumber}`,
+      });
+    }
+  }, [bookmarks, collection, collectionId, addBookmark, removeBookmark]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -96,6 +149,8 @@ export default function HadithReaderScreen() {
               language={language}
               theme={theme}
               showTransliteration={showTransliteration}
+              isBookmarked={isHadithBookmarked(item.id)}
+              onToggleBookmark={() => toggleBookmark(item)}
             />
           )}
           contentContainerStyle={styles.listContent}
@@ -139,7 +194,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   numberBadge: {
     width: 40,
@@ -150,7 +205,22 @@ const styles = StyleSheet.create({
   },
   numberText: { fontSize: fontSizes.bodySmall, fontWeight: '700' },
   bookName: { fontSize: fontSizes.bodySmall, fontWeight: '600' },
-  narratorText: { fontSize: fontSizes.caption },
+  narratorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingBottom: spacing.md,
+    marginBottom: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  narratorText: { fontSize: fontSizes.bodySmall, fontWeight: '500', flex: 1 },
+  bookmarkBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   gradeBadge: {
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
@@ -161,11 +231,30 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'right',
     lineHeight: 22 * lineHeights.arabic,
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  ornamentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: spacing.sm,
+    gap: spacing.sm,
+  },
+  ornamentLine: { flex: 1, height: StyleSheet.hairlineWidth },
+  ornamentDot: { fontSize: 16 },
+  translationSection: {
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    borderStartWidth: 3,
+  },
+  translationLabel: {
+    fontSize: fontSizes.caption,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: spacing.xs,
   },
   translationText: {
-    fontSize: fontSizes.body,
-    lineHeight: fontSizes.body * lineHeights.latin,
+    fontSize: 20,
   },
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
   emptyText: { fontSize: fontSizes.body, textAlign: 'center', lineHeight: 24, marginTop: spacing.md },

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { surahs, type SurahMeta } from '../../src/data/surahs';
 import { isSurahAvailable } from '../../src/data/quranText';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { getArabicFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
 
 function SurahCard({ surah, theme, language, onPress }: {
@@ -41,7 +42,7 @@ function SurahCard({ surah, theme, language, onPress }: {
       </View>
       <View style={styles.surahArabic}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={[styles.surahNameAr, { color: theme.textArabic }]}>{surah.nameAr}</Text>
+          <Text style={[styles.surahNameAr, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>{surah.nameAr}</Text>
           {isSurahAvailable(surah.number) && (
             <View style={[styles.availableBadge, { backgroundColor: theme.primary }]}>
               <Ionicons name="book" size={10} color="#fff" />
@@ -58,6 +59,9 @@ function SurahCard({ surah, theme, language, onPress }: {
 
 export default function QuranScreen() {
   const language = useAppStore((s) => s.settings.language);
+  const readingProgress = useAppStore((s) => s.readingProgress);
+  const bookmarks = useAppStore((s) => s.bookmarks);
+  const ayahBookmarks = useMemo(() => bookmarks.filter((b) => b.type === 'ayah'), [bookmarks]);
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -71,9 +75,10 @@ export default function QuranScreen() {
       )
     : surahs;
 
+  const lastSurah = readingProgress ? surahs.find((s) => s.number === readingProgress.lastSurah) : null;
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Search */}
       <View style={styles.searchContainer}>
         <TextInput
           style={[styles.searchInput, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
@@ -84,10 +89,55 @@ export default function QuranScreen() {
         />
       </View>
 
-      {/* Surah List */}
       <FlatList
         data={filteredSurahs}
         keyExtractor={(item) => item.number.toString()}
+        ListHeaderComponent={
+          <>
+            {lastSurah && !searchQuery ? (
+              <TouchableOpacity
+                style={[styles.resumeCard, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}
+                onPress={() => router.push(`/surah/${lastSurah.number}`)}
+                accessibilityLabel={`Continue reading ${lastSurah.nameEn}`}
+                accessibilityRole="button"
+              >
+                <Ionicons name="book" size={20} color={theme.primary} />
+                <View style={{ flex: 1, marginHorizontal: spacing.sm }}>
+                  <Text style={[styles.resumeTitle, { color: theme.primary }]}>
+                    {language === 'ar' ? 'أكمل القراءة' : language === 'ur' ? 'پڑھنا جاری رکھیں' : 'Continue Reading'}
+                  </Text>
+                  <Text style={[styles.resumeSubtitle, { color: theme.text }]}>
+                    {`${lastSurah.nameEn} • ${language === 'ar' ? 'آية' : language === 'ur' ? 'آیت' : 'Ayah'} ${readingProgress!.lastAyah}`}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={theme.primary} />
+              </TouchableOpacity>
+            ) : null}
+            {ayahBookmarks.length > 0 && !searchQuery ? (
+              <View style={styles.bookmarkSection}>
+                <Text style={[styles.bookmarkHeader, { color: theme.textSecondary }]}>
+                  {language === 'ar' ? 'الإشارات المرجعية' : language === 'ur' ? 'بک مارکس' : 'Bookmarks'}
+                </Text>
+                <FlatList
+                  data={ayahBookmarks.slice(0, 10)}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={[styles.bookmarkChip, { backgroundColor: theme.surface, borderColor: theme.border }]}
+                      onPress={() => router.push(`/surah/${item.surahNumber}`)}
+                    >
+                      <Ionicons name="bookmark" size={12} color={theme.primary} />
+                      <Text style={[styles.bookmarkChipText, { color: theme.text }]}>{item.label ?? `${item.surahNumber}:${item.ayahNumber}`}</Text>
+                    </TouchableOpacity>
+                  )}
+                  contentContainerStyle={{ gap: 8 }}
+                />
+              </View>
+            ) : null}
+          </>
+        }
         renderItem={({ item }) => (
           <SurahCard
             surah={item}
@@ -168,5 +218,47 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+  },
+  resumeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    marginBottom: spacing.md,
+  },
+  resumeTitle: {
+    fontSize: fontSizes.caption,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  resumeSubtitle: {
+    fontSize: fontSizes.body,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  bookmarkSection: {
+    marginBottom: spacing.md,
+  },
+  bookmarkHeader: {
+    fontSize: fontSizes.caption,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: spacing.sm,
+  },
+  bookmarkChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  bookmarkChipText: {
+    fontSize: fontSizes.caption,
+    fontWeight: '600',
   },
 });

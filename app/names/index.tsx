@@ -6,6 +6,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
 import { namesOfAllah, type AllahNameData } from '../../src/data/namesOfAllah';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { getArabicFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
 
 function NameCard({ name, language, theme }: {
@@ -19,7 +20,7 @@ function NameCard({ name, language, theme }: {
       <View style={[styles.numberBadge, { backgroundColor: theme.primaryLight }]}>
         <Text style={[styles.number, { color: theme.primary }]}>{name.id}</Text>
       </View>
-      <Text style={[styles.arabicName, { color: theme.textArabic }]}>{name.nameAr}</Text>
+      <Text style={[styles.arabicName, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>{name.nameAr}</Text>
       <Text style={[styles.transliteration, { color: theme.text }]}>{name.transliteration}</Text>
       <Text style={[styles.meaning, { color: theme.textSecondary }]}>{meaning}</Text>
     </View>

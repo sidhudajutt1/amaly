@@ -154,6 +154,8 @@ export interface AllahName {
   explanationUr: string;
 }
 
+export type ColorTheme = 'emerald' | 'midnight' | 'desert' | 'ocean' | 'day' | 'night';
+
 export interface UserSettings {
   language: Language;
   growthCategories: GrowthCategory[];
@@ -164,6 +166,7 @@ export interface UserSettings {
   locationName?: string;
   onboardingCompleted: boolean;
   theme: 'light' | 'dark' | 'auto';
+  colorTheme: ColorTheme;
   quranFontSize: number;
   translationFontSize: number;
   selectedReciter: ReciterId;
@@ -212,6 +215,35 @@ export interface DailyGoal {
 }
 
 export type ReciterId = 'alafasy' | 'husary' | 'minshawi' | 'abdulbasit' | 'sudais' | 'shuraim';
+
+export type BookmarkType = 'ayah' | 'hadith' | 'dua';
+
+export interface Bookmark {
+  id: string;
+  type: BookmarkType;
+  timestamp: number;
+  surahNumber?: number;
+  ayahNumber?: number;
+  hadithId?: string;
+  collectionId?: string;
+  duaId?: string;
+  categoryId?: string;
+  label?: string;
+}
+
+export interface ReadingProgress {
+  lastSurah: number;
+  lastAyah: number;
+  updatedAt: number;
+}
+
+export interface NotificationPrefs {
+  prayerAlerts: Record<PrayerName, boolean>;
+  morningReflection: boolean;
+  quranGoal: boolean;
+  suhoorAlert: boolean;
+  iftarAlert: boolean;
+}
 
 export interface GoalConfig {
   prayerGoalEnabled: boolean;

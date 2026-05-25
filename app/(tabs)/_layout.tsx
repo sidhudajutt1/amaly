@@ -23,6 +23,8 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
       return <MaterialCommunityIcons name={focused ? 'hands-pray' : 'hands-pray'} size={size} color={color} />;
     case 'prayer':
       return <MaterialCommunityIcons name={focused ? 'mosque' : 'mosque'} size={size} color={color} />;
+    case 'settings':
+      return <Ionicons name={focused ? 'settings' : 'settings-outline'} size={size} color={color} />;
     default:
       return <Ionicons name="ellipse" size={size} color={color} />;
   }
@@ -141,6 +143,15 @@ export default function TabsLayout() {
             title: t(language, 'tabs.prayer'),
             tabBarIcon: ({ focused, color }) => (
               <TabIcon name="prayer" focused={focused} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: t(language, 'settings.title'),
+            tabBarIcon: ({ focused, color }) => (
+              <TabIcon name="settings" focused={focused} color={color} />
             ),
           }}
         />

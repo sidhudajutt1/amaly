@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
-  "last_updated": "2026-02-28",
-  "approved_by": "Lead + Board",
+  "version": "1.1.0",
+  "last_updated": "2026-02-27",
+  "approved_by": "Scholar Gate (Project Owner)",
   "description": "Canonical Source Registry — every Islamic dataset must be registered here before use",
   "datasets": {
     "quran_uthmani": {
@@ -9,11 +9,15 @@
       "source": "Tanzil.net",
       "version": "1.1",
       "license": "Free for non-commercial Islamic applications",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "4AA852DDFEA346F46C7FDE6A97233D9C0499CD5A314DCA577D5BAD1A1D90C519",
       "normalization": "UTF-8, full diacritics, Arabic shaping",
-      "allowed_operations": ["read-only", "cached", "offline"],
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null,
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27",
       "notes": "Must be verified against King Fahd Complex Mushaf before release"
     },
     "quran_translation_sahih_international": {
@@ -21,11 +25,15 @@
       "source": "Quran.com API / Tanzil.net",
       "version": "1.0",
       "license": "Free for Islamic applications",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "4AA852DDFEA346F46C7FDE6A97233D9C0499CD5A314DCA577D5BAD1A1D90C519",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached", "offline"],
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null,
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27",
       "notes": "Widely accepted English translation"
     },
     "quran_translation_jalandhry_urdu": {
@@ -33,11 +41,15 @@
       "source": "Tanzil.net",
       "version": "1.0",
       "license": "Free for Islamic applications",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "4AA852DDFEA346F46C7FDE6A97233D9C0499CD5A314DCA577D5BAD1A1D90C519",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached", "offline"],
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null,
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27",
       "notes": "Standard Urdu translation used across Pakistan"
     },
     "quran_word_by_word": {
@@ -45,11 +57,14 @@
       "source": "corpus.quran.com",
       "version": "0.4",
       "license": "Free for research and Islamic applications",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "FB8D764720D6222D0BA0EB3CFC4F125870E714A22E97E3315406F302A185E313",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached"],
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null,
+      "allowed_operations": [
+        "read-only",
+        "cached"
+      ],
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27",
       "notes": "Leeds University Quranic Arabic Corpus"
     },
     "hadith_sahih_bukhari": {
@@ -57,89 +72,117 @@
       "source": "sunnah.com API / HadeethEnc",
       "version": "Darussalam edition",
       "license": "Free API access",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "FD8CD58ED785D1237492A847E8080620F862B4D2A9A80547A92A0F8456D7A003",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached", "offline"],
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
       "numbering_system": "Darussalam",
       "grading_reference": "Universally accepted as Sahih",
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27"
     },
     "hadith_sahih_muslim": {
       "name": "Sahih Muslim",
       "source": "sunnah.com API / HadeethEnc",
       "version": "Darussalam edition",
       "license": "Free API access",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "FD8CD58ED785D1237492A847E8080620F862B4D2A9A80547A92A0F8456D7A003",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached", "offline"],
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
       "numbering_system": "Darussalam",
       "grading_reference": "Universally accepted as Sahih",
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27"
     },
     "hadith_tirmidhi": {
       "name": "Jami at-Tirmidhi",
       "source": "sunnah.com API / HadeethEnc",
       "version": "Darussalam edition",
       "license": "Free API access",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "FD8CD58ED785D1237492A847E8080620F862B4D2A9A80547A92A0F8456D7A003",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached", "offline"],
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
       "numbering_system": "Darussalam",
       "grading_reference": "Darussalam grading per hadith",
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27"
     },
     "hadith_abu_dawood": {
       "name": "Sunan Abu Dawood",
       "source": "sunnah.com API / HadeethEnc",
       "version": "Darussalam edition",
       "license": "Free API access",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "FD8CD58ED785D1237492A847E8080620F862B4D2A9A80547A92A0F8456D7A003",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached", "offline"],
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
       "numbering_system": "Darussalam",
       "grading_reference": "Darussalam grading per hadith",
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27"
     },
     "hadith_nasai": {
       "name": "Sunan an-Nasai",
       "source": "sunnah.com API / HadeethEnc",
       "version": "Darussalam edition",
       "license": "Free API access",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "FD8CD58ED785D1237492A847E8080620F862B4D2A9A80547A92A0F8456D7A003",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached", "offline"],
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
       "numbering_system": "Darussalam",
       "grading_reference": "Darussalam grading per hadith",
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27"
     },
     "hadith_ibn_majah": {
       "name": "Sunan Ibn Majah",
       "source": "sunnah.com API / HadeethEnc",
       "version": "Darussalam edition",
       "license": "Free API access",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "FD8CD58ED785D1237492A847E8080620F862B4D2A9A80547A92A0F8456D7A003",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached", "offline"],
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
       "numbering_system": "Darussalam",
       "grading_reference": "Darussalam grading per hadith",
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27"
     },
     "duas_hisnul_muslim": {
       "name": "Hisnul Muslim (Fortress of the Muslim)",
       "source": "Verified print edition, Sa'id bin Ali bin Wahf Al-Qahtani",
       "version": "Standard edition",
       "license": "Freely distributable Islamic content",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "D0D3C26CC87A93B45DAB0D12EC3BC843D325A5210D9B02C6C6553883D2109F7C",
       "normalization": "UTF-8, full diacritics",
-      "allowed_operations": ["read-only", "cached", "offline"],
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null,
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27",
       "notes": "~280 duas organized by occasion"
     },
     "names_of_allah": {
@@ -147,11 +190,15 @@
       "source": "Classical Islamic sources, cross-referenced",
       "version": "1.0",
       "license": "Public Islamic knowledge",
-      "hash_sha256": "PENDING_INTEGRATION",
+      "hash_sha256": "625C9D4A26A068AECD023EC6284CB48A01B637B4E54CA6A2DFC76CE611B334AB",
       "normalization": "UTF-8",
-      "allowed_operations": ["read-only", "cached", "offline"],
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27"
     },
     "prayer_calculation": {
       "name": "Adhan.js Prayer Time Calculation",
@@ -159,7 +206,9 @@
       "version": "Latest stable",
       "license": "MIT",
       "hash_sha256": "N/A — code library, not dataset",
-      "allowed_operations": ["compute"],
+      "allowed_operations": [
+        "compute"
+      ],
       "calculation_methods": [
         "MuslimWorldLeague",
         "Egyptian",
@@ -174,8 +223,8 @@
         "Turkey",
         "Tehran"
       ],
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null,
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27",
       "notes": "Well-tested open-source library used by thousands of apps"
     },
     "quran_audio": {
@@ -184,10 +233,63 @@
       "version": "Multiple reciters",
       "license": "Free for Islamic applications",
       "hash_sha256": "N/A — streamed audio",
-      "allowed_operations": ["stream", "cache"],
-      "approved_by": "PENDING_SCHOLAR_GATE",
-      "approved_date": null,
+      "allowed_operations": [
+        "stream",
+        "cache"
+      ],
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27",
       "notes": "Reciters include Mishary Rashid, Abdul Rahman Al-Sudais, etc."
+    },
+    "daily_reflections_365": {
+      "name": "365 Daily Niyyah Reflections",
+      "source": "AI-generated, curated trilingual content (English, Arabic, Urdu)",
+      "version": "1.0.0",
+      "license": "Original content, project-owned",
+      "hash_sha256": "99D673A2C04B892D9B3796E92176A9D669DD5CC83F01E6950501EAF5C5836703",
+      "normalization": "UTF-8",
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
+      "content_summary": "365 unique daily reflections, each with a niyyah, Quranic ayah (with reference), and hadith (with book+number+grading) in three languages",
+      "hadith_sources_used": [
+        "Sahih al-Bukhari",
+        "Sahih Muslim",
+        "Jami at-Tirmidhi",
+        "Sunan Abu Dawud",
+        "Sunan Ibn Majah",
+        "Musnad Ahmad",
+        "Al-Bayhaqi",
+        "Mustadrak al-Hakim",
+        "Ibn Hibban",
+        "Al-Adab Al-Mufrad",
+        "Al-Tabarani"
+      ],
+      "grading_display": true,
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27",
+      "notes": "Ayah references verified. Hadith grading added per JPP. Some sources (Ahmad, Bayhaqi, Tabarani, etc.) are outside the 6 canonical collections — flagged for Scholar Gate review. Shariah audit SGV-003 resolved."
+    },
+    "special_day_reflections_20": {
+      "name": "19 Special Islamic Day Reflections",
+      "source": "AI-generated, curated trilingual content (English, Arabic, Urdu)",
+      "version": "1.2.0",
+      "license": "Original content, project-owned",
+      "hash_sha256": "309B98F50D0216126563238A507231D24C79AB7D8E25578D7AB4F7EDA7FAB27A",
+      "normalization": "UTF-8",
+      "allowed_operations": [
+        "read-only",
+        "cached",
+        "offline"
+      ],
+      "content_summary": "19 bespoke niyyahs for major Islamic occasions (Hijri calendar), each with ayah + hadith + grading in EN/AR/UR",
+      "removed_content": "Arba'een (2-20) removed per SGV-001/SGV-002 sectarian violation. Mawlid (3-12) removed per SGV-007 Scholar Gate ruling. Original count was 21.",
+      "grading_display": true,
+      "approved_by": "Scholar Gate (Project Owner)",
+      "approved_date": "2026-02-27",
+      "notes": "Shariah audit completed 2026-02-27. SGV-001 (Arba'een hadith), SGV-002 (sectarian), SGV-004 (Shab-e-Barat ayah), SGV-006 (Ahmad source) all resolved. SGV-005 (Ibn Majah 1390 disputed grading) labeled. SGV-007 (Mawlid) removed per Scholar Gate ruling 2026-02-27."
     }
   }
 }

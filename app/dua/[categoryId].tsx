@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -11,11 +11,13 @@ import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import { getArabicFontFamily, getTranslationFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
 
-function DuaCard({ dua, language, theme, showTransliteration }: {
+function DuaCard({ dua, language, theme, showTransliteration, isBookmarked, onToggleBookmark }: {
   dua: DuaData;
   language: Language;
   theme: Record<string, string>;
   showTransliteration: boolean;
+  isBookmarked: boolean;
+  onToggleBookmark: () => void;
 }) {
   const [count, setCount] = useState(0);
   const isDone = count >= dua.repetitions;
@@ -27,24 +29,32 @@ function DuaCard({ dua, language, theme, showTransliteration }: {
 
   return (
     <View style={[styles.duaCard, { backgroundColor: theme.surface, borderColor: isDone ? theme.success : theme.border }]}>
-      {/* Arabic */}
+      <View style={styles.duaTopRow}>
+        <View style={{ flex: 1 }} />
+        <TouchableOpacity
+          onPress={onToggleBookmark}
+          style={[styles.bookmarkBtn, { backgroundColor: isBookmarked ? theme.primary : theme.primaryLight }]}
+          accessibilityLabel={isBookmarked ? 'Remove bookmark' : 'Bookmark dua'}
+          accessibilityRole="button"
+        >
+          <Ionicons name={isBookmarked ? 'bookmark' : 'bookmark-outline'} size={14} color={isBookmarked ? '#fff' : theme.primary} />
+        </TouchableOpacity>
+      </View>
+
       <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>
         {dua.textAr}
       </Text>
 
-      {/* Transliteration */}
       {showTransliteration && (
         <Text style={[styles.transliteration, { color: theme.textTertiary }]}>
           {dua.transliteration}
         </Text>
       )}
 
-      {/* Translation */}
       <Text style={[styles.translationText, { color: theme.text, fontFamily: getTranslationFontFamily(language) }]}>
         {getTranslation()}
       </Text>
 
-      {/* Source */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: spacing.sm }}>
         <Ionicons name="book-outline" size={14} color={theme.textTertiary} />
         <Text style={[styles.source, { color: theme.textTertiary, marginBottom: 0 }]}>
@@ -52,7 +62,6 @@ function DuaCard({ dua, language, theme, showTransliteration }: {
         </Text>
       </View>
 
-      {/* Counter */}
       {dua.repetitions > 1 && (
         <View style={styles.counterRow}>
           <TouchableOpacity
@@ -80,6 +89,9 @@ export default function DuaReaderScreen() {
   const { categoryId } = useLocalSearchParams<{ categoryId: string }>();
   const language = useAppStore((s) => s.settings.language);
   const showTransliteration = useAppStore((s) => s.settings.showTransliteration);
+  const bookmarks = useAppStore((s) => s.bookmarks);
+  const addBookmark = useAppStore((s) => s.addBookmark);
+  const removeBookmark = useAppStore((s) => s.removeBookmark);
   const { theme } = useTheme();
 
   const category = duaCategories.find((c) => c.id === categoryId);
@@ -89,9 +101,26 @@ export default function DuaReaderScreen() {
     ? language === 'ar' ? category.nameAr : language === 'ur' ? category.nameUr : category.nameEn
     : categoryId;
 
+  const isDuaBookmarked = useCallback((duaId: string) => {
+    return bookmarks.some((b) => b.type === 'dua' && b.duaId === duaId);
+  }, [bookmarks]);
+
+  const toggleBookmark = useCallback((dua: DuaData) => {
+    const existing = bookmarks.find((b) => b.type === 'dua' && b.duaId === dua.id);
+    if (existing) {
+      removeBookmark(existing.id);
+    } else {
+      addBookmark({
+        type: 'dua',
+        duaId: dua.id,
+        categoryId: dua.categoryId,
+        label: category?.nameEn ?? dua.categoryId,
+      });
+    }
+  }, [bookmarks, category, addBookmark, removeBookmark]);
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={[styles.backText, { color: theme.primary }]}>
@@ -118,6 +147,8 @@ export default function DuaReaderScreen() {
               language={language}
               theme={theme}
               showTransliteration={showTransliteration}
+              isBookmarked={isDuaBookmarked(item.id)}
+              onToggleBookmark={() => toggleBookmark(item)}
             />
           )}
           contentContainerStyle={styles.listContent}
@@ -148,7 +179,6 @@ const styles = StyleSheet.create({
   backButton: { width: 80 },
   backText: { fontSize: fontSizes.bodySmall, fontWeight: '600' },
   headerCenter: { flex: 1, alignItems: 'center' },
-  headerIcon: { fontSize: 24, marginBottom: 2 },
   headerTitle: { fontSize: fontSizes.body, fontWeight: '700' },
   headerCount: { fontSize: fontSizes.caption },
   headerSpacer: { width: 80 },
@@ -158,6 +188,18 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     marginBottom: spacing.md,
     borderWidth: 1,
+  },
+  duaTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: spacing.sm,
+  },
+  bookmarkBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   arabicText: {
     fontSize: 24,
@@ -192,6 +234,5 @@ const styles = StyleSheet.create({
   counterBtnText: { color: '#fff', fontWeight: '700', fontSize: fontSizes.body },
   resetText: { fontSize: fontSizes.caption },
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
-  emptyIcon: { fontSize: 48, marginBottom: spacing.md },
   emptyText: { fontSize: fontSizes.body, textAlign: 'center', lineHeight: 24 },
 });

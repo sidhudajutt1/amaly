@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Niyyah",
-    "slug": "niyyah-app",
+    "slug": "niyyah",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,14 +14,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.niyyah.app",
+      "bundleIdentifier": "com.atifjamil.niyyah",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Niyyah needs your location to calculate accurate prayer times and Qibla direction.",
         "NSMotionUsageDescription": "Niyyah uses device sensors for the Qibla compass."
       }
     },
     "android": {
-      "package": "com.niyyah.app",
+      "package": "com.atifjamil.niyyah",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1B6B4A"
@@ -29,7 +31,9 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "VIBRATE"
+        "VIBRATE",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "plugins": [
@@ -51,6 +55,13 @@
     ],
     "experiments": {
       "typedRoutes": false
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0948a2c3-5f1b-48f4-8369-c0f6d4c9206f"
+      }
+    },
+    "owner": "atifjamil"
   }
 }

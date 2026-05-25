@@ -22,6 +22,8 @@ function QuickAccessCard({ icon, label, sublabel, theme, onPress }: {
       style={[styles.quickCard, { backgroundColor: theme.surface, borderColor: theme.border }]}
       activeOpacity={0.7}
       onPress={onPress}
+      accessibilityLabel={`${label}${sublabel ? `, ${sublabel}` : ''}`}
+      accessibilityRole="button"
     >
       <View style={styles.quickIconContainer}>{icon}</View>
       <Text style={[styles.quickLabel, { color: theme.text }]}>{label}</Text>
@@ -41,6 +43,8 @@ function DuaCategoryRow({ cat, language, theme }: {
       style={[styles.duaRow, { backgroundColor: theme.surface, borderColor: theme.border }]}
       activeOpacity={0.7}
       onPress={() => router.push(`/dua/${cat.id}`)}
+      accessibilityLabel={`${name}, ${cat.count} duas`}
+      accessibilityRole="button"
     >
       <Ionicons name="heart-outline" size={20} color={theme.primary} style={styles.duaIcon} />
       <View style={styles.duaInfo}>

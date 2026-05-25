@@ -7,6 +7,7 @@ import { t } from '../../src/i18n';
 import { hadithCollections, type HadithCollectionMeta } from '../../src/data/hadithCollections';
 import { hadiths } from '../../src/data/hadiths';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { getArabicFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
 
 function getName(collection: HadithCollectionMeta, lang: Language): string {
@@ -32,7 +33,7 @@ function CollectionCard({ collection, theme, language }: {
     >
       <MaterialCommunityIcons name="book-open-variant" size={28} color={theme.primary} style={styles.icon} />
       <View style={styles.cardContent}>
-        <Text style={[styles.nameAr, { color: theme.textArabic }]}>{collection.nameAr}</Text>
+        <Text style={[styles.nameAr, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>{collection.nameAr}</Text>
         <Text style={[styles.nameEn, { color: theme.text }]}>{getName(collection, language)}</Text>
         <Text style={[styles.compiler, { color: theme.textSecondary }]}>{collection.compiler}</Text>
         <View style={styles.statsRow}>

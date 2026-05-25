@@ -1,0 +1,146 @@
+{
+  "description": "365 themed daily reflections - niyyah + ayah + hadith thematically paired",
+  "themes": [
+    {
+      "id": "sabr",
+      "name": "Patience (Sabr)",
+      "days": 15
+    },
+    {
+      "id": "shukr",
+      "name": "Gratitude (Shukr)",
+      "days": 15
+    },
+    {
+      "id": "tawakkul",
+      "name": "Reliance on Allah (Tawakkul)",
+      "days": 15
+    },
+    {
+      "id": "tawbah",
+      "name": "Repentance (Tawbah)",
+      "days": 12
+    },
+    {
+      "id": "ikhlas",
+      "name": "Sincerity (Ikhlas)",
+      "days": 12
+    },
+    {
+      "id": "salah",
+      "name": "Prayer (Salah)",
+      "days": 20
+    },
+    {
+      "id": "quran",
+      "name": "Quran",
+      "days": 15
+    },
+    {
+      "id": "dhikr",
+      "name": "Remembrance (Dhikr)",
+      "days": 15
+    },
+    {
+      "id": "dua",
+      "name": "Supplication (Dua)",
+      "days": 12
+    },
+    {
+      "id": "sadaqah",
+      "name": "Charity (Sadaqah)",
+      "days": 15
+    },
+    {
+      "id": "family",
+      "name": "Parents & Family",
+      "days": 15
+    },
+    {
+      "id": "kinship",
+      "name": "Kinship Ties (Silah ar-Rahm)",
+      "days": 10
+    },
+    {
+      "id": "brotherhood",
+      "name": "Brotherhood & Community",
+      "days": 12
+    },
+    {
+      "id": "kindness",
+      "name": "Kindness (Rifq)",
+      "days": 12
+    },
+    {
+      "id": "humility",
+      "name": "Humility (Tawadu)",
+      "days": 10
+    },
+    {
+      "id": "honesty",
+      "name": "Honesty (Sidq)",
+      "days": 10
+    },
+    {
+      "id": "forgiveness",
+      "name": "Forgiveness (Afw)",
+      "days": 10
+    },
+    {
+      "id": "tongue",
+      "name": "Guarding the Tongue",
+      "days": 12
+    },
+    {
+      "id": "ilm",
+      "name": "Knowledge (Ilm)",
+      "days": 12
+    },
+    {
+      "id": "akhirah",
+      "name": "The Hereafter (Akhirah)",
+      "days": 10
+    },
+    {
+      "id": "qanaah",
+      "name": "Contentment (Qana'ah)",
+      "days": 10
+    },
+    {
+      "id": "siyam",
+      "name": "Fasting (Siyam)",
+      "days": 8
+    },
+    {
+      "id": "qiyam",
+      "name": "Night Worship (Qiyam)",
+      "days": 8
+    },
+    {
+      "id": "sunnah",
+      "name": "Sunnah Acts",
+      "days": 12
+    },
+    {
+      "id": "taqwa",
+      "name": "God-consciousness (Taqwa)",
+      "days": 12
+    },
+    {
+      "id": "hilm",
+      "name": "Forbearance & Anger (Hilm)",
+      "days": 10
+    },
+    {
+      "id": "rahmah",
+      "name": "Mercy & Compassion",
+      "days": 10
+    },
+    {
+      "id": "haya",
+      "name": "Modesty (Haya)",
+      "days": 8
+    }
+  ],
+  "total": 365
+}

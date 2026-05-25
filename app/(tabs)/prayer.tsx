@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { usePrayerTimes } from '../../src/hooks/usePrayerTimes';
@@ -9,8 +9,8 @@ import { t } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import { useLocation } from '../../src/hooks/useLocation';
 import { toHijri, formatHijriDate, isRamadan, getRamadanDay } from '../../src/services/hijriService';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { CircularProgress } from '../../src/components/CircularProgress';
+import { hapticLight, hapticSuccess } from '../../src/utils/haptics';
 import type { PrayerName } from '../../src/types';
 
 const PRAYER_ORDER: (PrayerName | 'sunrise')[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
@@ -130,7 +130,9 @@ export default function PrayerScreen() {
               </Text>
               {isPrayer && (
                 <TouchableOpacity
-                  onPress={() => markPrayerCompleted(name as PrayerName)}
+                  onPress={() => { hapticSuccess(); markPrayerCompleted(name as PrayerName); }}
+                  accessibilityLabel={`Mark ${name} as prayed`}
+                  accessibilityRole="button"
                   style={[
                     styles.prayedButton,
                     {

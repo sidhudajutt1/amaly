@@ -1,89 +1,218 @@
-import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet, Platform, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
-import { fontSizes, spacing } from '../../src/theme';
+import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import {
+  requestPermissions,
+  cancelAllScheduled,
+  scheduleDailyReflection,
+  scheduleQuranReminder,
+} from '../../src/services/notificationService';
+import type { PrayerName, Language } from '../../src/types';
 
-const PRAYER_NAMES = [
+const PRAYER_NAMES: { id: PrayerName; en: string; ar: string; ur: string }[] = [
   { id: 'fajr', en: 'Fajr', ar: 'الفجر', ur: 'فجر' },
   { id: 'dhuhr', en: 'Dhuhr', ar: 'الظهر', ur: 'ظہر' },
   { id: 'asr', en: 'Asr', ar: 'العصر', ur: 'عصر' },
   { id: 'maghrib', en: 'Maghrib', ar: 'المغرب', ur: 'مغرب' },
   { id: 'isha', en: 'Isha', ar: 'العشاء', ur: 'عشاء' },
-] as const;
+];
+
+function label(language: Language, en: string, ar: string, ur: string): string {
+  return language === 'ar' ? ar : language === 'ur' ? ur : en;
+}
 
 export default function NotificationsScreen() {
   const language = useAppStore((s) => s.settings.language);
+  const notificationPrefs = useAppStore((s) => s.notificationPrefs);
+  const togglePrayerAlert = useAppStore((s) => s.togglePrayerAlert);
+  const setNotificationPrefs = useAppStore((s) => s.setNotificationPrefs);
   const { theme } = useTheme();
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') {
+      requestPermissions().then(setHasPermission);
+    }
+  }, []);
+
+  const reschedule = async () => {
+    await cancelAllScheduled();
+
+    if (notificationPrefs.morningReflection) {
+      const [h, m] = (useAppStore.getState().settings.notificationTime || '05:30').split(':').map(Number);
+      await scheduleDailyReflection(h, m, language);
+    }
+    if (notificationPrefs.quranGoal) {
+      await scheduleQuranReminder(language);
+    }
+  };
+
+  const handleTogglePrayer = (prayer: PrayerName) => {
+    togglePrayerAlert(prayer);
+    reschedule();
+  };
+
+  const handleToggle = (key: 'morningReflection' | 'quranGoal' | 'suhoorAlert' | 'iftarAlert') => {
+    setNotificationPrefs({ [key]: !notificationPrefs[key] });
+    reschedule();
+  };
+
+  const handleRequestPermission = async () => {
+    const granted = await requestPermissions();
+    setHasPermission(granted);
+    if (!granted) {
+      Alert.alert(
+        label(language, 'Permission Required', 'الإذن مطلوب', 'اجازت درکار ہے'),
+        label(language,
+          'Please enable notifications in your device settings to receive prayer and reflection reminders.',
+          'يرجى تفعيل الإشعارات في إعدادات جهازك.',
+          'براہ کرم اپنی ڈیوائس سیٹنگز میں اطلاعات فعال کریں۔'),
+      );
+    }
+  };
 
   const getName = (prayer: typeof PRAYER_NAMES[number]) => {
     return language === 'ar' ? prayer.ar : language === 'ur' ? prayer.ur : prayer.en;
   };
 
+  const isWeb = Platform.OS === 'web';
+
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={theme.text} />
+        <TouchableOpacity onPress={() => router.back()} accessibilityLabel="Go back" accessibilityRole="button">
+          <Ionicons name={language === 'ar' || language === 'ur' ? 'arrow-forward' : 'arrow-back'} size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
-          {language === 'ar' ? 'الإشعارات' : language === 'ur' ? 'اطلاعات' : 'Notifications'}
+          {label(language, 'Notifications', 'الإشعارات', 'اطلاعات')}
         </Text>
         <View style={{ width: 24 }} />
       </View>
 
-      <Text style={[styles.sectionNote, { color: theme.textSecondary }]}>
-        {language === 'ar' ? 'ستتوفر الإشعارات بعد تثبيت التطبيق على هاتفك.' : language === 'ur' ? 'فون پر ایپ انسٹال ہونے کے بعد اطلاعات دستیاب ہوں گی۔' : 'Notifications will be available after installing the app on your phone.'}
-      </Text>
+      {isWeb ? (
+        <View style={[styles.webNote, { backgroundColor: theme.surfaceElevated || theme.surface, borderColor: theme.border }]}>
+          <Ionicons name="information-circle-outline" size={20} color={theme.primary} />
+          <Text style={[styles.webNoteText, { color: theme.textSecondary }]}>
+            {label(language,
+              'Push notifications work on mobile devices. Install the app on your phone to receive prayer alerts and daily reminders.',
+              'تعمل الإشعارات على الأجهزة المحمولة. قم بتثبيت التطبيق للحصول على تنبيهات الصلاة.',
+              'پش اطلاعات موبائل پر کام کرتی ہیں۔ نماز الرٹ حاصل کرنے کے لیے ایپ انسٹال کریں۔')}
+          </Text>
+        </View>
+      ) : hasPermission === false ? (
+        <TouchableOpacity
+          style={[styles.permissionBanner, { backgroundColor: `${theme.error || '#C62828'}15`, borderColor: theme.error || '#C62828' }]}
+          onPress={handleRequestPermission}
+          accessibilityLabel="Enable notifications" accessibilityRole="button"
+        >
+          <Ionicons name="notifications-off-outline" size={20} color={theme.error || '#C62828'} />
+          <Text style={[styles.permissionText, { color: theme.error || '#C62828' }]}>
+            {label(language,
+              'Notifications are disabled. Tap to enable.',
+              'الإشعارات معطلة. اضغط للتفعيل.',
+              'اطلاعات غیر فعال ہیں۔ فعال کرنے کے لیے ٹیپ کریں۔')}
+          </Text>
+        </TouchableOpacity>
+      ) : null}
 
-      {/* Prayer Adhan Notifications */}
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
-        {language === 'ar' ? 'تنبيه الأذان' : language === 'ur' ? 'اذان الرٹ' : 'Adhan Alerts'}
+        {label(language, 'Adhan Alerts', 'تنبيه الأذان', 'اذان الرٹ')}
+      </Text>
+      <Text style={[styles.sectionDesc, { color: theme.textTertiary || theme.textSecondary }]}>
+        {label(language,
+          'Get notified when each prayer time arrives.',
+          'احصل على إشعار عند حلول وقت كل صلاة.',
+          'ہر نماز کے وقت اطلاع حاصل کریں۔')}
       </Text>
       {PRAYER_NAMES.map((prayer) => (
         <View key={prayer.id} style={[styles.row, { borderColor: theme.border }]}>
           <Text style={[styles.rowLabel, { color: theme.text }]}>{getName(prayer)}</Text>
           <Switch
-            value={true}
-            disabled={true}
+            value={notificationPrefs.prayerAlerts[prayer.id]}
+            onValueChange={() => handleTogglePrayer(prayer.id)}
+            disabled={isWeb}
             trackColor={{ false: theme.border, true: theme.primary }}
           />
         </View>
       ))}
 
-      {/* Daily Reminder */}
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
-        {language === 'ar' ? 'التذكير اليومي' : language === 'ur' ? 'یومیہ یاد دہانی' : 'Daily Reminder'}
+        {label(language, 'Daily Reminders', 'التذكير اليومي', 'یومیہ یاد دہانی')}
       </Text>
       <View style={[styles.row, { borderColor: theme.border }]}>
-        <Text style={[styles.rowLabel, { color: theme.text }]}>
-          {language === 'ar' ? 'تأمل الصباح' : language === 'ur' ? 'صبح کا تأمل' : 'Morning Reflection'}
-        </Text>
-        <Switch value={true} disabled={true} trackColor={{ false: theme.border, true: theme.primary }} />
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.rowLabel, { color: theme.text }]}>
+            {label(language, 'Morning Niyyah', 'نية الصباح', 'صبح کی نیت')}
+          </Text>
+          <Text style={[styles.rowHint, { color: theme.textTertiary || theme.textSecondary }]}>
+            {label(language,
+              `Daily at ${useAppStore.getState().settings.notificationTime || '05:30'}`,
+              `يومياً الساعة ${useAppStore.getState().settings.notificationTime || '05:30'}`,
+              `روزانہ ${useAppStore.getState().settings.notificationTime || '05:30'} بجے`)}
+          </Text>
+        </View>
+        <Switch
+          value={notificationPrefs.morningReflection}
+          onValueChange={() => handleToggle('morningReflection')}
+          disabled={isWeb}
+          trackColor={{ false: theme.border, true: theme.primary }}
+        />
       </View>
       <View style={[styles.row, { borderColor: theme.border }]}>
-        <Text style={[styles.rowLabel, { color: theme.text }]}>
-          {language === 'ar' ? 'هدف القرآن' : language === 'ur' ? 'قرآن ہدف' : 'Quran Goal'}
-        </Text>
-        <Switch value={true} disabled={true} trackColor={{ false: theme.border, true: theme.primary }} />
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.rowLabel, { color: theme.text }]}>
+            {label(language, 'Quran Goal', 'هدف القرآن', 'قرآن ہدف')}
+          </Text>
+          <Text style={[styles.rowHint, { color: theme.textTertiary || theme.textSecondary }]}>
+            {label(language, 'Daily at 8:00 PM', 'يومياً الساعة 8 مساءً', 'روزانہ رات 8 بجے')}
+          </Text>
+        </View>
+        <Switch
+          value={notificationPrefs.quranGoal}
+          onValueChange={() => handleToggle('quranGoal')}
+          disabled={isWeb}
+          trackColor={{ false: theme.border, true: theme.primary }}
+        />
       </View>
 
-      {/* Ramadan */}
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
-        {language === 'ar' ? 'رمضان' : language === 'ur' ? 'رمضان' : 'Ramadan'}
+        {label(language, 'Ramadan', 'رمضان', 'رمضان')}
       </Text>
       <View style={[styles.row, { borderColor: theme.border }]}>
-        <Text style={[styles.rowLabel, { color: theme.text }]}>
-          {language === 'ar' ? 'تنبيه السحور' : language === 'ur' ? 'سحری الرٹ' : 'Suhoor Alert'}
-        </Text>
-        <Switch value={true} disabled={true} trackColor={{ false: theme.border, true: theme.primary }} />
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.rowLabel, { color: theme.text }]}>
+            {label(language, 'Suhoor Alert', 'تنبيه السحور', 'سحری الرٹ')}
+          </Text>
+          <Text style={[styles.rowHint, { color: theme.textTertiary || theme.textSecondary }]}>
+            {label(language, '30 min before Fajr', '30 دقيقة قبل الفجر', 'فجر سے 30 منٹ پہلے')}
+          </Text>
+        </View>
+        <Switch
+          value={notificationPrefs.suhoorAlert}
+          onValueChange={() => handleToggle('suhoorAlert')}
+          disabled={isWeb}
+          trackColor={{ false: theme.border, true: theme.primary }}
+        />
       </View>
       <View style={[styles.row, { borderColor: theme.border }]}>
-        <Text style={[styles.rowLabel, { color: theme.text }]}>
-          {language === 'ar' ? 'تنبيه الإفطار' : language === 'ur' ? 'افطار الرٹ' : 'Iftar Alert'}
-        </Text>
-        <Switch value={true} disabled={true} trackColor={{ false: theme.border, true: theme.primary }} />
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.rowLabel, { color: theme.text }]}>
+            {label(language, 'Iftar Alert', 'تنبيه الإفطار', 'افطار الرٹ')}
+          </Text>
+          <Text style={[styles.rowHint, { color: theme.textTertiary || theme.textSecondary }]}>
+            {label(language, '15 min before Maghrib', '15 دقيقة قبل المغرب', 'مغرب سے 15 منٹ پہلے')}
+          </Text>
+        </View>
+        <Switch
+          value={notificationPrefs.iftarAlert}
+          onValueChange={() => handleToggle('iftarAlert')}
+          disabled={isWeb}
+          trackColor={{ false: theme.border, true: theme.primary }}
+        />
       </View>
 
       <View style={{ height: 80 }} />
@@ -102,14 +231,38 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.md,
   },
   title: { fontSize: fontSizes.heading2, fontWeight: '700' },
-  sectionNote: { fontSize: fontSizes.bodySmall, textAlign: 'center', marginBottom: spacing.lg, lineHeight: 22 },
+  webNote: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    marginBottom: spacing.lg,
+  },
+  webNoteText: { fontSize: fontSizes.bodySmall, flex: 1, lineHeight: 20 },
+  permissionBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    marginBottom: spacing.lg,
+  },
+  permissionText: { fontSize: fontSizes.bodySmall, fontWeight: '600', flex: 1 },
   sectionHeader: {
     fontSize: fontSizes.caption,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginTop: spacing.lg,
+    marginBottom: 4,
+  },
+  sectionDesc: {
+    fontSize: fontSizes.caption,
     marginBottom: spacing.sm,
+    lineHeight: 18,
   },
   row: {
     flexDirection: 'row',
@@ -118,5 +271,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
   },
-  rowLabel: { fontSize: fontSizes.body, flex: 1 },
+  rowLabel: { fontSize: fontSizes.body },
+  rowHint: { fontSize: fontSizes.caption, marginTop: 2 },
 });

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {
   Language,
+  ColorTheme,
   GrowthCategory,
   CalculationMethod,
   UserSettings,
@@ -11,10 +12,22 @@ import type {
   HijriDate,
   GoalConfig,
   ReciterId,
+  Bookmark,
+  BookmarkType,
+  ReadingProgress,
+  NotificationPrefs,
 } from '../types';
 import { DEFAULT_GOAL_CONFIG } from '../services/goalsService';
 
 const STORAGE_KEY = '@niyyah_store';
+
+const defaultNotificationPrefs: NotificationPrefs = {
+  prayerAlerts: { fajr: true, dhuhr: true, asr: true, maghrib: true, isha: true },
+  morningReflection: true,
+  quranGoal: true,
+  suhoorAlert: true,
+  iftarAlert: true,
+};
 
 interface AppState {
   settings: UserSettings;
@@ -22,6 +35,9 @@ interface AppState {
   todayProgress: UserProgress;
   isLoading: boolean;
   goalConfig: GoalConfig;
+  bookmarks: Bookmark[];
+  readingProgress: ReadingProgress | null;
+  notificationPrefs: NotificationPrefs;
 
   // Settings actions
   setLanguage: (language: Language) => void;
@@ -31,6 +47,7 @@ interface AppState {
   setLocation: (lat: number, lng: number, name: string) => void;
   setOnboardingCompleted: () => void;
   setTheme: (theme: 'light' | 'dark' | 'auto') => void;
+  setColorTheme: (colorTheme: ColorTheme) => void;
   setQuranFontSize: (size: number) => void;
   setTranslationFontSize: (size: number) => void;
   toggleTransliteration: () => void;
@@ -54,6 +71,19 @@ interface AppState {
   markCustomGoal: (goalId: string) => void;
   markStreakCelebrationShown: () => void;
 
+  // Bookmark actions
+  addBookmark: (bookmark: Omit<Bookmark, 'id' | 'timestamp'>) => void;
+  removeBookmark: (id: string) => void;
+  isBookmarked: (type: BookmarkType, itemId: string) => boolean;
+  getBookmarksByType: (type: BookmarkType) => Bookmark[];
+
+  // Reading progress
+  updateReadingProgress: (surah: number, ayah: number) => void;
+
+  // Notification prefs
+  setNotificationPrefs: (prefs: Partial<NotificationPrefs>) => void;
+  togglePrayerAlert: (prayer: PrayerName) => void;
+
   // Persistence
   hydrate: () => Promise<void>;
   persist: () => Promise<void>;
@@ -66,6 +96,7 @@ const defaultSettings: UserSettings = {
   calculationMethod: 'MuslimWorldLeague',
   onboardingCompleted: false,
   theme: 'auto',
+  colorTheme: 'emerald',
   quranFontSize: 28,
   translationFontSize: 16,
   selectedReciter: 'alafasy',
@@ -117,6 +148,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   todayProgress: defaultProgress(),
   isLoading: true,
   goalConfig: DEFAULT_GOAL_CONFIG,
+  bookmarks: [],
+  readingProgress: null,
+  notificationPrefs: defaultNotificationPrefs,
 
   setLanguage: (language) => {
     set((state) => ({ settings: { ...state.settings, language } }));
@@ -152,6 +186,11 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setTheme: (theme) => {
     set((state) => ({ settings: { ...state.settings, theme } }));
+    get().persist();
+  },
+
+  setColorTheme: (colorTheme) => {
+    set((state) => ({ settings: { ...state.settings, colorTheme } }));
     get().persist();
   },
 
@@ -361,6 +400,60 @@ export const useAppStore = create<AppState>((set, get) => ({
     get().persist();
   },
 
+  addBookmark: (bookmark) => {
+    const { bookmarks } = get();
+    const id = `${bookmark.type}-${bookmark.surahNumber ?? bookmark.hadithId ?? bookmark.duaId}-${Date.now()}`;
+    const newBookmark: Bookmark = { ...bookmark, id, timestamp: Date.now() };
+    set({ bookmarks: [newBookmark, ...bookmarks] });
+    get().persist();
+  },
+
+  removeBookmark: (id) => {
+    const { bookmarks } = get();
+    set({ bookmarks: bookmarks.filter((b) => b.id !== id) });
+    get().persist();
+  },
+
+  isBookmarked: (type, itemId) => {
+    const { bookmarks } = get();
+    if (type === 'ayah') {
+      const [surah, ayah] = itemId.split(':').map(Number);
+      return bookmarks.some((b) => b.type === 'ayah' && b.surahNumber === surah && b.ayahNumber === ayah);
+    }
+    if (type === 'hadith') {
+      return bookmarks.some((b) => b.type === 'hadith' && b.hadithId === itemId);
+    }
+    return bookmarks.some((b) => b.type === 'dua' && b.duaId === itemId);
+  },
+
+  getBookmarksByType: (type) => {
+    return get().bookmarks.filter((b) => b.type === type);
+  },
+
+  updateReadingProgress: (surah, ayah) => {
+    set({ readingProgress: { lastSurah: surah, lastAyah: ayah, updatedAt: Date.now() } });
+    get().persist();
+  },
+
+  setNotificationPrefs: (prefs) => {
+    const current = get().notificationPrefs;
+    set({ notificationPrefs: { ...current, ...prefs } });
+    get().persist();
+  },
+
+  togglePrayerAlert: (prayer) => {
+    const { notificationPrefs } = get();
+    const updated = {
+      ...notificationPrefs,
+      prayerAlerts: {
+        ...notificationPrefs.prayerAlerts,
+        [prayer]: !notificationPrefs.prayerAlerts[prayer],
+      },
+    };
+    set({ notificationPrefs: updated });
+    get().persist();
+  },
+
   hydrate: async () => {
     try {
       const data = await AsyncStorage.getItem(STORAGE_KEY);
@@ -373,6 +466,11 @@ export const useAppStore = create<AppState>((set, get) => ({
             ? parsed.todayProgress
             : defaultProgress(),
           goalConfig: parsed.goalConfig ? { ...DEFAULT_GOAL_CONFIG, ...parsed.goalConfig } : DEFAULT_GOAL_CONFIG,
+          bookmarks: parsed.bookmarks ?? [],
+          readingProgress: parsed.readingProgress ?? null,
+          notificationPrefs: parsed.notificationPrefs
+            ? { ...defaultNotificationPrefs, ...parsed.notificationPrefs }
+            : defaultNotificationPrefs,
           isLoading: false,
         });
       } else {
@@ -385,10 +483,10 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   persist: async () => {
     try {
-      const { settings, streakData, todayProgress, goalConfig } = get();
+      const { settings, streakData, todayProgress, goalConfig, bookmarks, readingProgress, notificationPrefs } = get();
       await AsyncStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ settings, streakData, todayProgress, goalConfig })
+        JSON.stringify({ settings, streakData, todayProgress, goalConfig, bookmarks, readingProgress, notificationPrefs })
       );
     } catch {
       // Silently fail — will retry on next action

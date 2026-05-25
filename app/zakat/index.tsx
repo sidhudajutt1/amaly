@@ -82,7 +82,7 @@ export default function ZakatScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={theme.text} />
+          <Ionicons name={language === 'ar' || language === 'ur' ? 'arrow-forward' : 'arrow-back'} size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
           {language === 'ar' ? 'حاسبة الزكاة' : language === 'ur' ? 'زکوٰۃ کیلکولیٹر' : 'Zakat Calculator'}

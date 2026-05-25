@@ -6,10 +6,18 @@ import type { Language, LayoutDirection } from '../types';
 const translations: Record<Language, TranslationKeys> = { en, ar, ur };
 
 export function t(language: Language, path: string): string {
+  const lang = translations[language] as Record<string, unknown>;
+  const en = translations.en as Record<string, unknown>;
+
+  // Try direct flat key first (handles 'ramadan.suhoor' style keys)
+  if (path in lang && typeof lang[path] === 'string') return lang[path] as string;
+  if (path in en && typeof en[path] === 'string') return en[path] as string;
+
+  // Fall back to nested dot-traversal (handles 'common.appName' nested objects)
   const keys = path.split('.');
-  let current: unknown = translations[language];
+  let current: unknown = lang;
   for (const key of keys) {
-    if (current && typeof current === 'object' && key in current) {
+    if (current && typeof current === 'object' && key in (current as Record<string, unknown>)) {
       current = (current as Record<string, unknown>)[key];
     } else {
       current = undefined;
@@ -18,10 +26,9 @@ export function t(language: Language, path: string): string {
   }
   if (typeof current === 'string') return current;
 
-  // Fallback to English
-  let fallback: unknown = translations.en;
+  let fallback: unknown = en;
   for (const key of keys) {
-    if (fallback && typeof fallback === 'object' && key in fallback) {
+    if (fallback && typeof fallback === 'object' && key in (fallback as Record<string, unknown>)) {
       fallback = (fallback as Record<string, unknown>)[key];
     } else {
       return path;
