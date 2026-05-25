@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1052715022053",
-    "project_id": "niyyah-c33a8",
-    "storage_bucket": "niyyah-c33a8.firebasestorage.app"
+    "project_number": "196679941676",
+    "project_id": "amaly-b3ced",
+    "storage_bucket": "amaly-b3ced.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1052715022053:android:a96f045c7ad3239907460c",
+        "mobilesdk_app_id": "1:196679941676:android:13f6acfffca58a93891b89",
         "android_client_info": {
-          "package_name": "com.atifjamil.niyyah"
+          "package_name": "com.atifjamil.amaly"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCTE8TG3wAT0FC7fOFoLruKqedqbu9su6w"
+          "current_key": "AIzaSyDjFk-d8FZgiTao-Q3LUP8SKu0v_3yU85c"
         }
       ],
       "services": {
