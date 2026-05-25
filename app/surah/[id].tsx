@@ -9,7 +9,7 @@ import { t } from '../../src/i18n';
 import { surahs } from '../../src/data/surahs';
 import { getSurahData, isSurahAvailable, getAvailableSurahNumbers, type AyahData } from '../../src/data/quranText';
 import { getIndoPakAyahText } from '../../src/data/quranTextIndoPak';
-import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { fontSizes, spacing, borderRadius, lineHeights } from '../../src/theme';
 import { getQuranFontFamily, getTranslationFontFamily, fonts } from '../../src/theme/typography';
 import { createAudioPlayer, type PlaybackState, type AudioPlayer } from '../../src/services/audioService';
 import { getTafsirForAyah } from '../../src/data/tafsirLoader';
@@ -80,13 +80,13 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, lineHeight: quranFontSize * (language === 'ur' ? 2.0 : 1.8), fontFamily: arabicFontFamily }]}>
+      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, lineHeight: quranFontSize * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic), fontFamily: arabicFontFamily }]}>
         {arabicDisplayText}
       </Text>
       <View style={styles.divider}>
         <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
       </View>
-      <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize, lineHeight: Math.round(translationFontSize * (language === 'ur' ? 2.0 : 1.6)), fontFamily: getTranslationFontFamily(language) }]}>
+      <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize, lineHeight: Math.round(translationFontSize * (language === 'ur' ? lineHeights.urdu : lineHeights.latin)), fontFamily: getTranslationFontFamily(language) }]}>
         {getTranslation()}
       </Text>
 
@@ -111,7 +111,7 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
           <Text style={[styles.tafsirSource, { color: theme.textTertiary }]}>
             {language === 'ar' ? 'تفسير ابن كثير' : language === 'ur' ? 'تفسیر ابن کثیر' : 'Tafsir Ibn Kathir'}
           </Text>
-          <Text style={[styles.tafsirText, { color: theme.text, fontFamily: getTranslationFontFamily(language), lineHeight: fontSizes.body * (language === 'ur' ? 2.0 : 1.6) }]}>
+          <Text style={[styles.tafsirText, { color: theme.text, fontFamily: getTranslationFontFamily(language), lineHeight: fontSizes.body * (language === 'ur' ? lineHeights.urdu : lineHeights.latin) }]}>
             {tafsirText}
           </Text>
         </View>
@@ -432,9 +432,9 @@ const styles = StyleSheet.create({
   ayahNumber: { fontSize: fontSizes.caption, fontWeight: '700' },
   arabicText: {
     textAlign: 'right',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
   },
-  divider: { alignItems: 'center', marginVertical: spacing.sm },
+  divider: { alignItems: 'center', marginVertical: spacing.md },
   dividerLine: { height: 1, width: '60%' },
   translationText: {},
   tafsirToggle: {

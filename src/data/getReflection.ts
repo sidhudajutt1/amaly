@@ -2,10 +2,21 @@ import type { HijriDate } from '../services/hijriService';
 import { dailyReflections, type DailyReflection } from './dailyReflections';
 import { getSpecialDayReflection } from './specialDayReflections';
 import { getHijriThemedIndex } from './hijriThemeMap';
+import { getThemeExtra } from './themeExtras';
 
 export interface EnrichedReflection extends DailyReflection {
   isSpecialDay: boolean;
   specialEventKey?: string;
+  duaAr: string;
+  duaEn: string;
+  duaUr: string;
+  duaSource: string;
+  reflectionEn: string;
+  reflectionAr: string;
+  reflectionUr: string;
+  theme: string;
+  themeAr: string;
+  themeUr: string;
 }
 
 /**
@@ -18,6 +29,7 @@ export function getSmartReflection(gregorian: Date, hijri: HijriDate): EnrichedR
   const special = getSpecialDayReflection(hijri.month, hijri.day);
   if (special) {
     const base = getFallbackReflection(gregorian);
+    const extras = getThemeExtra(base.day);
     return {
       ...base,
       niyyahEn: special.niyyahEn,
@@ -33,16 +45,20 @@ export function getSmartReflection(gregorian: Date, hijri: HijriDate): EnrichedR
       hadithSource: special.hadithSource,
       isSpecialDay: true,
       specialEventKey: special.eventKey,
+      ...extras,
     };
   }
 
   const idx = getHijriThemedIndex(hijri.month, hijri.day, dailyReflections.length);
   const themed = dailyReflections[idx];
   if (themed) {
-    return { ...themed, isSpecialDay: false };
+    const extras = getThemeExtra(themed.day);
+    return { ...themed, isSpecialDay: false, ...extras };
   }
 
-  return { ...getFallbackReflection(gregorian), isSpecialDay: false };
+  const fallback = getFallbackReflection(gregorian);
+  const extras = getThemeExtra(fallback.day);
+  return { ...fallback, isSpecialDay: false, ...extras };
 }
 
 function getFallbackReflection(date: Date): DailyReflection {

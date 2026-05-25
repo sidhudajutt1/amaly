@@ -231,7 +231,7 @@ export default function SettingsScreen() {
 
       {/* Location */}
       <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>
-        {t(language, 'location.autoDetect')}
+        {t(language, 'prayer.location')}
       </Text>
       <ToggleRow
         label={t(language, 'location.autoDetect')}
@@ -251,24 +251,47 @@ export default function SettingsScreen() {
           </Text>
         </View>
       ) : locationDetected ? (
-        <View style={[styles.row, { borderColor: theme.border }]}>
-          <Text style={[styles.rowLabel, { color: theme.text }]}>{locationName}</Text>
-        </View>
-      ) : (
+        /* Location set — show city name with change button */
         <TouchableOpacity
-          style={[styles.row, { borderColor: theme.primary, borderWidth: 1.5, borderRadius: borderRadius.sm }]}
-          onPress={detectLocation}
+          style={[styles.row, { borderColor: theme.border }]}
+          onPress={() => router.push('/city-search')}
           activeOpacity={0.7}
         >
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.rowLabel, { color: theme.primary }]}>
-              {permissionDenied
-                ? (language === 'ar' ? 'الإذن مرفوض — تحقق من إعدادات الجهاز' : language === 'ur' ? 'اجازت نہیں — ڈیوائس کی ترتیبات دیکھیں' : 'Permission denied — check device settings')
-                : (language === 'ar' ? 'الموقع غير محدد — اضغط للكشف' : language === 'ur' ? 'مقام معلوم نہیں — دبائیں' : 'Location not detected — tap to detect')}
-            </Text>
-          </View>
-          {!permissionDenied && <Ionicons name="locate-outline" size={20} color={theme.primary} />}
+          <Text style={[styles.rowLabel, { color: theme.text, flex: 1 }]}>{locationName}</Text>
+          <Text style={[styles.rowLabel, { color: theme.primary, fontSize: 13 }]}>
+            {t(language, 'location.changeCity')}
+          </Text>
+          <Ionicons name="chevron-forward" size={16} color={theme.primary} />
         </TouchableOpacity>
+      ) : (
+        /* No location — detect button + manual search */
+        <View style={{ gap: 8 }}>
+          <TouchableOpacity
+            style={[styles.row, { borderColor: theme.primary, borderWidth: 1.5, borderRadius: borderRadius.sm }]}
+            onPress={detectLocation}
+            activeOpacity={0.7}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.rowLabel, { color: theme.primary }]}>
+                {permissionDenied
+                  ? (language === 'ar' ? 'الإذن مرفوض — تحقق من إعدادات الجهاز' : language === 'ur' ? 'اجازت نہیں — ڈیوائس کی ترتیبات دیکھیں' : 'Permission denied — check device settings')
+                  : (language === 'ar' ? 'الموقع غير محدد — اضغط للكشف' : language === 'ur' ? 'مقام معلوم نہیں — دبائیں' : 'Location not detected — tap to detect')}
+              </Text>
+            </View>
+            {!permissionDenied && <Ionicons name="locate-outline" size={20} color={theme.primary} />}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.row, { borderColor: theme.border }]}
+            onPress={() => router.push('/city-search')}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="search-outline" size={18} color={theme.textSecondary} />
+            <Text style={[styles.rowLabel, { color: theme.textSecondary, flex: 1, marginStart: 8 }]}>
+              {t(language, 'location.searchCity')}
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color={theme.textTertiary} />
+          </TouchableOpacity>
+        </View>
       )}
 
       {/* Hijri Adjustment */}

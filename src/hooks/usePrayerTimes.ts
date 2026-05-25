@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   calculatePrayerTimes,
   getNextPrayer,
@@ -6,10 +6,7 @@ import {
   getTimeUntil,
 } from '../services/prayerService';
 import { useAppStore } from '../store/useAppStore';
-import type { PrayerTimes, PrayerName, CalculationMethod } from '../types';
-
-const DEFAULT_LAT = 21.4225;
-const DEFAULT_LNG = 39.8262;
+import type { PrayerTimes, PrayerName } from '../types';
 
 export function usePrayerTimes(): {
   prayerTimes: PrayerTimes | null;
@@ -31,17 +28,29 @@ export function usePrayerTimes(): {
   const [currentPrayer, setCurrentPrayer] = useState<PrayerName | 'sunrise' | null>(null);
   const [countdown, setCountdown] = useState<{ hours: number; minutes: number } | null>(null);
 
+  // Track the date string prayer times were last calculated for (midnight recalculation)
+  const calculatedForDate = useRef<string | null>(null);
+
   useEffect(() => {
     if (storeLoading) return;
 
-    const lat = locationLat ?? DEFAULT_LAT;
-    const lng = locationLng ?? DEFAULT_LNG;
-    const today = new Date();
+    // No location confirmed yet — do not fall back to Makkah
+    if (locationLat === undefined || locationLng === undefined) {
+      setPrayerTimes(null);
+      setNextPrayer(null);
+      setCurrentPrayer(null);
+      setCountdown(null);
+      return;
+    }
 
-    const times = calculatePrayerTimes(lat, lng, today, calculationMethod);
-    setPrayerTimes(times);
+    const recalculate = (now: Date): PrayerTimes => {
+      const times = calculatePrayerTimes(locationLat, locationLng, now, calculationMethod);
+      setPrayerTimes(times);
+      calculatedForDate.current = now.toDateString();
+      return times;
+    };
 
-    const updatePrayerState = (now: Date) => {
+    const updatePrayerState = (times: PrayerTimes, now: Date) => {
       const next = getNextPrayer(times, now);
       const current = getCurrentPrayer(times, now);
       setNextPrayer(next);
@@ -49,11 +58,17 @@ export function usePrayerTimes(): {
       setCountdown(next ? getTimeUntil(next.time, now) : null);
     };
 
-    updatePrayerState(new Date());
+    const now = new Date();
+    const times = recalculate(now);
+    updatePrayerState(times, now);
 
     const intervalId = setInterval(() => {
-      const now = new Date();
-      updatePrayerState(now);
+      const tick = new Date();
+      // Recalculate if the calendar date has changed (midnight rollover)
+      const currentTimes = calculatedForDate.current !== tick.toDateString()
+        ? recalculate(tick)
+        : prayerTimes;
+      if (currentTimes) updatePrayerState(currentTimes, tick);
     }, 60000);
 
     return () => clearInterval(intervalId);

@@ -240,6 +240,12 @@ export default function TodayScreen() {
         <Text style={[styles.niyyahText, { color: theme.text, textAlign }]}>
           {language === 'ur' ? reflection.niyyahUr : language === 'ar' ? reflection.niyyahAr : reflection.niyyahEn}
         </Text>
+        <View style={[styles.reflectionRow, { borderTopColor: theme.primary + '25' }]}>
+          <Ionicons name="help-circle-outline" size={14} color={theme.primary} style={{ marginTop: 2 }} />
+          <Text style={[styles.reflectionText, { color: theme.primary + 'CC', textAlign }]}>
+            {language === 'ur' ? reflection.reflectionUr : language === 'ar' ? reflection.reflectionAr : reflection.reflectionEn}
+          </Text>
+        </View>
         {!todayProgress.niyyahCompleted && (
           <View style={[styles.niyyahButton, { backgroundColor: theme.primary }]}>
             <Text style={styles.niyyahButtonText}>
@@ -392,13 +398,13 @@ export default function TodayScreen() {
         accessibilityLabel={`Quran verse: ${reflection.ayahRef}`}
       >
         <IslamicPattern width={SCREEN_WIDTH - spacing.md * 2} height={160} color={theme.primary} opacity={0.04} variant="arch" />
-        <Text style={[styles.bismillah, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.bismillah * 0.8 * (language === 'ur' ? 2.0 : lineHeights.arabic) }]}>
+        <Text style={[styles.bismillah, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.bismillah * 0.8 * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic) }]}>
           {language === 'ur' ? 'بِسۡمِ اللهِ الرَّحۡمٰنِ الرَّحِيۡمِ' : 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ'}
         </Text>
-        <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.quranArabic * (language === 'ur' ? 2.0 : lineHeights.arabic) }]}>
+        <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.quranArabic * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic) }]}>
           {reflection.ayahAr}
         </Text>
-        <Text style={[styles.translationText, { color: theme.text, textAlign, lineHeight: fontSizes.translationDefault * (language === 'ur' ? 2.0 : lineHeights.latin) }]}>
+        <Text style={[styles.translationText, { color: theme.text, textAlign, lineHeight: fontSizes.translationDefault * (language === 'ur' ? lineHeights.urdu : lineHeights.latin) }]}>
           {language === 'ur' ? reflection.ayahUr : language === 'ar' ? reflection.ayahAr : reflection.ayahEn}
         </Text>
         <Text style={[styles.reference, { color: theme.textTertiary, textAlign }]}>
@@ -419,14 +425,38 @@ export default function TodayScreen() {
             {t(language, 'today.fromSunnah')}
           </Text>
         </View>
-        <Text style={[styles.hadithArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language), lineHeight: fontSizes.hadithArabic * (language === 'ur' ? 2.0 : lineHeights.arabic) }]}>
+        <Text style={[styles.hadithArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language), lineHeight: fontSizes.hadithArabic * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic) }]}>
           {reflection.hadithAr}
         </Text>
-        <Text style={[styles.translationText, { color: theme.text, textAlign, lineHeight: fontSizes.translationDefault * (language === 'ur' ? 2.0 : lineHeights.latin) }]}>
+        <Text style={[styles.translationText, { color: theme.text, textAlign, lineHeight: fontSizes.translationDefault * (language === 'ur' ? lineHeights.urdu : lineHeights.latin) }]}>
           {language === 'ur' ? reflection.hadithUr : language === 'ar' ? reflection.hadithAr : reflection.hadithEn}
         </Text>
         <Text style={[styles.reference, { color: theme.textTertiary, textAlign }]}>
           {`\u2014 ${reflection.hadithSource}`}
+        </Text>
+      </View>
+
+      {/* ── Dua of the Day ───────────────────────────────────────── */}
+      <View
+        style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}
+        accessibilityLabel="Dua of the day"
+      >
+        <View style={styles.cardHeader}>
+          <View style={[styles.cardIconCircle, { backgroundColor: theme.primary + '15' }]}>
+            <Ionicons name="hand-left-outline" size={16} color={theme.primary} />
+          </View>
+          <Text style={[styles.cardTitle, { color: theme.primary }]}>
+            {t(language, 'today.duaOfDay')}
+          </Text>
+        </View>
+        <Text style={[styles.hadithArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language), lineHeight: fontSizes.hadithArabic * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic) }]}>
+          {reflection.duaAr}
+        </Text>
+        <Text style={[styles.translationText, { color: theme.text, textAlign, lineHeight: fontSizes.translationDefault * (language === 'ur' ? lineHeights.urdu : lineHeights.latin) }]}>
+          {language === 'ur' ? reflection.duaUr : language === 'ar' ? reflection.duaAr : reflection.duaEn}
+        </Text>
+        <Text style={[styles.reference, { color: theme.textTertiary, textAlign }]}>
+          {`\u2014 ${reflection.duaSource}`}
         </Text>
       </View>
 
@@ -556,4 +586,19 @@ const styles = StyleSheet.create({
   chipsRow: { flexDirection: 'row' },
   chip: { paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderRadius: 999, borderWidth: 1, marginEnd: spacing.sm },
   chipText: { fontSize: fontSizes.bodySmall, fontWeight: '600' },
+
+  reflectionRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.xs,
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+  },
+  reflectionText: {
+    flex: 1,
+    fontSize: fontSizes.bodySmall,
+    fontStyle: 'italic',
+    lineHeight: fontSizes.bodySmall * 1.55,
+  },
 });

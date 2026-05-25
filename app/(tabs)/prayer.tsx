@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
@@ -22,7 +22,7 @@ export default function PrayerScreen() {
   const locationName = useAppStore((s) => s.settings.locationName);
   const { theme } = useTheme();
   const { prayerTimes, nextPrayer, countdown, currentPrayer } = usePrayerTimes();
-  const { locationName: detectedLocation } = useLocation();
+  const { locationName: detectedLocation, isDetecting, detectLocation, locationDetected } = useLocation();
   const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
   const now = new Date();
   const hijri = toHijri(now, hijriAdjustment);
@@ -57,6 +57,34 @@ export default function PrayerScreen() {
           {detectedLocation}
         </Text>
       </View>
+
+      {/* No location — prompt user */}
+      {!locationDetected && !isDetecting && (
+        <TouchableOpacity
+          style={[styles.locationPrompt, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}
+          onPress={detectLocation}
+          accessibilityRole="button"
+        >
+          <Ionicons name="location-outline" size={20} color={theme.primary} />
+          <Text style={[styles.locationPromptText, { color: theme.primary }]}>
+            {language === 'ar'
+              ? 'اضغط لتحديد موقعك وعرض مواقيت الصلاة'
+              : language === 'ur'
+              ? 'نماز کے اوقات دیکھنے کے لیے اپنا مقام متعین کریں'
+              : 'Tap to detect your location for accurate prayer times'}
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Detecting location */}
+      {isDetecting && (
+        <View style={[styles.locationPrompt, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+          <ActivityIndicator size="small" color={theme.primary} />
+          <Text style={[styles.locationPromptText, { color: theme.textSecondary }]}>
+            {language === 'ar' ? 'جاري تحديد الموقع…' : language === 'ur' ? 'مقام معلوم ہو رہا ہے…' : 'Detecting location…'}
+          </Text>
+        </View>
+      )}
 
       {/* Next Prayer Countdown */}
       {nextPrayer && countdown && (
@@ -187,6 +215,16 @@ const styles = StyleSheet.create({
   },
   locationIcon: { fontSize: 16, marginEnd: spacing.xs },
   locationText: { fontSize: fontSizes.bodySmall },
+  locationPrompt: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    borderWidth: 1,
+  },
+  locationPromptText: { fontSize: fontSizes.bodySmall, fontWeight: '600', flex: 1 },
   countdownCard: {
     borderRadius: borderRadius.lg,
     padding: spacing.lg,

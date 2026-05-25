@@ -98,7 +98,7 @@ const defaultSettings: UserSettings = {
   onboardingCompleted: false,
   theme: 'auto',
   colorTheme: 'emerald',
-  quranFontSize: 28,
+  quranFontSize: 32,
   translationFontSize: 16,
   selectedReciter: 'alafasy',
   showTransliteration: true,

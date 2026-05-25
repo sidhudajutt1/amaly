@@ -56,9 +56,24 @@ function PrayerBar() {
     );
   }
 
+  if (!prayerTimes) {
+    const noLocationLabel = language === 'ar'
+      ? 'حدد موقعك لمواقيت الصلاة'
+      : language === 'ur'
+      ? 'نماز کے اوقات کے لیے مقام متعین کریں'
+      : 'Set location for prayer times';
+    return (
+      <View style={[styles.prayerBar, { backgroundColor: theme.prayerBar }]}>
+        <Text style={[styles.prayerBarText, { color: theme.prayerBarText, opacity: 0.6 }]}>
+          {noLocationLabel}
+        </Text>
+      </View>
+    );
+  }
+
   const prayerNameKey = nextPrayer
     ? `prayer.${nextPrayer.name}` as const
-    : 'prayer.dhuhr';
+    : 'prayer.fajr';
   const timeStr = nextPrayer ? formatTime(nextPrayer.time) : '--:--';
   const countdownStr = countdown
     ? `${countdown.hours}${t(language, 'prayer.hours')} ${countdown.minutes}${t(language, 'prayer.minutes')}`

@@ -48,7 +48,7 @@ export function getTranslationFontFamily(language: Language): string | undefined
 }
 
 export const fontSizes = {
-  quranArabic: 28,
+  quranArabic: 32,
   quranArabicLarge: 34,
   hadithArabic: 22,
   duaArabic: 24,
@@ -67,8 +67,8 @@ export const fontSizes = {
 };
 
 export const lineHeights = {
-  arabic: 1.8,
-  urdu: 2.0,
+  arabic: 2.0,
+  urdu: 2.2,
   latin: 1.6,
   tight: 1.3,
 };
