@@ -6,7 +6,7 @@ import { useTheme } from '../src/hooks/useTheme';
 import { t } from '../src/i18n';
 
 const { width } = Dimensions.get('window');
-const MIN_SPLASH_MS = 1000;
+const MIN_SPLASH_MS = 2500;
 
 export default function SplashScreen() {
   const isLoading = useAppStore((s) => s.isLoading);
@@ -39,12 +39,6 @@ export default function SplashScreen() {
     const timer = setTimeout(() => setMinElapsed(true), MIN_SPLASH_MS);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    if (!isLoading) {
-      setMinElapsed(true);
-    }
-  }, [isLoading]);
 
   useEffect(() => {
     if (!isLoading && minElapsed) {
