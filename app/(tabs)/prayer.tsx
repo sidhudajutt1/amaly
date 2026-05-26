@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { usePrayerTimes } from '../../src/hooks/usePrayerTimes';
@@ -12,6 +13,7 @@ import { toHijri, formatHijriDate, isRamadan, getRamadanDay } from '../../src/se
 import { CircularProgress } from '../../src/components/CircularProgress';
 import { hapticLight, hapticSuccess } from '../../src/utils/haptics';
 import type { PrayerName } from '../../src/types';
+import { getDefaultLocation } from '../../src/services/locationService';
 
 const PRAYER_ORDER: (PrayerName | 'sunrise')[] = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
 
@@ -21,9 +23,14 @@ export default function PrayerScreen() {
   const markPrayerCompleted = useAppStore((s) => s.markPrayerCompleted);
   const unmarkPrayerCompleted = useAppStore((s) => s.unmarkPrayerCompleted);
   const locationName = useAppStore((s) => s.settings.locationName);
+  const locationLat = useAppStore((s) => s.settings.locationLat);
+  const locationLng = useAppStore((s) => s.settings.locationLng);
   const { theme } = useTheme();
   const { prayerTimes, nextPrayer, countdown, currentPrayer } = usePrayerTimes();
-  const { locationName: detectedLocation, isDetecting, detectLocation, locationDetected } = useLocation();
+  const { locationName: detectedLocation, isDetecting, permissionDenied } = useLocation();
+  const defaultLoc = getDefaultLocation();
+  const usingDefaultLocation = locationLat === undefined
+    || (Math.abs(locationLat - defaultLoc.lat) < 0.01 && Math.abs((locationLng ?? 0) - defaultLoc.lng) < 0.01);
   const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
   const now = new Date();
   const hijri = toHijri(now, hijriAdjustment);
@@ -59,20 +66,33 @@ export default function PrayerScreen() {
         </Text>
       </View>
 
-      {/* No location — prompt user */}
-      {!locationDetected && !isDetecting && (
+      {/* Default or missing location */}
+      {usingDefaultLocation && !isDetecting && (
         <TouchableOpacity
           style={[styles.locationPrompt, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}
-          onPress={detectLocation}
+          onPress={() => router.push('/city-search')}
           accessibilityRole="button"
         >
           <Ionicons name="location-outline" size={20} color={theme.primary} />
-          <Text style={[styles.locationPromptText, { color: theme.primary }]}>
-            {language === 'ar'
-              ? 'اضغط لتحديد موقعك وعرض مواقيت الصلاة'
-              : language === 'ur'
-              ? 'نماز کے اوقات دیکھنے کے لیے اپنا مقام متعین کریں'
-              : 'Tap to detect your location for accurate prayer times'}
+          <Text style={[styles.locationPromptText, { color: theme.primary, flex: 1 }]}>
+            {permissionDenied
+              ? t(language, 'location.permissionDenied')
+              : t(language, 'prayer.defaultLocationNote')}
+          </Text>
+          <Ionicons name="chevron-forward" size={16} color={theme.primary} />
+        </TouchableOpacity>
+      )}
+
+      {/* Detect location */}
+      {!usingDefaultLocation && !isDetecting && (
+        <TouchableOpacity
+          style={[styles.locationPrompt, { backgroundColor: theme.surface, borderColor: theme.border }]}
+          onPress={() => router.push('/city-search')}
+          accessibilityRole="button"
+        >
+          <Ionicons name="create-outline" size={18} color={theme.primary} />
+          <Text style={[styles.locationPromptText, { color: theme.textSecondary, flex: 1 }]}>
+            {t(language, 'location.changeCity')}
           </Text>
         </TouchableOpacity>
       )}

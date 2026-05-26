@@ -43,6 +43,11 @@ function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked
   const translation =
     language === 'ur' ? hadith.translationUr : language === 'en' ? hadith.translationEn : null;
 
+  const collectionMeta = hadithCollections.find((c) => c.id === hadith.collectionId);
+  const bookLabel = collectionMeta
+    ? (language === 'ar' ? collectionMeta.nameAr : language === 'ur' ? collectionMeta.nameUr : collectionMeta.nameEn)
+    : hadith.bookName;
+
   return (
     <View style={[styles.hadithCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
       <View style={styles.headerRow}>
@@ -50,7 +55,7 @@ function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked
           <Text style={[styles.numberText, { color: theme.primary }]}>{hadith.hadithNumber}</Text>
         </View>
         <View style={{ flex: 1, marginStart: spacing.sm }}>
-          <Text style={[styles.bookName, { color: theme.textSecondary }]}>{hadith.bookName}</Text>
+          <Text style={[styles.bookName, { color: theme.textSecondary }]}>{bookLabel}</Text>
         </View>
         <View style={[styles.gradeBadge, { backgroundColor: `${GRADE_COLORS[hadith.grade]}15` }]}>
           <Text style={[styles.gradeText, { color: GRADE_COLORS[hadith.grade] }]}>
@@ -75,6 +80,12 @@ function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked
       <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>
         {hadith.textAr}
       </Text>
+
+      {showTransliteration && language === 'en' && hadith.narrator ? (
+        <Text style={[styles.transliteration, { color: theme.textTertiary }]}>
+          {hadith.narrator}
+        </Text>
+      ) : null}
 
       <View style={styles.ornamentRow}>
         <View style={[styles.ornamentLine, { backgroundColor: theme.border }]} />
@@ -302,6 +313,12 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     lineHeight: 22 * lineHeights.arabic,
     marginBottom: spacing.sm,
+  },
+  transliteration: {
+    fontSize: fontSizes.bodySmall,
+    fontStyle: 'italic',
+    marginBottom: spacing.sm,
+    lineHeight: fontSizes.bodySmall * 1.5,
   },
   ornamentRow: {
     flexDirection: 'row',

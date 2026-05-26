@@ -5,6 +5,7 @@ import {
   getCurrentPrayer,
   getTimeUntil,
 } from '../services/prayerService';
+import { getDefaultLocation } from '../services/locationService';
 import { useAppStore } from '../store/useAppStore';
 import type { PrayerTimes, PrayerName } from '../types';
 
@@ -34,17 +35,12 @@ export function usePrayerTimes(): {
   useEffect(() => {
     if (storeLoading) return;
 
-    // No location confirmed yet — do not fall back to Makkah
-    if (locationLat === undefined || locationLng === undefined) {
-      setPrayerTimes(null);
-      setNextPrayer(null);
-      setCurrentPrayer(null);
-      setCountdown(null);
-      return;
-    }
+    const def = getDefaultLocation();
+    const lat = locationLat ?? def.lat;
+    const lng = locationLng ?? def.lng;
 
     const recalculate = (now: Date): PrayerTimes => {
-      const times = calculatePrayerTimes(locationLat, locationLng, now, calculationMethod);
+      const times = calculatePrayerTimes(lat, lng, now, calculationMethod);
       setPrayerTimes(times);
       calculatedForDate.current = now.toDateString();
       return times;

@@ -97,7 +97,7 @@ export default function GoalsSettingsScreen() {
         {t(language, 'goals.prayers')}
       </Text>
       <ToggleRow
-        label={t(language, 'goals.prayers')}
+        label={t(language, 'goals.trackPrayers')}
         value={config.prayerGoalEnabled}
         onToggle={() => {}}
         disabled
@@ -109,7 +109,7 @@ export default function GoalsSettingsScreen() {
         {t(language, 'goals.quran')}
       </Text>
       <ToggleRow
-        label={t(language, 'goals.quran')}
+        label={t(language, 'goals.trackQuran')}
         value={config.quranGoalEnabled}
         onToggle={() => updateConfig({ quranGoalEnabled: !config.quranGoalEnabled })}
         theme={theme}

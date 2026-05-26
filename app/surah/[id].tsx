@@ -323,7 +323,7 @@ export default function SurahReaderScreen() {
   if (!surahMeta) {
     return (
       <View style={[styles.centerContainer, { backgroundColor: theme.background }]}>
-        <Text style={{ color: theme.text }}>Surah not found</Text>
+        <Text style={{ color: theme.text }}>{t(language, 'quran.surahNotFound')}</Text>
       </View>
     );
   }

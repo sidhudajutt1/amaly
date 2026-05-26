@@ -53,23 +53,21 @@ export default function CalendarScreen() {
     day === todayHijri.day && viewMonth === todayHijri.month && viewYear === todayHijri.year;
 
   const goNextMonth = () => {
-    if (viewMonth === 12) {
-      setViewMonth(1);
-      setViewYear(viewYear + 1);
-    } else {
-      setViewMonth(viewMonth + 1);
-    }
-    setSelectedDay(null);
+    const nextMonth = viewMonth === 12 ? 1 : viewMonth + 1;
+    const nextYear = viewMonth === 12 ? viewYear + 1 : viewYear;
+    const maxDay = getHijriMonthDays(nextYear, nextMonth);
+    setViewMonth(nextMonth);
+    setViewYear(nextYear);
+    setSelectedDay((prev) => (prev !== null ? Math.min(prev, maxDay) : null));
   };
 
   const goPrevMonth = () => {
-    if (viewMonth === 1) {
-      setViewMonth(12);
-      setViewYear(viewYear - 1);
-    } else {
-      setViewMonth(viewMonth - 1);
-    }
-    setSelectedDay(null);
+    const prevMonth = viewMonth === 1 ? 12 : viewMonth - 1;
+    const prevYear = viewMonth === 1 ? viewYear - 1 : viewYear;
+    const maxDay = getHijriMonthDays(prevYear, prevMonth);
+    setViewMonth(prevMonth);
+    setViewYear(prevYear);
+    setSelectedDay((prev) => (prev !== null ? Math.min(prev, maxDay) : null));
   };
 
   const goToToday = () => {
@@ -157,6 +155,8 @@ export default function CalendarScreen() {
                 selected && !today && { backgroundColor: theme.primaryLight },
               ]}
               onPress={() => setSelectedDay(day)}
+              accessibilityRole="button"
+              accessibilityLabel={`${day} ${monthName}${event ? `, ${language === 'ar' ? event.nameAr : language === 'ur' ? event.nameUr : event.nameEn}` : ''}`}
             >
               <Text style={[
                 styles.dayText,
@@ -246,6 +246,7 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
   dayCell: {
     width: '14.28%',
+    minHeight: 44,
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',

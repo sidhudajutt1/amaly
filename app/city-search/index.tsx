@@ -68,7 +68,7 @@ export default function CitySearchScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: theme.border }]}>
+      <View style={[styles.header, { borderBottomColor: theme.border, flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton} activeOpacity={0.7}>
           <Ionicons
             name={isRTL ? 'arrow-forward-outline' : 'arrow-back-outline'}

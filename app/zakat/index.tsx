@@ -4,6 +4,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
+import { t } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 
 const GOLD_NISAB_GRAMS = 85;
@@ -85,7 +86,7 @@ export default function ZakatScreen() {
           <Ionicons name={language === 'ar' || language === 'ur' ? 'arrow-forward' : 'arrow-back'} size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
-          {language === 'ar' ? 'حاسبة الزكاة' : language === 'ur' ? 'زکوٰۃ کیلکولیٹر' : 'Zakat Calculator'}
+          {t(language, 'zakat.title')}
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -94,11 +95,7 @@ export default function ZakatScreen() {
       <View style={[styles.introCard, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}>
         <MaterialCommunityIcons name="hand-coin" size={24} color={theme.primary} />
         <Text style={[styles.introText, { color: theme.text }]}>
-          {language === 'ar'
-            ? 'الزكاة واجبة على من بلغ ماله النصاب وحال عليه الحول. النسبة 2.5% من إجمالي الثروة.'
-            : language === 'ur'
-            ? 'زکوٰۃ اس شخص پر واجب ہے جس کی دولت نصاب سے زیادہ ہو اور اس پر سال گزر چکا ہو۔ شرح 2.5% ہے۔'
-            : 'Zakat is obligatory on wealth above Nisab held for one lunar year. Rate: 2.5% of total zakatable wealth.'}
+          {t(language, 'zakat.intro')}
         </Text>
       </View>
 
@@ -137,7 +134,7 @@ export default function ZakatScreen() {
         onPress={() => setShowResult(true)}
       >
         <Text style={styles.calculateText}>
-          {language === 'ar' ? 'احسب الزكاة' : language === 'ur' ? 'زکوٰۃ حساب کریں' : 'Calculate Zakat'}
+          {t(language, 'zakat.calculate')}
         </Text>
       </TouchableOpacity>
 
@@ -145,29 +142,29 @@ export default function ZakatScreen() {
       {showResult && (
         <View style={[styles.resultCard, { backgroundColor: theme.surface, borderColor: theme.primary }]}>
           <Text style={[styles.resultHeader, { color: theme.text }]}>
-            {language === 'ar' ? 'النتيجة' : language === 'ur' ? 'نتیجہ' : 'Result'}
+            {t(language, 'zakat.result')}
           </Text>
           <View style={styles.resultRow}>
             <Text style={[styles.resultLabel, { color: theme.textSecondary }]}>
-              {language === 'ar' ? 'إجمالي الأصول' : language === 'ur' ? 'کل اثاثے' : 'Total Assets'}
+              {t(language, 'zakat.totalAssets')}
             </Text>
             <Text style={[styles.resultValue, { color: theme.text }]}>{`${currency} ${totalAssets.toLocaleString()}`}</Text>
           </View>
           <View style={styles.resultRow}>
             <Text style={[styles.resultLabel, { color: theme.textSecondary }]}>
-              {language === 'ar' ? 'الخصومات' : language === 'ur' ? 'کٹوتیاں' : 'Deductions'}
+              {t(language, 'zakat.deductions')}
             </Text>
             <Text style={[styles.resultValue, { color: theme.text }]}>{`${currency} ${totalDeductions.toLocaleString()}`}</Text>
           </View>
           <View style={[styles.resultRow, styles.resultDivider, { borderTopColor: theme.border }]}>
             <Text style={[styles.resultLabel, { color: theme.textSecondary }]}>
-              {language === 'ar' ? 'الثروة الزكوية' : language === 'ur' ? 'زکوٰۃ قابل دولت' : 'Zakatable Wealth'}
+              {t(language, 'zakat.zakatableWealth')}
             </Text>
             <Text style={[styles.resultValue, { color: theme.text }]}>{`${currency} ${netZakatableWealth.toLocaleString()}`}</Text>
           </View>
           <View style={[styles.zakatRow, { backgroundColor: theme.primaryLight }]}>
             <Text style={[styles.zakatLabel, { color: theme.primary }]}>
-              {language === 'ar' ? 'الزكاة المستحقة (2.5%)' : language === 'ur' ? 'واجب زکوٰۃ (2.5%)' : 'Zakat Due (2.5%)'}
+              {t(language, 'zakat.zakatDue')}
             </Text>
             <Text style={[styles.zakatAmount, { color: theme.primary }]}>{`${currency} ${zakatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</Text>
           </View>
@@ -176,11 +173,7 @@ export default function ZakatScreen() {
 
       {/* Disclaimer */}
       <Text style={[styles.disclaimer, { color: theme.textTertiary }]}>
-        {language === 'ar'
-          ? 'هذا الحاسب للتقدير فقط. يرجى استشارة عالم مؤهل لحالتك الخاصة.'
-          : language === 'ur'
-          ? 'یہ حساب صرف اندازے کے لیے ہے۔ اپنی مخصوص صورتحال کے لیے عالم سے مشورہ کریں۔'
-          : 'This calculator provides estimates only. Please consult a qualified scholar for your specific situation.'}
+        {t(language, 'zakat.disclaimer')}
       </Text>
 
       <View style={{ height: 80 }} />

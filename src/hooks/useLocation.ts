@@ -56,6 +56,7 @@ export function useLocation() {
           return true;
         } catch {
           setPermissionDenied(true);
+          setLocationAutoDetect?.(false);
           return false;
         }
       }
@@ -67,6 +68,7 @@ export function useLocation() {
       const granted = await requestLocationPermission();
       if (!granted) {
         setPermissionDenied(true);
+        setLocationAutoDetect?.(false);
         setIsDetecting(false);
         return false;
       }

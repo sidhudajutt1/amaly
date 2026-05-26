@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet, Platform, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -44,7 +44,7 @@ export default function NotificationsScreen() {
     }
   }, []);
 
-  const reschedule = async () => {
+  const reschedule = useCallback(async () => {
     await cancelAllScheduled();
 
     const state = useAppStore.getState();
@@ -74,16 +74,24 @@ export default function NotificationsScreen() {
         await scheduleIftarAlert(iftarTime, lang);
       }
     }
-  };
+  }, []);
+
+  const rescheduleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scheduleReschedule = useCallback(() => {
+    if (rescheduleTimer.current) clearTimeout(rescheduleTimer.current);
+    rescheduleTimer.current = setTimeout(() => {
+      reschedule();
+    }, 400);
+  }, [reschedule]);
 
   const handleTogglePrayer = (prayer: PrayerName) => {
     togglePrayerAlert(prayer);
-    reschedule();
+    scheduleReschedule();
   };
 
   const handleToggle = (key: 'morningReflection' | 'quranGoal' | 'suhoorAlert' | 'iftarAlert') => {
     setNotificationPrefs({ [key]: !notificationPrefs[key] });
-    reschedule();
+    scheduleReschedule();
   };
 
   const handleRequestPermission = async () => {

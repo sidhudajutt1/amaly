@@ -1,12 +1,12 @@
-import { useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet, Linking, Alert } from 'react-native';
+import { useCallback, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet, Linking, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as StoreReview from 'expo-store-review';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLocation } from '../../src/hooks/useLocation';
-import { t } from '../../src/i18n';
+import { t, isRTL } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius, colorThemeMeta, type ColorThemeName } from '../../src/theme';
 import type { Language, ColorTheme, CalculationMethod, ReciterId } from '../../src/types';
 
@@ -53,11 +53,12 @@ const CALC_METHODS: { id: CalculationMethod; label: string }[] = [
   { id: 'MoonsightingCommittee', label: 'Moonsighting Committee' },
 ];
 
-function SettingRow({ label, value, onPress, theme }: {
+function SettingRow({ label, value, onPress, theme, accessibilityHint }: {
   label: string;
   value?: string;
   onPress?: () => void;
   theme: Record<string, string>;
+  accessibilityHint?: string;
 }) {
   const content = (
     <>
@@ -72,7 +73,7 @@ function SettingRow({ label, value, onPress, theme }: {
 
   if (!onPress) {
     return (
-      <View style={[styles.row, { borderColor: theme.border }]}>
+      <View style={[styles.row, { borderColor: theme.border }]} accessibilityLabel={label}>
         {content}
       </View>
     );
@@ -83,6 +84,9 @@ function SettingRow({ label, value, onPress, theme }: {
       style={[styles.row, { borderColor: theme.border }]}
       onPress={onPress}
       activeOpacity={0.6}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityHint={accessibilityHint}
     >
       {content}
     </TouchableOpacity>
@@ -133,6 +137,8 @@ function SegmentedControl({ options, selected, onSelect, theme }: {
   );
 }
 
+type ExpandedSection = 'calc' | 'reciter' | null;
+
 export default function SettingsTab() {
   const language = useAppStore((s) => s.settings.language);
   const themeMode = useAppStore((s) => s.settings.theme);
@@ -152,11 +158,30 @@ export default function SettingsTab() {
   const setReciter = useAppStore((s) => s.setReciter);
   const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
   const setHijriAdjustment = useAppStore((s) => s.setHijriAdjustment);
-  const { locationName, isDetecting, detectLocation, locationAutoDetect } = useLocation();
+  const { locationName, isDetecting, detectLocation, locationAutoDetect, permissionDenied } = useLocation();
   const setLocationAutoDetect = useAppStore((s) => s.setLocationAutoDetect);
   const { theme } = useTheme();
+  const [expanded, setExpanded] = useState<ExpandedSection>(null);
 
   const currentMethodLabel = CALC_METHODS.find((m) => m.id === calcMethod)?.label || calcMethod;
+  const currentReciter = RECITERS.find((r) => r.id === selectedReciter);
+  const reciterLabel = language === 'ar' || language === 'ur'
+    ? currentReciter?.nameAr
+    : currentReciter?.name;
+
+  const handleLanguageChange = useCallback((key: string) => {
+    const next = key as Language;
+    const wasRtl = isRTL(language);
+    const willRtl = isRTL(next);
+    setLanguage(next);
+    if (Platform.OS !== 'web' && wasRtl !== willRtl) {
+      Alert.alert(
+        t(next, 'settings.restartTitle'),
+        t(next, 'settings.restartMessage'),
+        [{ text: t(next, 'common.done') }],
+      );
+    }
+  }, [language, setLanguage]);
 
   const handleRateApp = useCallback(() => requestAppReview(language), [language]);
   const handleReportContent = useCallback(() => {
@@ -192,7 +217,7 @@ export default function SettingsTab() {
           { key: 'ur', label: 'اردو' },
         ]}
         selected={language}
-        onSelect={(key) => setLanguage(key as Language)}
+        onSelect={handleLanguageChange}
         theme={theme}
       />
 
@@ -256,10 +281,21 @@ export default function SettingsTab() {
       />
       <ToggleRow
         label={t(language, 'settings.autoDetectLocation')}
-        value={locationAutoDetect ?? true}
-        onToggle={() => setLocationAutoDetect(!(locationAutoDetect ?? true))}
+        value={(locationAutoDetect ?? true) && !permissionDenied}
+        onToggle={async () => {
+          if (permissionDenied) {
+            await detectLocation();
+            return;
+          }
+          setLocationAutoDetect(!(locationAutoDetect ?? true));
+        }}
         theme={theme}
       />
+      {permissionDenied && (
+        <Text style={[styles.hintText, { color: theme.error || '#C62828' }]}>
+          {t(language, 'location.permissionDenied')}
+        </Text>
+      )}
 
       <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.lg }]}>
         {t(language, 'settings.prayerCalculation')}
@@ -267,17 +303,41 @@ export default function SettingsTab() {
       <SettingRow
         label={t(language, 'settings.calculationMethod')}
         value={currentMethodLabel}
-        onPress={() => {
-          const idx = CALC_METHODS.findIndex((m) => m.id === calcMethod);
-          const next = CALC_METHODS[(idx + 1) % CALC_METHODS.length];
-          setCalculationMethod(next.id);
-        }}
+        onPress={() => setExpanded(expanded === 'calc' ? null : 'calc')}
         theme={theme}
+        accessibilityHint={t(language, 'settings.tapToChoose')}
       />
-      <SettingRow
-        label={t(language, 'settings.hijriAdjust')}
-        value={`${hijriAdjustment >= 0 ? '+' : ''}${hijriAdjustment}`}
-        onPress={() => setHijriAdjustment(hijriAdjustment >= 2 ? -2 : hijriAdjustment + 1)}
+      {expanded === 'calc' && CALC_METHODS.map((method) => (
+        <TouchableOpacity
+          key={method.id}
+          style={[styles.pickerRow, { borderColor: theme.border }]}
+          onPress={() => {
+            setCalculationMethod(method.id);
+            setExpanded(null);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={method.label}
+        >
+          <Text style={[styles.pickerLabel, { color: theme.text }]}>{method.label}</Text>
+          {calcMethod === method.id && (
+            <Ionicons name="checkmark-circle" size={22} color={theme.primary} />
+          )}
+        </TouchableOpacity>
+      ))}
+
+      <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.md }]}>
+        {t(language, 'settings.hijriAdjust')}
+      </Text>
+      <SegmentedControl
+        options={[
+          { key: '-2', label: '-2' },
+          { key: '-1', label: '-1' },
+          { key: '0', label: t(language, 'hijri.noChange') },
+          { key: '1', label: '+1' },
+          { key: '2', label: '+2' },
+        ]}
+        selected={String(hijriAdjustment)}
+        onSelect={(key) => setHijriAdjustment(Number(key))}
         theme={theme}
       />
 
@@ -304,14 +364,30 @@ export default function SettingsTab() {
       />
       <SettingRow
         label={t(language, 'settings.reciter')}
-        value={RECITERS.find((r) => r.id === selectedReciter)?.name || selectedReciter}
-        onPress={() => {
-          const idx = RECITERS.findIndex((r) => r.id === selectedReciter);
-          const next = RECITERS[(idx + 1) % RECITERS.length];
-          setReciter(next.id);
-        }}
+        value={reciterLabel || selectedReciter}
+        onPress={() => setExpanded(expanded === 'reciter' ? null : 'reciter')}
         theme={theme}
+        accessibilityHint={t(language, 'settings.tapToChoose')}
       />
+      {expanded === 'reciter' && RECITERS.map((reciter) => (
+        <TouchableOpacity
+          key={reciter.id}
+          style={[styles.pickerRow, { borderColor: theme.border }]}
+          onPress={() => {
+            setReciter(reciter.id);
+            setExpanded(null);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={language === 'ar' || language === 'ur' ? reciter.nameAr : reciter.name}
+        >
+          <Text style={[styles.pickerLabel, { color: theme.text }]}>
+            {language === 'ar' || language === 'ur' ? reciter.nameAr : reciter.name}
+          </Text>
+          {selectedReciter === reciter.id && (
+            <Ionicons name="checkmark-circle" size={22} color={theme.primary} />
+          )}
+        </TouchableOpacity>
+      ))}
 
       <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.lg }]}>
         {t(language, 'settings.more')}
@@ -379,4 +455,14 @@ const styles = StyleSheet.create({
   swatchRow: { flexDirection: 'row', gap: 4 },
   swatch: { width: 18, height: 18, borderRadius: 9 },
   themeLabel: { fontSize: fontSizes.caption, fontWeight: '500' },
+  hintText: { fontSize: fontSizes.caption, marginBottom: spacing.sm, lineHeight: fontSizes.caption * 1.5 },
+  pickerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  pickerLabel: { fontSize: fontSizes.bodySmall, flex: 1 },
 });

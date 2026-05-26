@@ -4,7 +4,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
-import { t } from '../../src/i18n';
+import { t, isRTL } from '../../src/i18n';
 import { duaCategories } from '../../src/data/duaCategories';
 import { getQiblaDirection, getDistanceToMakkah } from '../../src/services/prayerService';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
@@ -38,6 +38,7 @@ function DuaCategoryRow({ cat, language, theme }: {
   theme: Record<string, string>;
 }) {
   const name = language === 'ar' ? cat.nameAr : language === 'ur' ? cat.nameUr : cat.nameEn;
+  const rtl = isRTL(language);
   return (
     <TouchableOpacity
       style={[styles.duaRow, { backgroundColor: theme.surface, borderColor: theme.border }]}
@@ -53,7 +54,7 @@ function DuaCategoryRow({ cat, language, theme }: {
           {cat.count} {language === 'ar' ? 'دعاء' : language === 'ur' ? 'دعائیں' : 'duas'}
         </Text>
       </View>
-      <Text style={[styles.duaArrow, { color: theme.textTertiary }]}>›</Text>
+      <Ionicons name={rtl ? 'chevron-back' : 'chevron-forward'} size={18} color={theme.textTertiary} />
     </TouchableOpacity>
   );
 }
@@ -68,6 +69,7 @@ export default function IbadahScreen() {
   const lng = locationLng ?? 39.8262;
   const qiblaDir = Math.round(getQiblaDirection(lat, lng));
   const distKm = getDistanceToMakkah(lat, lng);
+  const rtl = isRTL(language);
 
   return (
     <ScrollView
@@ -127,7 +129,7 @@ export default function IbadahScreen() {
             {language === 'ar' ? 'احسب زكاتك' : language === 'ur' ? 'اپنی زکوٰۃ حساب کریں' : 'Calculate your obligatory Zakat'}
           </Text>
         </View>
-        <Text style={[styles.duaArrow, { color: theme.textTertiary }]}>›</Text>
+        <Ionicons name={rtl ? 'chevron-back' : 'chevron-forward'} size={18} color={theme.textTertiary} />
       </TouchableOpacity>
 
       {/* Dua Categories */}
@@ -181,5 +183,4 @@ const styles = StyleSheet.create({
   duaInfo: { flex: 1 },
   duaName: { fontSize: fontSizes.body, fontWeight: '600', marginBottom: 2 },
   duaCount: { fontSize: fontSizes.caption },
-  duaArrow: { fontSize: 24, fontWeight: '300' },
 });
