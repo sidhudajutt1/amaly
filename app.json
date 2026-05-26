@@ -52,7 +52,8 @@
         {
           "locationWhenInUsePermission": "Amaly needs your location to calculate accurate prayer times and Qibla direction."
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": false
