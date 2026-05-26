@@ -15,7 +15,7 @@ import { useAppStore } from '../src/store/useAppStore';
 import { useTheme } from '../src/hooks/useTheme';
 import { t, languageNames, isRTL } from '../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../src/theme';
-import { requestLocationPermission, getCurrentLocation } from '../src/services/locationService';
+import { requestLocationPermission, getCurrentLocation, getDefaultLocation } from '../src/services/locationService';
 import { DEFAULT_GOAL_CONFIG } from '../src/services/goalsService';
 import { hapticLight } from '../src/utils/haptics';
 import type { Language, GrowthCategory } from '../src/types';
@@ -79,8 +79,14 @@ export default function OnboardingScreen() {
     );
   };
 
+  const applyDefaultLocation = () => {
+    const def = getDefaultLocation();
+    setLocation(def.lat, def.lng, `${def.cityName}, ${def.countryName}`);
+  };
+
   const handleLocationRequest = async () => {
     if (Platform.OS === 'web') {
+      applyDefaultLocation();
       setStep(2);
       return;
     }
@@ -113,7 +119,7 @@ export default function OnboardingScreen() {
   };
 
   const canGoNext = () => {
-    if (step === 2) return selectedCategories.length >= 3;
+    if (step === 2) return selectedCategories.length >= 1;
     return true;
   };
 
@@ -143,7 +149,7 @@ export default function OnboardingScreen() {
           <Text style={[styles.appName, { color: theme.primary }]}>عَمَلِي</Text>
           <Text style={[styles.appNameLatin, { color: theme.primary }]}>AMALY</Text>
           <Text style={[styles.tagline, { color: theme.textSecondary }]}>
-            {lang === 'ar' ? 'ابدأ يومك بعملٍ صالح' : lang === 'ur' ? 'اپنا دن ایک نیک عمل سے شروع کرو' : 'Begin your day\nwith a good deed.'}
+            {t(lang, 'onboarding.welcome')}
           </Text>
 
           <View style={styles.langRow}>
@@ -178,7 +184,7 @@ export default function OnboardingScreen() {
           accessibilityRole="button"
         >
           <Text style={styles.primaryButtonText}>
-            {lang === 'ar' ? 'ابدأ رحلتك' : lang === 'ur' ? 'سفر شروع کریں' : 'Start Your Journey'}
+            {t(lang, 'onboarding.startJourney')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -201,10 +207,10 @@ export default function OnboardingScreen() {
             <Ionicons name="location" size={48} color={theme.primary} />
           </View>
           <Text style={[styles.stepTitle, { color: theme.text, marginTop: spacing.lg }]}>
-            {lang === 'ar' ? 'تحديد الموقع' : lang === 'ur' ? 'مقام کا تعین' : 'Enable Location'}
+            {t(lang, 'onboarding.locationTitle')}
           </Text>
           <Text style={[styles.stepSubtitle, { color: theme.textSecondary }]}>
-            {lang === 'ar' ? 'لحساب أوقات الصلاة الدقيقة واتجاه القبلة' : lang === 'ur' ? 'نماز کے درست اوقات اور قبلے کی سمت کے لیے' : 'For accurate prayer times\nand Qibla direction'}
+            {t(lang, 'onboarding.locationSubtitle')}
           </Text>
         </View>
         <View>
@@ -217,9 +223,9 @@ export default function OnboardingScreen() {
             <Ionicons name="location" size={18} color="#fff" style={{ marginRight: 8 }} />
             <Text style={styles.primaryButtonText}>{t(lang, 'location.autoDetect')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.skipButton} onPress={() => setStep(2)} accessibilityLabel="Skip location" accessibilityRole="button">
+          <TouchableOpacity style={styles.skipButton} onPress={() => { applyDefaultLocation(); setStep(2); }} accessibilityLabel="Skip location" accessibilityRole="button">
             <Text style={[styles.skipText, { color: theme.textTertiary }]}>
-              {lang === 'ar' ? 'تخطي' : lang === 'ur' ? 'چھوڑیں' : 'Skip for now'}
+              {t(lang, 'onboarding.skipLocation')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -279,7 +285,7 @@ export default function OnboardingScreen() {
               );
             })}
           </View>
-          {selectedCategories.length < 3 && (
+          {selectedCategories.length === 0 && (
             <Text style={[styles.hint, { color: theme.textTertiary }]}>
               {t(lang, 'onboarding.selectAtLeast')}
             </Text>
@@ -307,7 +313,7 @@ export default function OnboardingScreen() {
           <>
             <ActivityIndicator size="large" color={theme.primary} />
             <Text style={[styles.loadingText, { color: theme.text }]}>
-              {lang === 'ar' ? 'جارٍ بناء خطتك...' : lang === 'ur' ? 'آپ کا منصوبہ تیار ہو رہا ہے...' : 'Building your personalized plan...'}
+              {t(lang, 'onboarding.buildingPlan')}
             </Text>
           </>
         ) : (
@@ -322,9 +328,7 @@ export default function OnboardingScreen() {
               {t(lang, 'onboarding.firstReflection')}
             </Text>
             <Text style={[styles.settingsHint, { color: theme.textTertiary }]}>
-              {lang === 'ar' ? 'يمكنك تخصيص الخط وطريقة الحساب والمزيد من الإعدادات'
-                : lang === 'ur' ? 'آپ فونٹ، حساب کا طریقہ اور مزید سیٹنگز سے تبدیل کر سکتے ہیں'
-                : 'You can customize font, calculation method, and more in Settings'}
+              {t(lang, 'onboarding.settingsHint')}
             </Text>
           </>
         )}

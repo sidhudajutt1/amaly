@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState, useCallback, useMemo } from 'react';
+import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
@@ -27,7 +27,8 @@ function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked
   onToggleBookmark: () => void;
 }) {
   const isRTL = language === 'ar' || language === 'ur';
-  const translation = language === 'ur' ? hadith.translationUr : hadith.translationEn;
+  const translation =
+    language === 'ur' ? hadith.translationUr : language === 'en' ? hadith.translationEn : null;
 
   return (
     <View style={[styles.hadithCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
@@ -66,22 +67,24 @@ function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked
         <View style={[styles.ornamentLine, { backgroundColor: theme.border }]} />
       </View>
 
-      <View style={[styles.translationSection, { backgroundColor: theme.surfaceElevated, borderStartColor: theme.primary }]}>
-        <Text style={[styles.translationLabel, { color: theme.textTertiary }]}>
-          {language === 'ar' ? 'الترجمة' : language === 'ur' ? 'ترجمہ' : 'Translation'}
-        </Text>
-        <Text style={[
-          styles.translationText,
-          {
-            color: theme.text,
-            fontFamily: getTranslationFontFamily(language),
-            textAlign: isRTL ? 'right' : 'left',
-            lineHeight: language === 'ur' ? 20 * 2.0 : 20 * 1.6,
-          },
-        ]}>
-          {translation}
-        </Text>
-      </View>
+      {translation ? (
+        <View style={[styles.translationSection, { backgroundColor: theme.surfaceElevated, borderStartColor: theme.primary }]}>
+          <Text style={[styles.translationLabel, { color: theme.textTertiary }]}>
+            {language === 'ur' ? 'ترجمہ' : 'Translation'}
+          </Text>
+          <Text style={[
+            styles.translationText,
+            {
+              color: theme.text,
+              fontFamily: getTranslationFontFamily(language),
+              textAlign: isRTL ? 'right' : 'left',
+              lineHeight: language === 'ur' ? 20 * 2.0 : 20 * 1.6,
+            },
+          ]}>
+            {translation}
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -95,8 +98,21 @@ export default function HadithReaderScreen() {
   const removeBookmark = useAppStore((s) => s.removeBookmark);
   const { theme } = useTheme();
 
+  const [searchQuery, setSearchQuery] = useState('');
   const collection = hadithCollections.find((c) => c.id === collectionId);
   const collectionHadiths = getHadithsByCollection(collectionId ?? '');
+
+  const filteredHadiths = useMemo(() => {
+    if (!searchQuery.trim()) return collectionHadiths;
+    const q = searchQuery.toLowerCase();
+    return collectionHadiths.filter((h) =>
+      h.textAr.includes(searchQuery) ||
+      h.translationEn.toLowerCase().includes(q) ||
+      h.translationUr.includes(searchQuery) ||
+      h.narrator.toLowerCase().includes(q) ||
+      h.hadithNumber.toString() === searchQuery.trim()
+    );
+  }, [searchQuery, collectionHadiths]);
 
   const colName = collection
     ? language === 'ar' ? collection.nameAr : language === 'ur' ? collection.nameUr : collection.nameEn
@@ -141,8 +157,25 @@ export default function HadithReaderScreen() {
       </View>
 
       {collectionHadiths.length > 0 ? (
-        <FlatList
-          data={collectionHadiths}
+        <>
+          <View style={[styles.searchContainer, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+            <Ionicons name="search" size={16} color={theme.textTertiary} />
+            <TextInput
+              style={[styles.searchInput, { color: theme.text }]}
+              placeholder={language === 'ar' ? 'ابحث في الأحاديث...' : language === 'ur' ? 'احادیث میں تلاش کریں...' : 'Search hadiths...'}
+              placeholderTextColor={theme.textTertiary}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              returnKeyType="search"
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityLabel="Clear search">
+                <Ionicons name="close-circle" size={16} color={theme.textTertiary} />
+              </TouchableOpacity>
+            )}
+          </View>
+          <FlatList
+            data={filteredHadiths}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <HadithCard
@@ -154,9 +187,18 @@ export default function HadithReaderScreen() {
               onToggleBookmark={() => toggleBookmark(item)}
             />
           )}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Ionicons name="search" size={40} color={theme.textSecondary} />
+              <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
+                {language === 'ar' ? 'لا توجد نتائج' : language === 'ur' ? 'کوئی نتیجہ نہیں' : 'No results found'}
+              </Text>
+            </View>
+          }
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
+        </>
       ) : (
         <View style={styles.emptyState}>
           <MaterialCommunityIcons name="book-open-variant" size={48} color={theme.textSecondary} />
@@ -171,6 +213,18 @@ export default function HadithReaderScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginHorizontal: spacing.md,
+    marginVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+  },
+  searchInput: { flex: 1, fontSize: fontSizes.body, paddingVertical: 0 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

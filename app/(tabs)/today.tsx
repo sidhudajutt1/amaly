@@ -1,5 +1,7 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, Share } from 'react-native';
+import * as ExpoSharing from 'expo-sharing';
+import { captureRef } from 'react-native-view-shot';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
@@ -79,6 +81,15 @@ function AnimatedPressable({ children, onPress, style, disabled, accessibilityLa
   );
 }
 
+function getAutoTrackedHint(goalId: string, language: Language): string | null {
+  if (goalId === 'prayers') return t(language, 'goals.autoTrackedPrayers');
+  if (goalId === 'quran') return t(language, 'goals.autoTrackedQuran');
+  if (goalId === 'friday-kahf' || goalId === 'mulk' || goalId === 'taraweeh') {
+    return t(language, 'goals.autoTrackedSurah');
+  }
+  return null;
+}
+
 export default function TodayScreen() {
   const language = useAppStore((s) => s.settings.language);
   const streakData = useAppStore((s) => s.streakData);
@@ -96,6 +107,8 @@ export default function TodayScreen() {
   const { prayerTimes, nextPrayer, countdown, currentPrayer } = usePrayerTimes();
 
   const progressAnim = useRef(new Animated.Value(0)).current;
+  const niyyahCardRef = useRef<View>(null);
+  const [sharing, setSharing] = useState(false);
 
   const now = new Date();
   const hijri = toHijri(now, hijriAdjustment);
@@ -130,7 +143,26 @@ export default function TodayScreen() {
   }, [prayerTimes, nextPrayer, currentPrayer]);
 
   const reflection = useMemo(() => getSmartReflection(now, hijri), [now.toDateString(), hijri.month, hijri.day]);
+
+  const handleShareNiyyah = useCallback(async () => {
+    setSharing(true);
+    try {
+      const isAvailable = await ExpoSharing.isAvailableAsync();
+      if (isAvailable && niyyahCardRef.current) {
+        const uri = await captureRef(niyyahCardRef, { format: 'png', quality: 1 });
+        await ExpoSharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: "Share today's deed" });
+      } else {
+        const niyyahText = language === 'ur' ? reflection.niyyahUr : language === 'ar' ? reflection.niyyahAr : reflection.niyyahEn;
+        await Share.share({ message: `${niyyahText}\n\n— Amaly App`, title: "Today's Deed" });
+      }
+    } catch {
+      // user cancelled or silently dismissed
+    } finally {
+      setSharing(false);
+    }
+  }, [language, reflection]);
   const textAlign = language === 'ar' || language === 'ur' ? 'right' as const : 'left' as const;
+  const isRtl = language === 'ar' || language === 'ur';
   const todayIdx = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
   const handleGoalPress = (goalId: string) => {
@@ -172,9 +204,15 @@ export default function TodayScreen() {
         <Text style={[styles.locationLabel, { color: theme.textSecondary }]} accessibilityLabel={`Location: ${locationName}`}>
           {locationName}
         </Text>
-        <Text style={[styles.hijriDate, { color: theme.text }]} accessibilityLabel={`Hijri date: ${hijriStr}`}>
-          {hijriStr}
-        </Text>
+        <TouchableOpacity
+          onPress={() => router.push('/calendar')}
+          accessibilityRole="button"
+          accessibilityLabel={`${t(language, 'calendar.title')}: ${hijriStr}`}
+        >
+          <Text style={[styles.hijriDate, { color: theme.text }]} accessibilityLabel={`Hijri date: ${hijriStr}`}>
+            {hijriStr}
+          </Text>
+        </TouchableOpacity>
         <Text style={[styles.gregorianDate, { color: theme.textTertiary }]}>
           {now.toLocaleDateString(language === 'ar' ? 'ar-SA' : language === 'ur' ? 'ur-PK' : 'en-US', {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
@@ -203,13 +241,7 @@ export default function TodayScreen() {
       </View>
 
       {/* ── HERO: Niyyah Card (above the fold) ───────────────────── */}
-      <AnimatedPressable
-        onPress={todayProgress.niyyahCompleted ? undefined : handleNiyyahPress}
-        disabled={todayProgress.niyyahCompleted}
-        accessibilityLabel={`Today's niyyah: ${reflection.niyyahEn}`}
-        accessibilityHint={todayProgress.niyyahCompleted ? 'Already completed' : 'Tap to mark as done'}
-        style={[styles.niyyahCard, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}
-      >
+      <View style={[styles.niyyahCard, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}>
         <IslamicPattern
           width={SCREEN_WIDTH - spacing.md * 2}
           height={200}
@@ -224,6 +256,7 @@ export default function TodayScreen() {
           opacity={0.05}
           variant="corner"
         />
+        <View ref={niyyahCardRef} collapsable={false}>
         <View style={styles.niyyahHeader}>
           <View style={[styles.niyyahIconCircle, { backgroundColor: theme.primary + '20' }]}>
             <MaterialCommunityIcons name="star-crescent" size={20} color={theme.primary} />
@@ -236,6 +269,15 @@ export default function TodayScreen() {
               <Ionicons name="checkmark" size={12} color="#fff" />
             </View>
           )}
+          <TouchableOpacity
+            onPress={handleShareNiyyah}
+            style={[styles.shareIconBtn, { backgroundColor: theme.primary + '20' }]}
+            accessibilityLabel="Share today's deed"
+            accessibilityRole="button"
+            disabled={sharing}
+          >
+            <Ionicons name={sharing ? 'hourglass-outline' : 'share-outline'} size={16} color={theme.primary} />
+          </TouchableOpacity>
         </View>
         <Text style={[styles.niyyahText, { color: theme.text, textAlign }]}>
           {language === 'ur' ? reflection.niyyahUr : language === 'ar' ? reflection.niyyahAr : reflection.niyyahEn}
@@ -246,14 +288,20 @@ export default function TodayScreen() {
             {language === 'ur' ? reflection.reflectionUr : language === 'ar' ? reflection.reflectionAr : reflection.reflectionEn}
           </Text>
         </View>
-        {!todayProgress.niyyahCompleted && (
-          <View style={[styles.niyyahButton, { backgroundColor: theme.primary }]}>
+        </View>
+        {!todayProgress.niyyahCompleted ? (
+          <TouchableOpacity
+            onPress={handleNiyyahPress}
+            style={[styles.niyyahButton, { backgroundColor: theme.primary }]}
+            accessibilityLabel="I did this today"
+            accessibilityRole="button"
+          >
             <Text style={styles.niyyahButtonText}>
               {t(language, 'today.iDidThis')}
             </Text>
-          </View>
-        )}
-      </AnimatedPressable>
+          </TouchableOpacity>
+        ) : null}
+      </View>
 
       {/* ── Next Prayer ──────────────────────────────────────────── */}
       {nextPrayer && countdown && (
@@ -325,7 +373,7 @@ export default function TodayScreen() {
             <Text style={[styles.summaryPercent, { color: theme.primary }]}>
               {`${Math.round(progressPercent)}%`}
             </Text>
-            <Ionicons name="chevron-forward" size={16} color={theme.textTertiary} />
+            <Ionicons name={isRtl ? 'chevron-back' : 'chevron-forward'} size={16} color={theme.textTertiary} />
           </View>
         </View>
         <View style={[styles.progressBarBg, { backgroundColor: theme.border }]}>
@@ -343,6 +391,7 @@ export default function TodayScreen() {
         const icon = getGoalIcon(goal.type);
         const title = language === 'ar' ? goal.titleAr : language === 'ur' ? goal.titleUr : goal.titleEn;
         const canToggle = !goal.isCompleted && goal.id !== 'prayers' && goal.id !== 'quran' && goal.id !== 'friday-kahf' && goal.id !== 'mulk' && goal.id !== 'taraweeh';
+        const autoHint = !canToggle && !goal.isCompleted ? getAutoTrackedHint(goal.id, language) : null;
 
         return (
           <AnimatedPressable
@@ -368,6 +417,11 @@ export default function TodayScreen() {
               <Text style={[styles.goalTitle, { color: theme.text, textDecorationLine: goal.isCompleted ? 'line-through' : 'none' }]}>
                 {title}
               </Text>
+              {autoHint ? (
+                <Text style={[styles.goalHint, { color: theme.textTertiary, textAlign }]}>
+                  {autoHint}
+                </Text>
+              ) : null}
               {goal.target > 1 && (
                 <Text style={[styles.goalProgress, { color: theme.textTertiary }]}>
                   {`${goal.completed}/${goal.target}`}
@@ -449,7 +503,7 @@ export default function TodayScreen() {
             {t(language, 'today.duaOfDay')}
           </Text>
         </View>
-        <Text style={[styles.hadithArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language), lineHeight: fontSizes.hadithArabic * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic) }]}>
+        <Text style={[styles.duaArabic, { color: theme.textArabic, fontFamily: getArabicFontFamily(language), lineHeight: fontSizes.duaArabic * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic) }]}>
           {reflection.duaAr}
         </Text>
         <Text style={[styles.translationText, { color: theme.text, textAlign, lineHeight: fontSizes.translationDefault * (language === 'ur' ? lineHeights.urdu : lineHeights.latin) }]}>
@@ -472,7 +526,11 @@ export default function TodayScreen() {
               style={[styles.chip, { backgroundColor: theme.surface, borderColor: theme.border }]}
               onPress={() => {
                 hapticLight();
-                if (surah.id > 0) router.push(`/surah/${surah.id}`);
+                if (surah.id === 0) {
+                  router.push('/surah/2?ayah=255');
+                } else {
+                  router.push(`/surah/${surah.id}`);
+                }
               }}
               accessibilityLabel={t(language, surah.nameKey)}
               accessibilityRole="button"
@@ -526,6 +584,7 @@ const styles = StyleSheet.create({
   niyyahText: { fontSize: fontSizes.body, lineHeight: fontSizes.body * 1.7, marginBottom: spacing.lg, zIndex: 1 },
   niyyahButton: { borderRadius: borderRadius.md, paddingVertical: spacing.md, alignItems: 'center', zIndex: 1 },
   niyyahButtonText: { color: '#FFFFFF', fontSize: fontSizes.body, fontWeight: '700' },
+  shareIconBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
 
   nextPrayerCard: {
     flexDirection: 'row',
@@ -567,6 +626,7 @@ const styles = StyleSheet.create({
   },
   goalTitle: { fontSize: fontSizes.body },
   goalProgress: { fontSize: fontSizes.caption, marginTop: 2 },
+  goalHint: { fontSize: fontSizes.caption, marginTop: 4, lineHeight: fontSizes.caption * 1.4 },
   goalCheck: { width: 28, height: 28, borderRadius: 14, borderWidth: 2, justifyContent: 'center', alignItems: 'center' },
 
   dividerContainer: { alignItems: 'center', marginVertical: spacing.lg },
@@ -578,6 +638,7 @@ const styles = StyleSheet.create({
   bismillah: { fontSize: fontSizes.bismillah * 0.8, textAlign: 'center', marginBottom: spacing.md, lineHeight: fontSizes.bismillah * lineHeights.arabic * 0.8 },
   arabicText: { fontSize: fontSizes.quranArabic, textAlign: 'right', lineHeight: fontSizes.quranArabic * lineHeights.arabic, marginBottom: spacing.md },
   hadithArabic: { fontSize: fontSizes.hadithArabic, textAlign: 'right', lineHeight: fontSizes.hadithArabic * lineHeights.arabic, marginBottom: spacing.md },
+  duaArabic: { fontSize: fontSizes.duaArabic, textAlign: 'right', lineHeight: fontSizes.duaArabic * 2.3, letterSpacing: 0.8, marginBottom: spacing.md },
   translationText: { fontSize: fontSizes.translationDefault, lineHeight: fontSizes.translationDefault * lineHeights.latin, marginBottom: spacing.sm },
   reference: { fontSize: fontSizes.caption, fontStyle: 'italic' },
 

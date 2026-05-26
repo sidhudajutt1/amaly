@@ -1,5 +1,5 @@
-import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet } from 'react-native';
+import { Tabs, router } from 'expo-router';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppStore } from '../../src/store/useAppStore';
@@ -62,12 +62,26 @@ function PrayerBar() {
       : language === 'ur'
       ? 'نماز کے اوقات کے لیے مقام متعین کریں'
       : 'Set location for prayer times';
+    const isRTL = language === 'ar' || language === 'ur';
     return (
-      <View style={[styles.prayerBar, { backgroundColor: theme.prayerBar }]}>
-        <Text style={[styles.prayerBarText, { color: theme.prayerBarText, opacity: 0.6 }]}>
+      <TouchableOpacity
+        style={[styles.prayerBar, { backgroundColor: theme.prayerBar }]}
+        onPress={() => router.push('/city-search')}
+        accessibilityRole="button"
+        accessibilityLabel={noLocationLabel}
+        accessibilityHint={language === 'ar' ? 'اضغط لتحديد المدينة' : language === 'ur' ? 'شہر منتخب کرنے کے لیے دبائیں' : 'Tap to set your city'}
+        activeOpacity={0.8}
+      >
+        <Text style={[styles.prayerBarText, { color: theme.prayerBarText, opacity: 0.9 }]}>
           {noLocationLabel}
         </Text>
-      </View>
+        <Ionicons
+          name={isRTL ? 'chevron-back' : 'chevron-forward'}
+          size={14}
+          color={theme.prayerBarText}
+          style={{ opacity: 0.9, marginStart: 4 }}
+        />
+      </TouchableOpacity>
     );
   }
 
@@ -80,11 +94,17 @@ function PrayerBar() {
     : '';
 
   return (
-    <View style={[styles.prayerBar, { backgroundColor: theme.prayerBar }]}>
+    <TouchableOpacity
+      style={[styles.prayerBar, { backgroundColor: theme.prayerBar }]}
+      onPress={() => router.push('/prayer')}
+      accessibilityRole="button"
+      accessibilityLabel={`${t(language, prayerNameKey)} ${timeStr}`}
+      activeOpacity={0.85}
+    >
       <Text style={[styles.prayerBarText, { color: theme.prayerBarText }]}>
         {`${t(language, prayerNameKey)} ${timeStr} — ${countdownStr}`}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -180,6 +200,8 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   prayerBarText: {
     fontSize: fontSizes.prayerBar,

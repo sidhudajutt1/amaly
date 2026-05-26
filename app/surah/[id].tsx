@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Audio } from 'expo-av';
@@ -17,6 +17,22 @@ import type { Language, ReciterId } from '../../src/types';
 
 const BISMILLAH_INDOPAK = 'بِسۡمِ اللهِ الرَّحۡمٰنِ الرَّحِيۡمِ';
 const BISMILLAH_UTHMANI = 'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِيمِ';
+
+// Islamic Network CDN reciter IDs for whole-surah MP3 downloads
+const ISLAMIC_NETWORK_RECITER: Record<ReciterId, string> = {
+  alafasy: 'ar.alafasy',
+  husary: 'ar.husary',
+  minshawi: 'ar.minshawi',
+  abdulbasit: 'ar.abdulbasitmujawwad',
+  sudais: 'ar.abdurrahmaan.as-sudais',
+  shuraim: 'ar.shaatri',
+};
+
+function getSurahAudioUrl(reciter: ReciterId, surahNumber: number): string {
+  const id = ISLAMIC_NETWORK_RECITER[reciter] ?? 'ar.alafasy';
+  const n = surahNumber.toString().padStart(3, '0');
+  return `https://cdn.islamic.network/quran/audio-surah/128/${id}/${n}.mp3`;
+}
 
 function Bismillah({ theme, language }: { theme: Record<string, string>; language: Language }) {
   return (
@@ -42,10 +58,8 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
 }) {
   const [tafsirOpen, setTafsirOpen] = useState(false);
 
-  const getTranslation = () => {
-    if (language === 'ur') return ayah.translationUr;
-    return ayah.translationEn;
-  };
+  const translation =
+    language === 'ur' ? ayah.translationUr : language === 'en' ? ayah.translationEn : null;
 
   const indoPakText = language === 'ur' ? getIndoPakAyahText(surahNumber, ayah.number) : null;
   const arabicDisplayText = indoPakText ?? ayah.textAr;
@@ -83,12 +97,16 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
       <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, lineHeight: quranFontSize * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic), fontFamily: arabicFontFamily }]}>
         {arabicDisplayText}
       </Text>
-      <View style={styles.divider}>
-        <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
-      </View>
-      <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize, lineHeight: Math.round(translationFontSize * (language === 'ur' ? lineHeights.urdu : lineHeights.latin)), fontFamily: getTranslationFontFamily(language) }]}>
-        {getTranslation()}
-      </Text>
+      {translation ? (
+        <>
+          <View style={styles.divider}>
+            <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
+          </View>
+          <Text style={[styles.translationText, { color: theme.text, fontSize: translationFontSize, lineHeight: Math.round(translationFontSize * (language === 'ur' ? lineHeights.urdu : lineHeights.latin)), fontFamily: getTranslationFontFamily(language) }]}>
+            {translation}
+          </Text>
+        </>
+      ) : null}
 
       {hasTafsir && (
         <TouchableOpacity
@@ -185,7 +203,7 @@ function AudioControlBar({ playbackState, currentAyah, totalAyahs, surahName, on
 }
 
 export default function SurahReaderScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, ayah: ayahParam } = useLocalSearchParams<{ id: string; ayah?: string }>();
   const surahNumber = parseInt(id || '1', 10);
   const language = useAppStore((s) => s.settings.language);
   const quranFontSize = useAppStore((s) => s.settings.quranFontSize);
@@ -201,6 +219,9 @@ export default function SurahReaderScreen() {
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle');
   const [currentAyah, setCurrentAyah] = useState<number | null>(null);
   const playerRef = useRef<AudioPlayer | null>(null);
+  const listRef = useRef<FlatList<AyahData>>(null);
+  const scrollToAyahDone = useRef(false);
+  const targetAyah = ayahParam ? parseInt(ayahParam, 10) : null;
 
   const surahMeta = surahs.find((s) => s.number === surahNumber);
   const surahData = getSurahData(surahNumber);
@@ -219,6 +240,23 @@ export default function SurahReaderScreen() {
       playerRef.current?.cleanup();
     };
   }, []);
+
+  useEffect(() => {
+    scrollToAyahDone.current = false;
+  }, [surahNumber, ayahParam]);
+
+  useEffect(() => {
+    if (!targetAyah || !surahData || scrollToAyahDone.current) return;
+    const index = surahData.ayahs.findIndex((a) => a.number === targetAyah);
+    if (index < 0) return;
+
+    const timer = setTimeout(() => {
+      listRef.current?.scrollToIndex({ index, animated: true, viewPosition: 0.15 });
+      scrollToAyahDone.current = true;
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [targetAyah, surahData]);
 
   const getPlayer = useCallback(() => {
     if (!playerRef.current) {
@@ -305,9 +343,34 @@ export default function SurahReaderScreen() {
             theme={theme}
             language={language}
           />
+          <TouchableOpacity
+            style={[styles.downloadBtn, { backgroundColor: theme.surface, borderColor: theme.border }]}
+            onPress={() => Linking.openURL(getSurahAudioUrl(selectedReciter, surahNumber))}
+            accessibilityLabel="Download surah audio"
+            accessibilityRole="button"
+          >
+            <Ionicons name="download-outline" size={16} color={theme.primary} />
+            <Text style={[styles.downloadBtnText, { color: theme.primary }]}>
+              {language === 'ar' ? 'تحميل السورة MP3' : language === 'ur' ? 'سورہ MP3 ڈاؤن لوڈ' : 'Download Surah MP3'}
+            </Text>
+          </TouchableOpacity>
           <FlatList
+            ref={listRef}
             data={surahData.ayahs}
             keyExtractor={(item) => `${surahNumber}-${item.number}`}
+            onScrollToIndexFailed={(info) => {
+              listRef.current?.scrollToOffset({
+                offset: info.averageItemLength * info.index,
+                animated: false,
+              });
+              setTimeout(() => {
+                listRef.current?.scrollToIndex({
+                  index: info.index,
+                  animated: true,
+                  viewPosition: 0.15,
+                });
+              }, 150);
+            }}
             ListHeaderComponent={surahNumber !== 1 && surahNumber !== 9 ? <Bismillah theme={theme} language={language} /> : null}
             renderItem={({ item }) => (
               <AyahCard
@@ -423,9 +486,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   actionBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -495,6 +558,18 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
   },
   playAllText: { color: '#fff', fontWeight: '700', fontSize: fontSizes.bodySmall },
+  downloadBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.xs,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+  },
+  downloadBtnText: { fontSize: fontSizes.bodySmall, fontWeight: '600' },
   comingSoon: {
     flex: 1,
     justifyContent: 'center',

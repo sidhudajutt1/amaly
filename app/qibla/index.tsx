@@ -6,6 +6,7 @@ import Svg, { Circle, Line, G, Text as SvgText } from 'react-native-svg';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { getQiblaDirection, getDistanceToMakkah } from '../../src/services/prayerService';
+import { t } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 
 function useHeading(): number | null {
@@ -43,13 +44,16 @@ function useHeading(): number | null {
 
 export default function QiblaScreen() {
   const language = useAppStore((s) => s.settings.language);
-  const locationLat = useAppStore((s) => s.settings.locationLat) ?? 21.4225;
+  const locationLat = useAppStore((s) => s.settings.locationLat);
   const locationLng = useAppStore((s) => s.settings.locationLng) ?? 39.8262;
+  const lat = locationLat ?? 21.4225;
+  const lng = locationLng ?? 39.8262;
   const locationName = useAppStore((s) => s.settings.locationName);
   const { theme } = useTheme();
 
-  const qiblaAngle = Math.round(getQiblaDirection(locationLat, locationLng));
-  const distance = getDistanceToMakkah(locationLat, locationLng);
+  const usingDefaultLocation = locationLat === undefined;
+  const qiblaAngle = Math.round(getQiblaDirection(lat, lng));
+  const distance = getDistanceToMakkah(lat, lng);
 
   const heading = useHeading();
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -107,6 +111,19 @@ export default function QiblaScreen() {
         </Text>
       </View>
 
+      {usingDefaultLocation && (
+        <TouchableOpacity
+          style={[styles.defaultHint, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}
+          onPress={() => router.push('/city-search')}
+          accessibilityRole="button"
+        >
+          <Ionicons name="information-circle-outline" size={18} color={theme.primary} />
+          <Text style={[styles.defaultHintText, { color: theme.primary }]}>
+            {t(language, 'qibla.defaultLocationHint')}
+          </Text>
+        </TouchableOpacity>
+      )}
+
       {isLive && (
         <View style={[styles.liveBadge, { backgroundColor: theme.success + '20' }]}>
           <View style={[styles.liveIndicator, { backgroundColor: theme.success }]} />
@@ -117,7 +134,7 @@ export default function QiblaScreen() {
       )}
 
       <View style={styles.compassContainer} accessibilityLabel={`Qibla direction: ${qiblaAngle} degrees`}>
-        <Animated.View style={{ transform: [{ rotate: isLive ? compassRotation : '0deg' }] }}>
+        <Animated.View style={{ transform: [{ rotate: compassRotation }] }}>
           <Svg width={compassSize} height={compassSize}>
             <Circle cx={center} cy={center} r={radius} stroke={theme.border} strokeWidth={2} fill="none" />
             <Circle cx={center} cy={center} r={radius - 15} stroke={theme.border} strokeWidth={0.5} fill="none" />
@@ -230,6 +247,17 @@ const styles = StyleSheet.create({
   title: { fontSize: fontSizes.heading2, fontWeight: '700' },
   locationRow: { flexDirection: 'row', alignItems: 'center', gap: 4, justifyContent: 'center', marginBottom: spacing.sm },
   locationText: { fontSize: fontSizes.bodySmall },
+  defaultHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.md,
+    padding: spacing.sm,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+  },
+  defaultHintText: { flex: 1, fontSize: fontSizes.caption, lineHeight: fontSizes.caption * 1.5 },
   liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',

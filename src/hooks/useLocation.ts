@@ -93,10 +93,24 @@ export function useLocation() {
 
   useEffect(() => {
     if (storeLoading) return;
-    if (!locationLat && locationAutoDetect !== false) {
-      detectLocation();
+    if (locationLat !== undefined) return;
+
+    const applyDefault = () => {
+      const def = getDefaultLocation();
+      setLocation(def.lat, def.lng, `${def.cityName}, ${def.countryName}`);
+    };
+
+    if (locationAutoDetect === false) {
+      applyDefault();
+      return;
     }
-  }, [storeLoading, locationLat, locationAutoDetect, detectLocation]);
+
+    detectLocation().then((ok) => {
+      if (!ok && useAppStore.getState().settings.locationLat === undefined) {
+        applyDefault();
+      }
+    });
+  }, [storeLoading, locationLat, locationAutoDetect, detectLocation, setLocation]);
 
   return useMemo(() => ({
     lat: locationLat ?? 21.4225,

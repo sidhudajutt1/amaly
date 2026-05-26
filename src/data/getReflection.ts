@@ -28,10 +28,11 @@ export interface EnrichedReflection extends DailyReflection {
 export function getSmartReflection(gregorian: Date, hijri: HijriDate): EnrichedReflection {
   const special = getSpecialDayReflection(hijri.month, hijri.day);
   if (special) {
-    const base = getFallbackReflection(gregorian);
-    const extras = getThemeExtra(base.day);
+    const idx = getHijriThemedIndex(hijri.month, hijri.day, dailyReflections.length);
+    const themed = dailyReflections[idx] ?? dailyReflections[0];
+    const extras = getThemeExtra(themed.day);
     return {
-      ...base,
+      ...themed,
       niyyahEn: special.niyyahEn,
       niyyahAr: special.niyyahAr,
       niyyahUr: special.niyyahUr,

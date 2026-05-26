@@ -5,12 +5,17 @@ import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { t } from '../../src/i18n';
 import {
   requestPermissions,
   cancelAllScheduled,
   scheduleDailyReflection,
   scheduleQuranReminder,
+  scheduleAllPrayerNotifications,
+  scheduleSuhoorAlert,
+  scheduleIftarAlert,
 } from '../../src/services/notificationService';
+import { calculatePrayerTimes, getRamadanTimes } from '../../src/services/prayerService';
 import type { PrayerName, Language } from '../../src/types';
 
 const PRAYER_NAMES: { id: PrayerName; en: string; ar: string; ur: string }[] = [
@@ -42,12 +47,32 @@ export default function NotificationsScreen() {
   const reschedule = async () => {
     await cancelAllScheduled();
 
-    if (notificationPrefs.morningReflection) {
-      const [h, m] = (useAppStore.getState().settings.notificationTime || '05:30').split(':').map(Number);
-      await scheduleDailyReflection(h, m, language);
+    const state = useAppStore.getState();
+    const prefs = state.notificationPrefs;
+    const { settings } = state;
+    const lang = settings.language;
+
+    if (prefs.morningReflection) {
+      const [h, m] = (settings.notificationTime || '05:30').split(':').map(Number);
+      await scheduleDailyReflection(h, m, lang);
     }
-    if (notificationPrefs.quranGoal) {
-      await scheduleQuranReminder(language);
+    if (prefs.quranGoal) {
+      await scheduleQuranReminder(lang);
+    }
+
+    const { locationLat, locationLng, calculationMethod } = settings;
+    if (locationLat !== undefined && locationLng !== undefined) {
+      const times = calculatePrayerTimes(locationLat, locationLng, new Date(), calculationMethod);
+      await scheduleAllPrayerNotifications(times, prefs.prayerAlerts, lang);
+
+      if (prefs.suhoorAlert) {
+        const { suhoorEnd } = getRamadanTimes(times);
+        await scheduleSuhoorAlert(suhoorEnd, lang);
+      }
+      if (prefs.iftarAlert) {
+        const { iftarTime } = getRamadanTimes(times);
+        await scheduleIftarAlert(iftarTime, lang);
+      }
     }
   };
 
@@ -146,7 +171,7 @@ export default function NotificationsScreen() {
       <View style={[styles.row, { borderColor: theme.border }]}>
         <View style={{ flex: 1 }}>
           <Text style={[styles.rowLabel, { color: theme.text }]}>
-            {label(language, 'Morning Niyyah', 'نية الصباح', 'صبح کی نیت')}
+            {t(language, 'notifications.morningDeed')}
           </Text>
           <Text style={[styles.rowHint, { color: theme.textTertiary || theme.textSecondary }]}>
             {label(language,

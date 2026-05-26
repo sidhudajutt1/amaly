@@ -131,12 +131,18 @@ const PRAYER_STEPS: PrayerStep[] = [
   },
 ];
 
-const RAKAH_TABLE = [
-  { prayer: 'Fajr', fard: 2, sunnah: '2 before' },
-  { prayer: 'Dhuhr', fard: 4, sunnah: '4 before, 2 after' },
-  { prayer: 'Asr', fard: 4, sunnah: '4 before (optional)' },
-  { prayer: 'Maghrib', fard: 3, sunnah: '2 after' },
-  { prayer: 'Isha', fard: 4, sunnah: '2 after + 3 Witr' },
+const RAKAH_TABLE: {
+  prayerKey: 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
+  fard: number;
+  sunnahEn: string;
+  sunnahAr: string;
+  sunnahUr: string;
+}[] = [
+  { prayerKey: 'fajr', fard: 2, sunnahEn: '2 before', sunnahAr: '٢ قبل', sunnahUr: '٢ قبل' },
+  { prayerKey: 'dhuhr', fard: 4, sunnahEn: '4 before, 2 after', sunnahAr: '٤ قبل، ٢ بعد', sunnahUr: '٤ قبل، ٢ بعد' },
+  { prayerKey: 'asr', fard: 4, sunnahEn: '4 before (optional)', sunnahAr: '٤ قبل (سنّة)', sunnahUr: '٤ قبل (سنّت)' },
+  { prayerKey: 'maghrib', fard: 3, sunnahEn: '2 after', sunnahAr: '٢ بعد', sunnahUr: '٢ بعد' },
+  { prayerKey: 'isha', fard: 4, sunnahEn: '2 after + 3 Witr', sunnahAr: '٢ بعد + ٣ وتر', sunnahUr: '٢ بعد + ٣ وتر' },
 ];
 
 export default function PrayerGuideScreen() {
@@ -159,7 +165,7 @@ export default function PrayerGuideScreen() {
         <View style={styles.headerCenter}>
           <MaterialCommunityIcons name="book-open-outline" size={24} color={theme.primary} />
           <Text style={[styles.headerTitle, { color: theme.text }]}>
-            {language === 'ar' ? 'دليل الصلاة' : language === 'ur' ? 'نماز کی رہنمائی' : 'Prayer Guide'}
+            {t(language, 'prayerGuide.title')}
           </Text>
         </View>
         <View style={styles.headerSpacer} />
@@ -172,12 +178,16 @@ export default function PrayerGuideScreen() {
             {language === 'ar' ? 'عدد الركعات' : language === 'ur' ? 'رکعات کی تعداد' : "Rak'ah Count"}
           </Text>
           {RAKAH_TABLE.map((row) => (
-            <View key={row.prayer} style={[styles.tableRow, { borderColor: theme.border }]}>
-              <Text style={[styles.tablePrayer, { color: theme.text }]}>{row.prayer}</Text>
+            <View key={row.prayerKey} style={[styles.tableRow, { borderColor: theme.border }]}>
+              <Text style={[styles.tablePrayer, { color: theme.text }]}>
+                {t(language, `prayer.${row.prayerKey}`)}
+              </Text>
               <Text style={[styles.tableFard, { color: theme.primary }]}>
                 {`${row.fard} ${language === 'ar' ? 'فرض' : language === 'ur' ? 'فرض' : 'Fard'}`}
               </Text>
-              <Text style={[styles.tableSunnah, { color: theme.textSecondary }]}>{row.sunnah}</Text>
+              <Text style={[styles.tableSunnah, { color: theme.textSecondary }]}>
+                {language === 'ar' ? row.sunnahAr : language === 'ur' ? row.sunnahUr : row.sunnahEn}
+              </Text>
             </View>
           ))}
         </View>

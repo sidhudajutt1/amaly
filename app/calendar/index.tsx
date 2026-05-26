@@ -94,6 +94,7 @@ export default function CalendarScreen() {
   }, [selectedDay, viewMonth, viewYear, hijriAdjustment, locationLat, locationLng, calcMethod]);
 
   const monthName = getHijriMonthName(viewMonth, language);
+  const isRtl = language === 'ar' || language === 'ur';
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
@@ -114,15 +115,15 @@ export default function CalendarScreen() {
 
       {/* Month Navigation */}
       <View style={styles.monthNav}>
-        <TouchableOpacity onPress={goPrevMonth}>
-          <Ionicons name="chevron-back" size={28} color={theme.text} />
+        <TouchableOpacity onPress={goPrevMonth} accessibilityLabel="Previous month">
+          <Ionicons name={isRtl ? 'chevron-forward' : 'chevron-back'} size={28} color={theme.text} />
         </TouchableOpacity>
         <View style={styles.monthCenter}>
           <Text style={[styles.monthName, { color: theme.text }]}>{monthName}</Text>
           <Text style={[styles.yearText, { color: theme.textSecondary }]}>{viewYear} AH</Text>
         </View>
-        <TouchableOpacity onPress={goNextMonth}>
-          <Ionicons name="chevron-forward" size={28} color={theme.text} />
+        <TouchableOpacity onPress={goNextMonth} accessibilityLabel="Next month">
+          <Ionicons name={isRtl ? 'chevron-back' : 'chevron-forward'} size={28} color={theme.text} />
         </TouchableOpacity>
       </View>
 

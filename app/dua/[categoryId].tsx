@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState, useCallback, useMemo } from 'react';
+import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
@@ -94,8 +94,20 @@ export default function DuaReaderScreen() {
   const removeBookmark = useAppStore((s) => s.removeBookmark);
   const { theme } = useTheme();
 
+  const [searchQuery, setSearchQuery] = useState('');
   const category = duaCategories.find((c) => c.id === categoryId);
   const categoryDuas = duas.filter((d) => d.categoryId === categoryId);
+
+  const filteredDuas = useMemo(() => {
+    if (!searchQuery.trim()) return categoryDuas;
+    const q = searchQuery.toLowerCase();
+    return categoryDuas.filter((d) =>
+      d.textAr.includes(searchQuery) ||
+      d.translationEn.toLowerCase().includes(q) ||
+      d.translationUr.includes(searchQuery) ||
+      d.transliteration.toLowerCase().includes(q)
+    );
+  }, [searchQuery, categoryDuas]);
 
   const catName = category
     ? language === 'ar' ? category.nameAr : language === 'ur' ? category.nameUr : category.nameEn
@@ -138,8 +150,25 @@ export default function DuaReaderScreen() {
       </View>
 
       {categoryDuas.length > 0 ? (
-        <FlatList
-          data={categoryDuas}
+        <>
+          <View style={[styles.searchContainer, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+            <Ionicons name="search" size={16} color={theme.textTertiary} />
+            <TextInput
+              style={[styles.searchInput, { color: theme.text }]}
+              placeholder={language === 'ar' ? 'ابحث في الأدعية...' : language === 'ur' ? 'دعاؤں میں تلاش کریں...' : 'Search duas...'}
+              placeholderTextColor={theme.textTertiary}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              returnKeyType="search"
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')} accessibilityLabel="Clear search">
+                <Ionicons name="close-circle" size={16} color={theme.textTertiary} />
+              </TouchableOpacity>
+            )}
+          </View>
+          <FlatList
+            data={filteredDuas}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <DuaCard
@@ -151,9 +180,18 @@ export default function DuaReaderScreen() {
               onToggleBookmark={() => toggleBookmark(item)}
             />
           )}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Ionicons name="search" size={40} color={theme.textSecondary} />
+              <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
+                {language === 'ar' ? 'لا توجد نتائج' : language === 'ur' ? 'کوئی نتیجہ نہیں' : 'No results found'}
+              </Text>
+            </View>
+          }
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />
+        </>
       ) : (
         <View style={styles.emptyState}>
           <Ionicons name="book-outline" size={48} color={theme.textSecondary} />
@@ -168,6 +206,18 @@ export default function DuaReaderScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginHorizontal: spacing.md,
+    marginVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+  },
+  searchInput: { flex: 1, fontSize: fontSizes.body, paddingVertical: 0 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

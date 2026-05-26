@@ -1,11 +1,33 @@
-import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet } from 'react-native';
+import { useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet, Linking, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import * as StoreReview from 'expo-store-review';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLocation } from '../../src/hooks/useLocation';
-import { t, languageNames } from '../../src/i18n';
+import { t } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius, colorThemeMeta, type ColorThemeName } from '../../src/theme';
 import type { Language, ColorTheme, CalculationMethod, ReciterId } from '../../src/types';
+
+const FEEDBACK_EMAIL = 'amaly.app.feedback@gmail.com';
+const FEEDBACK_FORM_URL = 'https://forms.gle/AmalyFeedback';
+
+async function requestAppReview(language: Language) {
+  const available = await StoreReview.isAvailableAsync();
+  if (available) {
+    await StoreReview.requestReview();
+  } else {
+    const msg =
+      language === 'ar' ? 'شكراً جزيلاً على دعمك! تقييمك يساعدنا كثيراً.' :
+      language === 'ur' ? 'آپ کے تعاون کا شکریہ! آپ کا ریویو ہمارے لیے بہت قیمتی ہے۔' :
+      'Thank you for your support! Your review helps spread this Sadaqah Jariyah app.';
+    Alert.alert(
+      language === 'ar' ? 'تقييم التطبيق' : language === 'ur' ? 'ایپ ریویو' : 'Rate Amaly',
+      msg,
+    );
+  }
+}
 
 const RECITERS: { id: ReciterId; name: string; nameAr: string }[] = [
   { id: 'alafasy', name: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
@@ -42,6 +64,8 @@ function SettingRow({ label, value, onPress, theme }: {
       <Text style={[styles.rowLabel, { color: onPress ? theme.text : theme.textTertiary }]}>{label}</Text>
       {value ? (
         <Text style={[styles.rowValue, { color: theme.textSecondary }]}>{`${value} ›`}</Text>
+      ) : onPress ? (
+        <Text style={[styles.rowValue, { color: theme.textSecondary }]}>›</Text>
       ) : null}
     </>
   );
@@ -133,7 +157,18 @@ export default function SettingsTab() {
   const { theme } = useTheme();
 
   const currentMethodLabel = CALC_METHODS.find((m) => m.id === calcMethod)?.label || calcMethod;
-  const currentLangLabel = languageNames[language]?.native || language;
+
+  const handleRateApp = useCallback(() => requestAppReview(language), [language]);
+  const handleReportContent = useCallback(() => {
+    const subject = encodeURIComponent(
+      language === 'ar' ? 'الإبلاغ عن محتوى' : language === 'ur' ? 'مواد کی اطلاع دیں' : 'Report Content — Amaly App',
+    );
+    const body = encodeURIComponent(
+      language === 'ar' ? 'الرجاء وصف المشكلة:\n\n' : language === 'ur' ? 'براہ کرم مسئلہ بیان کریں:\n\n' : 'Please describe the issue:\n\nScreen: \nContent: \nConcern: ',
+    );
+    Linking.openURL(`mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`);
+  }, [language]);
+  const handleFeedbackForm = useCallback(() => Linking.openURL(FEEDBACK_FORM_URL), []);
 
   return (
     <ScrollView
@@ -214,6 +249,11 @@ export default function SettingsTab() {
         onPress={detectLocation}
         theme={theme}
       />
+      <SettingRow
+        label={t(language, 'location.searchCity')}
+        onPress={() => router.push('/city-search')}
+        theme={theme}
+      />
       <ToggleRow
         label={t(language, 'settings.autoDetectLocation')}
         value={locationAutoDetect ?? true}
@@ -274,10 +314,49 @@ export default function SettingsTab() {
       />
 
       <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.lg }]}>
-        {language === 'ar' ? 'معلومات' : language === 'ur' ? 'معلومات' : 'About'}
+        {t(language, 'settings.more')}
       </Text>
-      <SettingRow label={language === 'ar' ? 'شريعة متوافق' : language === 'ur' ? 'شریعہ موافق' : 'Shariah Compliant'} value="✓" theme={theme} />
-      <SettingRow label={language === 'ar' ? 'الإصدار' : language === 'ur' ? 'ورژن' : 'Version'} value="1.0.0" theme={theme} />
+      <SettingRow
+        label={t(language, 'settings.notifications')}
+        onPress={() => router.push('/notifications')}
+        theme={theme}
+      />
+      <SettingRow
+        label={t(language, 'calendar.title')}
+        onPress={() => router.push('/calendar')}
+        theme={theme}
+      />
+      <SettingRow
+        label={t(language, 'about.title')}
+        onPress={() => router.push('/about')}
+        theme={theme}
+      />
+      <SettingRow
+        label={t(language, 'settings.privacyPolicy')}
+        onPress={() => router.push('/privacy')}
+        theme={theme}
+      />
+      <SettingRow
+        label={t(language, 'settings.rateApp')}
+        onPress={handleRateApp}
+        theme={theme}
+      />
+      <SettingRow
+        label={t(language, 'settings.reportContent')}
+        onPress={handleReportContent}
+        theme={theme}
+      />
+      <SettingRow
+        label={t(language, 'settings.shareFeedback')}
+        onPress={handleFeedbackForm}
+        theme={theme}
+      />
+
+      <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.lg }]}>
+        {t(language, 'settings.about')}
+      </Text>
+      <SettingRow label={t(language, 'settings.shariahCompliant')} value="✓" theme={theme} />
+      <SettingRow label={t(language, 'settings.version')} value="1.0.0" theme={theme} />
 
       <View style={{ height: 40 }} />
     </ScrollView>
