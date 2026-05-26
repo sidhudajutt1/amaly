@@ -124,10 +124,21 @@ export default function TodayScreen() {
   );
   const summary = useMemo(() => getGoalsSummary(goals), [goals]);
 
-  const streakMilestone = getStreakMilestone(streakData.currentStreak);
-  const allGoalsComplete = summary.total > 0 && summary.completed === summary.total;
-  const showCelebration = !todayProgress.streakCelebrationShown && (allGoalsComplete || (streakMilestone !== null && streakData.currentStreak > 0));
-  const [celebrationVisible, setCelebrationVisible] = useState(showCelebration);
+  const [celebrationVisible, setCelebrationVisible] = useState(false);
+
+  const maybeCelebrate = useCallback(() => {
+    if (useAppStore.getState().todayProgress.streakCelebrationShown) return;
+    const progress = useAppStore.getState().todayProgress;
+    const config = useAppStore.getState().goalConfig;
+    const streak = useAppStore.getState().streakData;
+    const freshGoals = generateDailyGoals(config, progress, hijri, dayOfWeek);
+    const freshSummary = getGoalsSummary(freshGoals);
+    const allDone = freshSummary.total > 0 && freshSummary.completed === freshSummary.total;
+    const milestone = getStreakMilestone(streak.currentStreak);
+    if (allDone || (milestone !== null && streak.currentStreak > 0)) {
+      setCelebrationVisible(true);
+    }
+  }, [hijri, dayOfWeek]);
 
   const countdownProgress = useMemo(() => {
     if (!prayerTimes || !nextPrayer || !currentPrayer) return 0;
@@ -179,11 +190,13 @@ export default function TodayScreen() {
         }
         break;
     }
+    setTimeout(maybeCelebrate, 0);
   };
 
   const handleNiyyahPress = () => {
     hapticSuccess();
     markNiyyahCompleted();
+    setTimeout(maybeCelebrate, 0);
   };
 
   const dismissCelebration = () => {
@@ -362,7 +375,7 @@ export default function TodayScreen() {
                 </Text>
               </View>
               <View style={styles.summaryDotItem}>
-                <View style={[styles.dot, { backgroundColor: '#E8A838' }]} />
+                <View style={[styles.dot, { backgroundColor: theme.warning }]} />
                 <Text style={[styles.dotLabel, { color: theme.textSecondary }]}>
                   {`${summary.dhikrDone}/${summary.dhikrTotal}`}
                 </Text>

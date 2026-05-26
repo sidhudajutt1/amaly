@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
@@ -129,23 +130,24 @@ export default function QuranScreen() {
                 <Text style={[styles.bookmarkHeader, { color: theme.textSecondary }]}>
                   {t(language, 'quran.bookmarks')}
                 </Text>
-                <FlatList
-                  data={ayahBookmarks.slice(0, 10)}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+                  {ayahBookmarks.slice(0, 10).map((item) => (
                     <TouchableOpacity
+                      key={item.id}
                       style={[styles.bookmarkChip, { backgroundColor: theme.surface, borderColor: theme.border }]}
                       onPress={() => router.push(`/surah/${item.surahNumber}?ayah=${item.ayahNumber ?? 1}`)}
                     >
                       <Ionicons name="bookmark" size={12} color={theme.primary} />
                       <Text style={[styles.bookmarkChipText, { color: theme.text }]}>{item.label ?? `${item.surahNumber}:${item.ayahNumber}`}</Text>
                     </TouchableOpacity>
-                  )}
-                  contentContainerStyle={{ gap: 8 }}
-                />
+                  ))}
+                </ScrollView>
               </View>
+            ) : null}
+            {!searchQuery ? (
+              <Text style={[styles.availableLegend, { color: theme.textTertiary }]}>
+                {t(language, 'quran.availableLegend')}
+              </Text>
             ) : null}
           </>
         }
@@ -290,5 +292,10 @@ const styles = StyleSheet.create({
   bookmarkChipText: {
     fontSize: fontSizes.caption,
     fontWeight: '600',
+  },
+  availableLegend: {
+    fontSize: fontSizes.caption,
+    marginBottom: spacing.sm,
+    lineHeight: fontSizes.caption * 1.4,
   },
 });

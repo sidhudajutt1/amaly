@@ -65,18 +65,16 @@ export default function ZakatScreen() {
 
   const CURRENCIES = ['SAR', 'USD', 'PKR', 'GBP', 'EUR', 'AED'];
 
-  const fields: { key: keyof AssetInputs; en: string; ar: string; ur: string; icon: string }[] = [
-    { key: 'cash', en: 'Cash in Hand', ar: 'النقد في اليد', ur: 'نقد رقم', icon: 'cash' },
-    { key: 'bankBalance', en: 'Bank Balance', ar: 'الرصيد البنكي', ur: 'بینک بیلنس', icon: 'bank' },
-    { key: 'goldValue', en: 'Gold Value', ar: 'قيمة الذهب', ur: 'سونے کی قیمت', icon: 'gold' },
-    { key: 'silverValue', en: 'Silver Value', ar: 'قيمة الفضة', ur: 'چاندی کی قیمت', icon: 'diamond-stone' },
-    { key: 'investments', en: 'Investments & Stocks', ar: 'الاستثمارات والأسهم', ur: 'سرمایہ کاری', icon: 'chart-line' },
-    { key: 'businessGoods', en: 'Business Goods', ar: 'البضائع التجارية', ur: 'تجارتی سامان', icon: 'store' },
-    { key: 'receivables', en: 'Money Owed to You', ar: 'ديون لك', ur: 'قرضے (آپ کو ملنے والے)', icon: 'account-arrow-left' },
-    { key: 'debtsOwed', en: 'Debts You Owe', ar: 'ديون عليك', ur: 'قرضے (آپ پر)', icon: 'account-arrow-right' },
+  const fields: { key: keyof AssetInputs; labelKey: 'zakat.cash' | 'zakat.bankBalance' | 'zakat.goldValue' | 'zakat.silverValue' | 'zakat.investments' | 'zakat.businessGoods' | 'zakat.receivables' | 'zakat.debtsOwed'; icon: string }[] = [
+    { key: 'cash', labelKey: 'zakat.cash', icon: 'cash' },
+    { key: 'bankBalance', labelKey: 'zakat.bankBalance', icon: 'bank' },
+    { key: 'goldValue', labelKey: 'zakat.goldValue', icon: 'gold' },
+    { key: 'silverValue', labelKey: 'zakat.silverValue', icon: 'diamond-stone' },
+    { key: 'investments', labelKey: 'zakat.investments', icon: 'chart-line' },
+    { key: 'businessGoods', labelKey: 'zakat.businessGoods', icon: 'store' },
+    { key: 'receivables', labelKey: 'zakat.receivables', icon: 'account-arrow-left' },
+    { key: 'debtsOwed', labelKey: 'zakat.debtsOwed', icon: 'account-arrow-right' },
   ];
-
-  const getLabel = (f: typeof fields[number]) => language === 'ar' ? f.ar : language === 'ur' ? f.ur : f.en;
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
@@ -116,7 +114,7 @@ export default function ZakatScreen() {
       {fields.map((f) => (
         <View key={f.key} style={[styles.inputRow, { borderColor: theme.border }]}>
           <MaterialCommunityIcons name={f.icon as any} size={20} color={theme.primary} style={styles.inputIcon} />
-          <Text style={[styles.inputLabel, { color: theme.text }]}>{getLabel(f)}</Text>
+          <Text style={[styles.inputLabel, { color: theme.text }]}>{t(language, f.labelKey)}</Text>
           <TextInput
             style={[styles.input, { color: theme.text, borderColor: theme.border, backgroundColor: theme.surface }]}
             placeholder="0"
@@ -206,7 +204,7 @@ const styles = StyleSheet.create({
   currencyChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: borderRadius.md, borderWidth: 1 },
   currencyText: { fontSize: fontSizes.bodySmall, fontWeight: '600' },
   inputRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: 1 },
-  inputIcon: { marginRight: spacing.sm },
+  inputIcon: { marginEnd: spacing.sm },
   inputLabel: { flex: 1, fontSize: fontSizes.bodySmall },
   input: {
     width: 120,

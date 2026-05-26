@@ -11,15 +11,16 @@ import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import { getArabicFontFamily, getTranslationFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
 
-function DuaCard({ dua, language, theme, showTransliteration, isBookmarked, onToggleBookmark }: {
+function DuaCard({ dua, language, theme, showTransliteration, isBookmarked, onToggleBookmark, count, onCountChange }: {
   dua: DuaData;
   language: Language;
   theme: Record<string, string>;
   showTransliteration: boolean;
   isBookmarked: boolean;
   onToggleBookmark: () => void;
+  count: number;
+  onCountChange: (next: number) => void;
 }) {
-  const [count, setCount] = useState(0);
   const isDone = count >= dua.repetitions;
 
   const getTranslation = () => {
@@ -66,14 +67,14 @@ function DuaCard({ dua, language, theme, showTransliteration, isBookmarked, onTo
         <View style={styles.counterRow}>
           <TouchableOpacity
             style={[styles.counterBtn, { backgroundColor: isDone ? theme.success : theme.primary }]}
-            onPress={() => setCount((c) => Math.min(c + 1, dua.repetitions))}
+            onPress={() => onCountChange(Math.min(count + 1, dua.repetitions))}
           >
             <Text style={styles.counterBtnText}>
               {isDone ? '✓' : `${count} / ${dua.repetitions}`}
             </Text>
           </TouchableOpacity>
           {count > 0 && !isDone && (
-            <TouchableOpacity onPress={() => setCount(0)}>
+            <TouchableOpacity onPress={() => onCountChange(0)}>
               <Text style={[styles.resetText, { color: theme.textTertiary }]}>
                 {t(language, 'ibadah.reset')}
               </Text>
@@ -95,6 +96,7 @@ export default function DuaReaderScreen() {
   const { theme } = useTheme();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [counters, setCounters] = useState<Record<string, number>>({});
   const category = duaCategories.find((c) => c.id === categoryId);
   const categoryDuas = duas.filter((d) => d.categoryId === categoryId);
 
@@ -178,6 +180,8 @@ export default function DuaReaderScreen() {
               showTransliteration={showTransliteration}
               isBookmarked={isDuaBookmarked(item.id)}
               onToggleBookmark={() => toggleBookmark(item)}
+              count={counters[item.id] ?? 0}
+              onCountChange={(next) => setCounters((prev) => ({ ...prev, [item.id]: next }))}
             />
           )}
           ListEmptyComponent={
@@ -196,8 +200,22 @@ export default function DuaReaderScreen() {
         <View style={styles.emptyState}>
           <Ionicons name="book-outline" size={48} color={theme.textSecondary} />
           <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-            {language === 'ar' ? 'الأدعية قريباً.\nجرّب أذكار الصباح أو المساء.' : language === 'ur' ? 'دعائیں اگلی تازہ کاری میں۔\nصبح یا شام کے اذکار آزمائیں۔' : 'Duas loading in next update.\nTry Morning or Evening Adhkar.'}
+            {t(language, 'dua.emptyCategory')}
           </Text>
+          <View style={styles.emptyActions}>
+            <TouchableOpacity
+              style={[styles.emptyBtn, { backgroundColor: theme.primary }]}
+              onPress={() => router.push('/dua/morning')}
+            >
+              <Text style={styles.emptyBtnText}>{t(language, 'dua.tryMorning')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.emptyBtn, { backgroundColor: theme.surface, borderColor: theme.border, borderWidth: 1 }]}
+              onPress={() => router.push('/dua/evening')}
+            >
+              <Text style={[styles.emptyBtnText, { color: theme.text }]}>{t(language, 'dua.tryEvening')}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </View>
@@ -285,4 +303,7 @@ const styles = StyleSheet.create({
   resetText: { fontSize: fontSizes.caption },
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
   emptyText: { fontSize: fontSizes.body, textAlign: 'center', lineHeight: 24 },
+  emptyActions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg, flexWrap: 'wrap', justifyContent: 'center' },
+  emptyBtn: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: borderRadius.md },
+  emptyBtnText: { color: '#fff', fontWeight: '600', fontSize: fontSizes.bodySmall },
 });

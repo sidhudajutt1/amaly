@@ -12,11 +12,11 @@ import { fontSizes, spacing, borderRadius, lineHeights } from '../../src/theme';
 import { getArabicFontFamily, getTranslationFontFamily } from '../../src/theme/typography';
 import type { Language } from '../../src/types';
 
-const GRADE_COLORS: Record<string, string> = {
-  sahih: '#2E7D32',
-  hasan: '#F57F17',
-  daif: '#C62828',
-};
+function getGradeColor(grade: string, theme: Record<string, string>): string {
+  if (grade === 'sahih') return theme.success ?? theme.primary;
+  if (grade === 'hasan') return theme.warning;
+  return theme.error;
+}
 
 function getGradeLabel(grade: string, gradeLabel: string, language: Language): string {
   if (language === 'en') return gradeLabel;
@@ -57,8 +57,8 @@ function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked
         <View style={{ flex: 1, marginStart: spacing.sm }}>
           <Text style={[styles.bookName, { color: theme.textSecondary }]}>{bookLabel}</Text>
         </View>
-        <View style={[styles.gradeBadge, { backgroundColor: `${GRADE_COLORS[hadith.grade]}15` }]}>
-          <Text style={[styles.gradeText, { color: GRADE_COLORS[hadith.grade] }]}>
+        <View style={[styles.gradeBadge, { backgroundColor: `${getGradeColor(hadith.grade, theme)}15` }]}>
+          <Text style={[styles.gradeText, { color: getGradeColor(hadith.grade, theme) }]}>
             {getGradeLabel(hadith.grade, hadith.gradeLabel, language)}
           </Text>
         </View>

@@ -22,7 +22,7 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
     case 'ibadah':
       return <MaterialCommunityIcons name={focused ? 'hands-pray' : 'hands-pray'} size={size} color={color} />;
     case 'prayer':
-      return <MaterialCommunityIcons name={focused ? 'mosque' : 'mosque'} size={size} color={color} />;
+      return <MaterialCommunityIcons name={focused ? 'mosque' : 'clock-outline'} size={size} color={color} />;
     case 'settings':
       return <Ionicons name={focused ? 'settings' : 'settings-outline'} size={size} color={color} />;
     default:

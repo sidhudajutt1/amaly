@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Linking, Alert } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Audio } from 'expo-av';
@@ -362,13 +362,16 @@ export default function SurahReaderScreen() {
           />
           <TouchableOpacity
             style={[styles.downloadBtn, { backgroundColor: theme.surface, borderColor: theme.border }]}
-            onPress={() => Linking.openURL(getSurahAudioUrl(selectedReciter, surahNumber))}
-            accessibilityLabel="Download surah audio"
+            onPress={async () => {
+              await Linking.openURL(getSurahAudioUrl(selectedReciter, surahNumber));
+              Alert.alert(t(language, 'quran.downloadTitle'), t(language, 'quran.downloadOpened'));
+            }}
+            accessibilityLabel={t(language, 'quran.downloadTitle')}
             accessibilityRole="button"
           >
             <Ionicons name="download-outline" size={16} color={theme.primary} />
             <Text style={[styles.downloadBtnText, { color: theme.primary }]}>
-              {language === 'ar' ? 'تحميل السورة MP3' : language === 'ur' ? 'سورہ MP3 ڈاؤن لوڈ' : 'Download Surah MP3'}
+              {t(language, 'quran.downloadTitle')}
             </Text>
           </TouchableOpacity>
           <FlatList

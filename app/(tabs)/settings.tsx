@@ -137,7 +137,10 @@ function SegmentedControl({ options, selected, onSelect, theme }: {
   );
 }
 
-type ExpandedSection = 'calc' | 'reciter' | null;
+type ExpandedSection = 'calc' | 'reciter' | 'quranFont' | 'translationFont' | null;
+
+const QURAN_FONT_SIZES = [18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
+const TRANSLATION_FONT_SIZES = [12, 14, 16, 18, 20, 22, 24];
 
 export default function SettingsTab() {
   const language = useAppStore((s) => s.settings.language);
@@ -347,15 +350,41 @@ export default function SettingsTab() {
       <SettingRow
         label={t(language, 'settings.quranFontSize')}
         value={`${quranFontSize}`}
-        onPress={() => setQuranFontSize(quranFontSize >= 36 ? 18 : quranFontSize + 2)}
+        onPress={() => setExpanded(expanded === 'quranFont' ? null : 'quranFont')}
         theme={theme}
+        accessibilityHint={t(language, 'settings.tapToChoose')}
       />
+      {expanded === 'quranFont' && QURAN_FONT_SIZES.map((size) => (
+        <TouchableOpacity
+          key={size}
+          style={[styles.pickerRow, { borderColor: theme.border }]}
+          onPress={() => { setQuranFontSize(size); setExpanded(null); }}
+          accessibilityRole="button"
+          accessibilityLabel={`${size}`}
+        >
+          <Text style={[styles.pickerLabel, { color: theme.text }]}>{size}</Text>
+          {quranFontSize === size && <Ionicons name="checkmark-circle" size={22} color={theme.primary} />}
+        </TouchableOpacity>
+      ))}
       <SettingRow
         label={t(language, 'settings.translationFontSize')}
         value={`${translationFontSize}`}
-        onPress={() => setTranslationFontSize(translationFontSize >= 24 ? 12 : translationFontSize + 2)}
+        onPress={() => setExpanded(expanded === 'translationFont' ? null : 'translationFont')}
         theme={theme}
+        accessibilityHint={t(language, 'settings.tapToChoose')}
       />
+      {expanded === 'translationFont' && TRANSLATION_FONT_SIZES.map((size) => (
+        <TouchableOpacity
+          key={size}
+          style={[styles.pickerRow, { borderColor: theme.border }]}
+          onPress={() => { setTranslationFontSize(size); setExpanded(null); }}
+          accessibilityRole="button"
+          accessibilityLabel={`${size}`}
+        >
+          <Text style={[styles.pickerLabel, { color: theme.text }]}>{size}</Text>
+          {translationFontSize === size && <Ionicons name="checkmark-circle" size={22} color={theme.primary} />}
+        </TouchableOpacity>
+      ))}
       <ToggleRow
         label={t(language, 'settings.showTransliteration')}
         value={showTransliteration}
@@ -451,7 +480,7 @@ const styles = StyleSheet.create({
   segmentBtn: { flex: 1, paddingVertical: spacing.sm, alignItems: 'center' },
   segmentText: { fontSize: fontSizes.caption, fontWeight: '600' },
   themeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md },
-  themeCard: { width: '30%', borderWidth: 2, borderRadius: borderRadius.md, padding: spacing.sm, alignItems: 'center', gap: 4 },
+  themeCard: { width: '31%', minWidth: 96, borderWidth: 2, borderRadius: borderRadius.md, padding: spacing.sm, alignItems: 'center', gap: 4 },
   swatchRow: { flexDirection: 'row', gap: 4 },
   swatch: { width: 18, height: 18, borderRadius: 9 },
   themeLabel: { fontSize: fontSizes.caption, fontWeight: '500' },

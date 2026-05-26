@@ -6,7 +6,7 @@ import { useTheme } from '../src/hooks/useTheme';
 import { t } from '../src/i18n';
 
 const { width } = Dimensions.get('window');
-const MIN_SPLASH_MS = 1800;
+const MIN_SPLASH_MS = 1000;
 
 export default function SplashScreen() {
   const isLoading = useAppStore((s) => s.isLoading);

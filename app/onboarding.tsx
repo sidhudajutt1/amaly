@@ -8,6 +8,7 @@ import {
   I18nManager,
   Platform,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -40,7 +41,7 @@ const GROWTH_CATEGORIES: {
   { id: 'death_remembrance', iconName: 'dove', iconFamily: 'material' },
 ];
 
-function ProgressDots({ current, total, color }: { current: number; total: number; color: string }) {
+function ProgressDots({ current, total, color, inactiveColor }: { current: number; total: number; color: string; inactiveColor: string }) {
   return (
     <View style={styles.dotsRow} accessibilityLabel={`Step ${current + 1} of ${total}`}>
       {Array.from({ length: total }).map((_, i) => (
@@ -48,7 +49,7 @@ function ProgressDots({ current, total, color }: { current: number; total: numbe
           key={i}
           style={[
             styles.dot,
-            { backgroundColor: i <= current ? color : '#D9D9D9' },
+            { backgroundColor: i <= current ? color : inactiveColor },
             i === current && styles.dotActive,
           ]}
         />
@@ -95,7 +96,16 @@ export default function OnboardingScreen() {
       const loc = await getCurrentLocation();
       if (loc) {
         setLocation(loc.lat, loc.lng, `${loc.cityName}, ${loc.countryName}`);
+      } else {
+        applyDefaultLocation();
       }
+    } else {
+      applyDefaultLocation();
+      Alert.alert(
+        t(lang, 'onboarding.locationDeniedTitle'),
+        t(lang, 'onboarding.locationDeniedMessage'),
+        [{ text: t(lang, 'common.done') }],
+      );
     }
     setStep(2);
   };
@@ -111,11 +121,16 @@ export default function OnboardingScreen() {
     if (Platform.OS !== 'web' && I18nManager.isRTL !== shouldBeRTL) {
       I18nManager.forceRTL(shouldBeRTL);
       I18nManager.allowRTL(shouldBeRTL);
+      Alert.alert(
+        t(selectedLang, 'settings.restartTitle'),
+        t(selectedLang, 'settings.restartMessage'),
+        [{ text: t(selectedLang, 'common.done') }],
+      );
     }
 
     setTimeout(() => {
       router.replace('/(tabs)/today');
-    }, 1800);
+    }, 1200);
   };
 
   const canGoNext = () => {
@@ -144,7 +159,7 @@ export default function OnboardingScreen() {
     const languages: Language[] = ['en', 'ar', 'ur'];
     return (
       <View style={[styles.container, { backgroundColor: theme.background }]}>
-        <ProgressDots current={0} total={TOTAL_STEPS} color={theme.primary} />
+        <ProgressDots current={0} total={TOTAL_STEPS} color={theme.primary} inactiveColor={theme.border} />
         <View style={styles.centerContent}>
           <Text style={[styles.appName, { color: theme.primary }]}>عَمَلِي</Text>
           <Text style={[styles.appNameLatin, { color: theme.primary }]}>AMALY</Text>
@@ -199,7 +214,7 @@ export default function OnboardingScreen() {
           <TouchableOpacity onPress={goBack} accessibilityLabel="Go back" accessibilityRole="button">
             <Ionicons name={lang === 'ar' || lang === 'ur' ? 'arrow-forward' : 'arrow-back'} size={24} color={theme.text} />
           </TouchableOpacity>
-          <ProgressDots current={1} total={TOTAL_STEPS} color={theme.primary} />
+          <ProgressDots current={1} total={TOTAL_STEPS} color={theme.primary} inactiveColor={theme.border} />
           <View style={{ width: 24 }} />
         </View>
         <View style={styles.centerContent}>
@@ -241,7 +256,7 @@ export default function OnboardingScreen() {
           <TouchableOpacity onPress={goBack} accessibilityLabel="Go back" accessibilityRole="button">
             <Ionicons name={lang === 'ar' || lang === 'ur' ? 'arrow-forward' : 'arrow-back'} size={24} color={theme.text} />
           </TouchableOpacity>
-          <ProgressDots current={2} total={TOTAL_STEPS} color={theme.primary} />
+          <ProgressDots current={2} total={TOTAL_STEPS} color={theme.primary} inactiveColor={theme.border} />
           <View style={{ width: 24 }} />
         </View>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -307,7 +322,7 @@ export default function OnboardingScreen() {
   // ── Step 3: All Set ────────────────────────────────────────────
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <ProgressDots current={3} total={TOTAL_STEPS} color={theme.primary} />
+      <ProgressDots current={3} total={TOTAL_STEPS} color={theme.primary} inactiveColor={theme.border} />
       <View style={styles.centerContent}>
         {isLoading ? (
           <>
