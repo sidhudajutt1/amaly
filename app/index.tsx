@@ -41,6 +41,12 @@ export default function SplashScreen() {
   }, []);
 
   useEffect(() => {
+    if (!isLoading) {
+      setMinElapsed(true);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
     if (!isLoading && minElapsed) {
       router.replace(onboardingCompleted ? '/(tabs)/today' : '/onboarding');
     }

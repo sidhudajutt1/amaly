@@ -93,6 +93,19 @@ function SettingRow({ label, value, onPress, theme, accessibilityHint }: {
   );
 }
 
+function InfoRow({ label, value, theme }: {
+  label: string;
+  value: string;
+  theme: Record<string, string>;
+}) {
+  return (
+    <View style={[styles.infoRow, { borderColor: theme.border, backgroundColor: theme.surfaceElevated }]} accessibilityLabel={`${label}: ${value}`}>
+      <Text style={[styles.infoLabel, { color: theme.textTertiary }]}>{label}</Text>
+      <Text style={[styles.infoValue, { color: theme.textSecondary }]}>{value}</Text>
+    </View>
+  );
+}
+
 function ToggleRow({ label, value, onToggle, theme }: {
   label: string;
   value: boolean;
@@ -106,6 +119,8 @@ function ToggleRow({ label, value, onToggle, theme }: {
         value={value}
         onValueChange={onToggle}
         trackColor={{ false: theme.border, true: theme.primary }}
+        accessibilityLabel={label}
+        accessibilityRole="switch"
       />
     </View>
   );
@@ -460,8 +475,8 @@ export default function SettingsTab() {
       <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.lg }]}>
         {t(language, 'settings.about')}
       </Text>
-      <SettingRow label={t(language, 'settings.shariahCompliant')} value="✓" theme={theme} />
-      <SettingRow label={t(language, 'settings.version')} value="1.0.0" theme={theme} />
+      <InfoRow label={t(language, 'settings.shariahCompliant')} value="✓" theme={theme} />
+      <InfoRow label={t(language, 'settings.version')} value="1.0.0" theme={theme} />
 
       <View style={{ height: 40 }} />
     </ScrollView>
@@ -494,4 +509,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   pickerLabel: { fontSize: fontSizes.bodySmall, flex: 1 },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderRadius: borderRadius.sm,
+    marginBottom: spacing.xs,
+  },
+  infoLabel: { fontSize: fontSizes.body, flex: 1 },
+  infoValue: { fontSize: fontSizes.body, fontWeight: '600' },
 });

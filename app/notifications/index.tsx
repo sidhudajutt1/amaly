@@ -130,10 +130,7 @@ export default function NotificationsScreen() {
         <View style={[styles.webNote, { backgroundColor: theme.surfaceElevated || theme.surface, borderColor: theme.border }]}>
           <Ionicons name="information-circle-outline" size={20} color={theme.primary} />
           <Text style={[styles.webNoteText, { color: theme.textSecondary }]}>
-            {label(language,
-              'Push notifications work on mobile devices. Install the app on your phone to receive prayer alerts and daily reminders.',
-              'تعمل الإشعارات على الأجهزة المحمولة. قم بتثبيت التطبيق للحصول على تنبيهات الصلاة.',
-              'پش اطلاعات موبائل پر کام کرتی ہیں۔ نماز الرٹ حاصل کرنے کے لیے ایپ انسٹال کریں۔')}
+            {t(language, 'notifications.webNote')}
           </Text>
         </View>
       ) : hasPermission === false ? (

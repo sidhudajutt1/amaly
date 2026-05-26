@@ -20,7 +20,7 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
     case 'hadith':
       return <Ionicons name={focused ? 'library' : 'library-outline'} size={size} color={color} />;
     case 'ibadah':
-      return <MaterialCommunityIcons name={focused ? 'hands-pray' : 'hands-pray'} size={size} color={color} />;
+      return <MaterialCommunityIcons name={focused ? 'hands-pray' : 'heart-outline'} size={size} color={color} />;
     case 'prayer':
       return <MaterialCommunityIcons name={focused ? 'mosque' : 'clock-outline'} size={size} color={color} />;
     case 'settings':
@@ -131,8 +131,11 @@ export default function TabsLayout() {
             paddingTop: spacing.xs,
           },
           tabBarLabelStyle: {
-            fontSize: fontSizes.tabLabel,
+            fontSize: 10,
             fontWeight: '600',
+          },
+          tabBarItemStyle: {
+            paddingHorizontal: 2,
           },
         }}
       >

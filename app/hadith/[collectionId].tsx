@@ -87,6 +87,12 @@ function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked
         </Text>
       ) : null}
 
+      {showTransliteration && language === 'en' && !hadith.narrator && hadith.translationEn ? (
+        <Text style={[styles.transliteration, { color: theme.textTertiary }]}>
+          {hadith.translationEn.split('.')[0]}.
+        </Text>
+      ) : null}
+
       <View style={styles.ornamentRow}>
         <View style={[styles.ornamentLine, { backgroundColor: theme.border }]} />
         <Text style={[styles.ornamentDot, { color: theme.primary }]}>{'\u066D'}</Text>

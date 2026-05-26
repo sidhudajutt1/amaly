@@ -175,7 +175,7 @@ export default function PrayerGuideScreen() {
         {/* Rak'ah Reference */}
         <View style={[styles.tableCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <Text style={[styles.sectionLabel, { color: theme.primary }]}>
-            {language === 'ar' ? 'عدد الركعات' : language === 'ur' ? 'رکعات کی تعداد' : "Rak'ah Count"}
+            {t(language, 'prayerGuide.rakahCount')}
           </Text>
           {RAKAH_TABLE.map((row) => (
             <View key={row.prayerKey} style={[styles.tableRow, { borderColor: theme.border }]}>
@@ -183,7 +183,7 @@ export default function PrayerGuideScreen() {
                 {t(language, `prayer.${row.prayerKey}`)}
               </Text>
               <Text style={[styles.tableFard, { color: theme.primary }]}>
-                {`${row.fard} ${language === 'ar' ? 'فرض' : language === 'ur' ? 'فرض' : 'Fard'}`}
+                {`${row.fard} ${t(language, 'prayerGuide.fard')}`}
               </Text>
               <Text style={[styles.tableSunnah, { color: theme.textSecondary }]}>
                 {language === 'ar' ? row.sunnahAr : language === 'ur' ? row.sunnahUr : row.sunnahEn}
@@ -194,7 +194,7 @@ export default function PrayerGuideScreen() {
 
         {/* Step-by-Step */}
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          {language === 'ar' ? 'خطوات الصلاة' : language === 'ur' ? 'نماز کے مراحل' : 'Step-by-Step Guide'}
+          {t(language, 'prayerGuide.stepsTitle')}
         </Text>
 
         {PRAYER_STEPS.map((step) => (

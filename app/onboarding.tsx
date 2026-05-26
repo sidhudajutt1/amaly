@@ -7,7 +7,6 @@ import {
   ScrollView,
   I18nManager,
   Platform,
-  ActivityIndicator,
   Alert,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -62,7 +61,6 @@ export default function OnboardingScreen() {
   const [step, setStep] = useState(0);
   const [selectedLang, setSelectedLang] = useState<Language>('en');
   const [selectedCategories, setSelectedCategories] = useState<GrowthCategory[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const setLanguage = useAppStore((s) => s.setLanguage);
   const setGrowthCategories = useAppStore((s) => s.setGrowthCategories);
@@ -111,7 +109,6 @@ export default function OnboardingScreen() {
   };
 
   const finishOnboarding = () => {
-    setIsLoading(true);
     setLanguage(selectedLang);
     setGrowthCategories(selectedCategories);
     setGoalConfig({ ...DEFAULT_GOAL_CONFIG, quranVersesPerDay: 5 });
@@ -128,9 +125,7 @@ export default function OnboardingScreen() {
       );
     }
 
-    setTimeout(() => {
-      router.replace('/(tabs)/today');
-    }, 1200);
+    router.replace('/(tabs)/today');
   };
 
   const canGoNext = () => {
@@ -324,40 +319,27 @@ export default function OnboardingScreen() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ProgressDots current={3} total={TOTAL_STEPS} color={theme.primary} inactiveColor={theme.border} />
       <View style={styles.centerContent}>
-        {isLoading ? (
-          <>
-            <ActivityIndicator size="large" color={theme.primary} />
-            <Text style={[styles.loadingText, { color: theme.text }]}>
-              {t(lang, 'onboarding.buildingPlan')}
-            </Text>
-          </>
-        ) : (
-          <>
-            <View style={[styles.doneIconCircle, { backgroundColor: theme.primaryLight }]}>
-              <Ionicons name="checkmark-circle" size={64} color={theme.primary} />
-            </View>
-            <Text style={[styles.doneTitle, { color: theme.text }]}>
-              {t(lang, 'onboarding.allSet')}
-            </Text>
-            <Text style={[styles.doneSubtitle, { color: theme.textSecondary }]}>
-              {t(lang, 'onboarding.firstReflection')}
-            </Text>
-            <Text style={[styles.settingsHint, { color: theme.textTertiary }]}>
-              {t(lang, 'onboarding.settingsHint')}
-            </Text>
-          </>
-        )}
+        <View style={[styles.doneIconCircle, { backgroundColor: theme.primaryLight }]}>
+          <Ionicons name="checkmark-circle" size={64} color={theme.primary} />
+        </View>
+        <Text style={[styles.doneTitle, { color: theme.text }]}>
+          {t(lang, 'onboarding.allSet')}
+        </Text>
+        <Text style={[styles.doneSubtitle, { color: theme.textSecondary }]}>
+          {t(lang, 'onboarding.firstReflection')}
+        </Text>
+        <Text style={[styles.settingsHint, { color: theme.textTertiary }]}>
+          {t(lang, 'onboarding.settingsHint')}
+        </Text>
       </View>
-      {!isLoading && (
-        <TouchableOpacity
-          style={[styles.primaryButton, { backgroundColor: theme.primary }]}
-          onPress={finishOnboarding}
-          accessibilityLabel="Get started"
-          accessibilityRole="button"
-        >
-          <Text style={styles.primaryButtonText}>{t(lang, 'common.done')}</Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        style={[styles.primaryButton, { backgroundColor: theme.primary }]}
+        onPress={finishOnboarding}
+        accessibilityLabel={t(lang, 'common.done')}
+        accessibilityRole="button"
+      >
+        <Text style={styles.primaryButtonText}>{t(lang, 'common.done')}</Text>
+      </TouchableOpacity>
     </View>
   );
 }

@@ -99,7 +99,7 @@ export default function QiblaScreen() {
           <Ionicons name={language === 'ar' || language === 'ur' ? 'arrow-forward' : 'arrow-back'} size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
-          {language === 'ar' ? 'اتجاه القبلة' : language === 'ur' ? 'قبلے کی سمت' : 'Qibla Direction'}
+          {t(language, 'qibla.title')}
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -128,7 +128,7 @@ export default function QiblaScreen() {
         <View style={[styles.liveBadge, { backgroundColor: theme.success + '20' }]}>
           <View style={[styles.liveIndicator, { backgroundColor: theme.success }]} />
           <Text style={[styles.liveText, { color: theme.success }]}>
-            {language === 'ar' ? 'بوصلة مباشرة' : language === 'ur' ? 'براہ راست کمپاس' : 'Live Compass'}
+            {t(language, 'qibla.liveCompass')}
           </Text>
         </View>
       )}

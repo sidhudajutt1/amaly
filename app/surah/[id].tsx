@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Linking, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Linking, Alert, Platform } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Audio } from 'expo-av';
@@ -66,7 +66,10 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
   const arabicFontFamily = language === 'ur' ? fonts.quranIndoPak : fonts.quranMushaf;
 
   const tafsir = tafsirOpen ? getTafsirForAyah(surahNumber, ayah.number) : undefined;
-  const tafsirText = tafsir ? (language === 'ur' && tafsir.ur ? tafsir.ur : tafsir.en) : '';
+  const tafsirText = tafsir
+    ? (language === 'ur' && tafsir.ur ? tafsir.ur : language === 'en' ? tafsir.en : null)
+    : null;
+  const tafsirNote = language === 'ar' && tafsir ? t(language, 'quran.tafsirEnglishOnly') : null;
   const hasTafsir = !!getTafsirForAyah(surahNumber, ayah.number);
 
   return (
@@ -124,14 +127,21 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
         </TouchableOpacity>
       )}
 
-      {tafsirOpen && tafsirText ? (
+      {tafsirOpen && (tafsirText || tafsirNote) ? (
         <View style={[styles.tafsirBox, { backgroundColor: theme.background, borderColor: theme.border }]}>
           <Text style={[styles.tafsirSource, { color: theme.textTertiary }]}>
-            {language === 'ar' ? 'تفسير ابن كثير' : language === 'ur' ? 'تفسیر ابن کثیر' : 'Tafsir Ibn Kathir'}
+            {t(language, 'quran.tafsirSource')}
           </Text>
-          <Text style={[styles.tafsirText, { color: theme.text, fontFamily: getTranslationFontFamily(language), lineHeight: fontSizes.body * (language === 'ur' ? lineHeights.urdu : lineHeights.latin) }]}>
-            {tafsirText}
-          </Text>
+          {tafsirNote ? (
+            <Text style={[styles.tafsirText, { color: theme.textSecondary, fontStyle: 'italic' }]}>
+              {tafsirNote}
+            </Text>
+          ) : null}
+          {tafsirText ? (
+            <Text style={[styles.tafsirText, { color: theme.text, fontFamily: getTranslationFontFamily(language), lineHeight: fontSizes.body * (language === 'ur' ? lineHeights.urdu : lineHeights.latin) }]}>
+              {tafsirText}
+            </Text>
+          ) : null}
         </View>
       ) : null}
     </View>
@@ -348,6 +358,14 @@ export default function SurahReaderScreen() {
 
       {available && surahData ? (
         <>
+          {Platform.OS === 'web' && (
+            <View style={[styles.webNote, { backgroundColor: theme.surfaceElevated, borderColor: theme.border }]}>
+              <Ionicons name="information-circle-outline" size={16} color={theme.primary} />
+              <Text style={[styles.webNoteText, { color: theme.textSecondary }]}>
+                {t(language, 'quran.audioWebNote')}
+              </Text>
+            </View>
+          )}
           <AudioControlBar
             playbackState={playbackState}
             currentAyah={currentAyah}
@@ -594,6 +612,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   downloadBtnText: { fontSize: fontSizes.bodySmall, fontWeight: '600' },
+  webNote: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.xs,
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.sm,
+    padding: spacing.sm,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+  },
+  webNoteText: { flex: 1, fontSize: fontSizes.caption, lineHeight: fontSizes.caption * 1.5 },
   comingSoon: {
     flex: 1,
     justifyContent: 'center',
