@@ -253,6 +253,8 @@ export const ar: TranslationKeys = {
   'location.detecting': 'جارٍ تحديد الموقع...',
   'location.searchCity': 'ابحث عن مدينة',
   'location.changeCity': 'تغيير',
+  'location.setForPrayerTimes': 'حدد موقعك لمواقيت الصلاة',
+  'location.tapToSetCity': 'اضغط لتحديد المدينة',
   'location.permissionDenied': 'تم رفض إذن الموقع',
   'location.manualSelect': 'اختر المدينة يدوياً',
   'hijri.adjustment': 'تعديل التاريخ الهجري',

@@ -253,6 +253,8 @@ export const en = {
   'location.manualSelect': 'Select city manually',
   'location.searchCity': 'Search city',
   'location.changeCity': 'Change',
+  'location.setForPrayerTimes': 'Set location for prayer times',
+  'location.tapToSetCity': 'Tap to set your city',
   'hijri.adjustment': 'Hijri Date Adjustment',
   'hijri.noChange': 'No change',
   'hijri.daysEarlier': 'days earlier',

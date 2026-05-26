@@ -1,5 +1,5 @@
 import { Tabs, router } from 'expo-router';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppStore } from '../../src/store/useAppStore';
@@ -57,11 +57,7 @@ function PrayerBar() {
   }
 
   if (!prayerTimes) {
-    const noLocationLabel = language === 'ar'
-      ? 'حدد موقعك لمواقيت الصلاة'
-      : language === 'ur'
-      ? 'نماز کے اوقات کے لیے مقام متعین کریں'
-      : 'Set location for prayer times';
+    const noLocationLabel = t(language, 'location.setForPrayerTimes');
     const isRTL = language === 'ar' || language === 'ur';
     return (
       <TouchableOpacity
@@ -69,7 +65,7 @@ function PrayerBar() {
         onPress={() => router.push('/city-search')}
         accessibilityRole="button"
         accessibilityLabel={noLocationLabel}
-        accessibilityHint={language === 'ar' ? 'اضغط لتحديد المدينة' : language === 'ur' ? 'شہر منتخب کرنے کے لیے دبائیں' : 'Tap to set your city'}
+        accessibilityHint={t(language, 'location.tapToSetCity')}
         activeOpacity={0.8}
       >
         <Text style={[styles.prayerBarText, { color: theme.prayerBarText, opacity: 0.9 }]}>
@@ -112,6 +108,8 @@ export default function TabsLayout() {
   const language = useAppStore((s) => s.settings.language);
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const compactTabs = width < 380;
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
@@ -123,10 +121,11 @@ export default function TabsLayout() {
           headerShown: false,
           tabBarActiveTintColor: theme.tabBarActive,
           tabBarInactiveTintColor: theme.tabBarInactive,
+          tabBarShowLabel: !compactTabs,
           tabBarStyle: {
             backgroundColor: theme.tabBar,
             borderTopColor: theme.border,
-            height: 60 + insets.bottom,
+            height: (compactTabs ? 52 : 60) + insets.bottom,
             paddingBottom: insets.bottom,
             paddingTop: spacing.xs,
           },
@@ -135,7 +134,7 @@ export default function TabsLayout() {
             fontWeight: '600',
           },
           tabBarItemStyle: {
-            paddingHorizontal: 2,
+            paddingHorizontal: compactTabs ? 0 : 2,
           },
         }}
       >
@@ -143,6 +142,7 @@ export default function TabsLayout() {
           name="today"
           options={{
             title: t(language, 'tabs.today'),
+            tabBarAccessibilityLabel: t(language, 'tabs.today'),
             tabBarIcon: ({ focused, color }) => (
               <TabIcon name="today" focused={focused} color={color} />
             ),
@@ -152,6 +152,7 @@ export default function TabsLayout() {
           name="quran"
           options={{
             title: t(language, 'tabs.quran'),
+            tabBarAccessibilityLabel: t(language, 'tabs.quran'),
             tabBarIcon: ({ focused, color }) => (
               <TabIcon name="quran" focused={focused} color={color} />
             ),
@@ -161,6 +162,7 @@ export default function TabsLayout() {
           name="hadith"
           options={{
             title: t(language, 'tabs.hadith'),
+            tabBarAccessibilityLabel: t(language, 'tabs.hadith'),
             tabBarIcon: ({ focused, color }) => (
               <TabIcon name="hadith" focused={focused} color={color} />
             ),
@@ -170,6 +172,7 @@ export default function TabsLayout() {
           name="ibadah"
           options={{
             title: t(language, 'tabs.ibadah'),
+            tabBarAccessibilityLabel: t(language, 'tabs.ibadah'),
             tabBarIcon: ({ focused, color }) => (
               <TabIcon name="ibadah" focused={focused} color={color} />
             ),
@@ -179,6 +182,7 @@ export default function TabsLayout() {
           name="prayer"
           options={{
             title: t(language, 'tabs.prayer'),
+            tabBarAccessibilityLabel: t(language, 'tabs.prayer'),
             tabBarIcon: ({ focused, color }) => (
               <TabIcon name="prayer" focused={focused} color={color} />
             ),
@@ -188,6 +192,7 @@ export default function TabsLayout() {
           name="settings"
           options={{
             title: t(language, 'settings.title'),
+            tabBarAccessibilityLabel: t(language, 'settings.title'),
             tabBarIcon: ({ focused, color }) => (
               <TabIcon name="settings" focused={focused} color={color} />
             ),

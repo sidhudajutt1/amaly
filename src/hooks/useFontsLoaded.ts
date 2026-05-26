@@ -1,4 +1,5 @@
 import { useFonts } from 'expo-font';
+import { Platform } from 'react-native';
 import { AmiriQuran_400Regular } from '@expo-google-fonts/amiri-quran';
 import { Amiri_400Regular, Amiri_700Bold } from '@expo-google-fonts/amiri';
 import { NotoNastaliqUrdu_400Regular, NotoNastaliqUrdu_700Bold } from '@expo-google-fonts/noto-nastaliq-urdu';
@@ -12,6 +13,8 @@ export function useFontsLoaded(): boolean {
     NotoNastaliqUrdu: NotoNastaliqUrdu_400Regular,
     NotoNastaliqUrduBold: NotoNastaliqUrdu_700Bold,
   });
+  // Web: don't block navigation on font load (avoids spinner flash on route changes in dev).
+  if (Platform.OS === 'web') return true;
   return loaded;
 }
 

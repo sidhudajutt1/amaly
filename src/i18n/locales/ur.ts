@@ -253,6 +253,8 @@ export const ur: TranslationKeys = {
   'location.detecting': 'مقام تلاش ہو رہا ہے...',
   'location.searchCity': 'شہر تلاش کریں',
   'location.changeCity': 'تبدیل کریں',
+  'location.setForPrayerTimes': 'نماز کے اوقات کے لیے مقام متعین کریں',
+  'location.tapToSetCity': 'شہر منتخب کرنے کے لیے دبائیں',
   'location.permissionDenied': 'مقام کی اجازت نہیں دی گئی',
   'location.manualSelect': 'شہر دستی منتخب کریں',
   'hijri.adjustment': 'ہجری تاریخ ترمیم',
