@@ -19,6 +19,7 @@ export default function PrayerScreen() {
   const language = useAppStore((s) => s.settings.language);
   const todayProgress = useAppStore((s) => s.todayProgress);
   const markPrayerCompleted = useAppStore((s) => s.markPrayerCompleted);
+  const unmarkPrayerCompleted = useAppStore((s) => s.unmarkPrayerCompleted);
   const locationName = useAppStore((s) => s.settings.locationName);
   const { theme } = useTheme();
   const { prayerTimes, nextPrayer, countdown, currentPrayer } = usePrayerTimes();
@@ -158,8 +159,16 @@ export default function PrayerScreen() {
               </Text>
               {isPrayer && (
                 <TouchableOpacity
-                  onPress={() => { hapticSuccess(); markPrayerCompleted(name as PrayerName); }}
-                  accessibilityLabel={`Mark ${name} as prayed`}
+                  onPress={() => {
+                    if (isPrayed) {
+                      hapticLight();
+                      unmarkPrayerCompleted(name as PrayerName);
+                    } else {
+                      hapticSuccess();
+                      markPrayerCompleted(name as PrayerName);
+                    }
+                  }}
+                  accessibilityLabel={isPrayed ? t(language, 'a11y.unmarkPrayed') : t(language, 'a11y.markPrayed')}
                   accessibilityRole="button"
                   style={[
                     styles.prayedButton,

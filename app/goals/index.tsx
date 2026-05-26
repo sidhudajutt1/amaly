@@ -1,7 +1,7 @@
-import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
@@ -38,14 +38,35 @@ export default function GoalsSettingsScreen() {
 
   const [config, setConfig] = useState<GoalConfig>({ ...currentConfig });
 
+  const hasUnsavedChanges = useMemo(
+    () => JSON.stringify(config) !== JSON.stringify(currentConfig),
+    [config, currentConfig],
+  );
+
   const updateConfig = (partial: Partial<GoalConfig>) => {
     setConfig((prev) => ({ ...prev, ...partial }));
   };
 
-  const save = () => {
+  const save = useCallback(() => {
     setGoalConfig(config);
     router.back();
-  };
+  }, [config, setGoalConfig]);
+
+  const handleBack = useCallback(() => {
+    if (!hasUnsavedChanges) {
+      router.back();
+      return;
+    }
+    Alert.alert(
+      t(language, 'goals.unsavedTitle'),
+      t(language, 'goals.unsavedMessage'),
+      [
+        { text: t(language, 'common.cancel'), style: 'cancel' },
+        { text: t(language, 'goals.discard'), style: 'destructive', onPress: () => router.back() },
+        { text: t(language, 'goals.saveChanges'), onPress: save },
+      ],
+    );
+  }, [hasUnsavedChanges, language, save]);
 
   const versesOptions = [1, 3, 5, 10];
 
@@ -56,7 +77,7 @@ export default function GoalsSettingsScreen() {
     >
       {/* Header */}
       <View style={styles.headerRow}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={handleBack}>
           <Ionicons
             name={language === 'ar' || language === 'ur' ? 'arrow-forward' : 'arrow-back'}
             size={24}

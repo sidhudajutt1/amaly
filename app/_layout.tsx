@@ -6,12 +6,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAppStore } from '../src/store/useAppStore';
 import { isRTL } from '../src/i18n';
 import { useFontsLoaded } from '../src/hooks/useFontsLoaded';
+import { useTheme } from '../src/hooks/useTheme';
 
 export default function RootLayout() {
   const hydrate = useAppStore((s) => s.hydrate);
   const language = useAppStore((s) => s.settings.language);
-  const theme = useAppStore((s) => s.settings.theme);
+  const themeMode = useAppStore((s) => s.settings.theme);
   const fontsLoaded = useFontsLoaded();
+  const { theme } = useTheme();
 
   useEffect(() => {
     hydrate();
@@ -28,15 +30,15 @@ export default function RootLayout() {
 
   if (!fontsLoaded) {
     return (
-      <View style={layoutStyles.loading}>
-        <ActivityIndicator size="large" color="#1B6B4A" />
+      <View style={[layoutStyles.loading, { backgroundColor: theme.background }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
 
   return (
     <SafeAreaProvider>
-      <StatusBar style={theme === 'dark' ? 'light' : 'auto'} />
+      <StatusBar style={themeMode === 'dark' ? 'light' : 'auto'} />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
@@ -58,5 +60,5 @@ export default function RootLayout() {
 }
 
 const layoutStyles = StyleSheet.create({
-  loading: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' },
+  loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 });

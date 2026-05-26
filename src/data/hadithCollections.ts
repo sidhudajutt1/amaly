@@ -4,6 +4,8 @@ export interface HadithCollectionMeta {
   nameAr: string;
   nameUr: string;
   compiler: string;
+  compilerAr: string;
+  compilerUr: string;
   totalHadiths: number;
   totalBooks: number;
   icon: string;
@@ -17,6 +19,8 @@ export const hadithCollections: HadithCollectionMeta[] = [
     nameAr: 'صحيح البخاري',
     nameUr: 'صحیح بخاری',
     compiler: 'Imam Muhammad ibn Ismail al-Bukhari',
+    compilerAr: 'الإمام محمد بن إسماعيل البخاري',
+    compilerUr: 'امام محمد بن اسماعیل بخاری',
     totalHadiths: 7563,
     totalBooks: 97,
     icon: '📗',
@@ -28,6 +32,8 @@ export const hadithCollections: HadithCollectionMeta[] = [
     nameAr: 'صحيح مسلم',
     nameUr: 'صحیح مسلم',
     compiler: 'Imam Muslim ibn al-Hajjaj',
+    compilerAr: 'الإمام مسلم بن الحجاج',
+    compilerUr: 'امام مسلم بن حجاج',
     totalHadiths: 7500,
     totalBooks: 56,
     icon: '📗',
@@ -39,6 +45,8 @@ export const hadithCollections: HadithCollectionMeta[] = [
     nameAr: 'جامع الترمذي',
     nameUr: 'جامع ترمذی',
     compiler: 'Imam Abu Isa at-Tirmidhi',
+    compilerAr: 'الإمام أبو عيسى الترمذي',
+    compilerUr: 'امام ابو عیسیٰ ترمذی',
     totalHadiths: 3956,
     totalBooks: 49,
     icon: '📕',
@@ -50,6 +58,8 @@ export const hadithCollections: HadithCollectionMeta[] = [
     nameAr: 'سنن أبي داود',
     nameUr: 'سنن ابوداؤد',
     compiler: 'Imam Abu Dawud as-Sijistani',
+    compilerAr: 'الإمام أبو داود السجستاني',
+    compilerUr: 'امام ابو داؤد سجستانی',
     totalHadiths: 5274,
     totalBooks: 43,
     icon: '📕',
@@ -61,6 +71,8 @@ export const hadithCollections: HadithCollectionMeta[] = [
     nameAr: 'سنن النسائي',
     nameUr: 'سنن نسائی',
     compiler: "Imam Ahmad an-Nasa'i",
+    compilerAr: 'الإمام أحمد النسائي',
+    compilerUr: 'امام احمد نسائی',
     totalHadiths: 5758,
     totalBooks: 51,
     icon: '📙',
@@ -72,6 +84,8 @@ export const hadithCollections: HadithCollectionMeta[] = [
     nameAr: 'سنن ابن ماجه',
     nameUr: 'سنن ابن ماجہ',
     compiler: 'Imam Ibn Majah al-Qazwini',
+    compilerAr: 'الإمام ابن ماجه القزويني',
+    compilerUr: 'امام ابن ماجہ قزوینی',
     totalHadiths: 4341,
     totalBooks: 37,
     icon: '📙',

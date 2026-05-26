@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { View, Text, Animated, StyleSheet, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useAppStore } from '../src/store/useAppStore';
+import { useTheme } from '../src/hooks/useTheme';
 import { t } from '../src/i18n';
 
 const { width } = Dimensions.get('window');
@@ -11,6 +12,7 @@ export default function SplashScreen() {
   const isLoading = useAppStore((s) => s.isLoading);
   const onboardingCompleted = useAppStore((s) => s.settings.onboardingCompleted);
   const language = useAppStore((s) => s.settings.language);
+  const { theme, isDark } = useTheme();
 
   const [minElapsed, setMinElapsed] = useState(false);
   const logoScale = useRef(new Animated.Value(0.6)).current;
@@ -47,33 +49,33 @@ export default function SplashScreen() {
   const glowOpacity = shimmer.interpolate({ inputRange: [0, 1], outputRange: [0.3, 0.7] });
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.glowCircle, { opacity: glowOpacity }]} />
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Animated.View style={[styles.glowCircle, { opacity: glowOpacity, backgroundColor: theme.primary }]} />
 
       <Animated.View style={[styles.logoContainer, { opacity: logoOpacity, transform: [{ scale: logoScale }] }]}>
-        <View style={styles.logoOuter}>
-          <View style={styles.logoInner}>
+        <View style={[styles.logoOuter, { backgroundColor: `${theme.primary}26`, borderColor: `${theme.primary}59` }]}>
+          <View style={[styles.logoInner, { backgroundColor: theme.primary }]}>
             <Text style={styles.logoArabic}>{'\u0639'}</Text>
           </View>
         </View>
       </Animated.View>
 
       <Animated.View style={{ opacity: nameOpacity, alignItems: 'center' }}>
-        <Text style={styles.appNameArabic}>{'\u0639\u064E\u0645\u064E\u0644\u0650\u064A'}</Text>
-        <Text style={styles.appNameLatin}>AMALY</Text>
-        <Text style={styles.tagline}>{t(language, 'splash.tagline')}</Text>
+        <Text style={[styles.appNameArabic, { color: isDark ? theme.primaryLight : theme.text }]}>{'\u0639\u064E\u0645\u064E\u0644\u0650\u064A'}</Text>
+        <Text style={[styles.appNameLatin, { color: theme.primary }]}>AMALY</Text>
+        <Text style={[styles.tagline, { color: theme.textSecondary }]}>{t(language, 'splash.tagline')}</Text>
       </Animated.View>
 
-      <View style={styles.dotsRow}>
+      <View style={styles.dotsRow} accessibilityLabel={t(language, 'common.loading')}>
         {[0, 1, 2].map((i) => (
-          <LoadingDot key={i} delay={i * 250} />
+          <LoadingDot key={i} delay={i * 250} color={theme.primary} />
         ))}
       </View>
     </View>
   );
 }
 
-function LoadingDot({ delay }: { delay: number }) {
+function LoadingDot({ delay, color }: { delay: number; color: string }) {
   const opacity = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
@@ -88,7 +90,7 @@ function LoadingDot({ delay }: { delay: number }) {
     return () => clearTimeout(timeout);
   }, []);
 
-  return <Animated.View style={[styles.dot, { opacity }]} />;
+  return <Animated.View style={[styles.dot, { opacity, backgroundColor: color }]} />;
 }
 
 const LOGO_SIZE = width * 0.28;
@@ -99,14 +101,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#022C22',
   },
   glowCircle: {
     position: 'absolute',
     width: GLOW_SIZE,
     height: GLOW_SIZE,
     borderRadius: GLOW_SIZE / 2,
-    backgroundColor: '#059669',
   },
   logoContainer: {
     marginBottom: 28,
@@ -115,17 +115,14 @@ const styles = StyleSheet.create({
     width: LOGO_SIZE,
     height: LOGO_SIZE,
     borderRadius: LOGO_SIZE / 2,
-    backgroundColor: 'rgba(52, 211, 153, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: 'rgba(52, 211, 153, 0.35)',
   },
   logoInner: {
     width: LOGO_SIZE * 0.72,
     height: LOGO_SIZE * 0.72,
     borderRadius: (LOGO_SIZE * 0.72) / 2,
-    backgroundColor: '#059669',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -137,20 +134,17 @@ const styles = StyleSheet.create({
   },
   appNameArabic: {
     fontSize: 36,
-    color: '#D1FAE5',
     fontWeight: '300',
     marginBottom: 4,
   },
   appNameLatin: {
     fontSize: 16,
-    color: '#34D399',
     fontWeight: '600',
     letterSpacing: 6,
     marginBottom: 8,
   },
   tagline: {
     fontSize: 13,
-    color: 'rgba(167, 243, 208, 0.6)',
     fontWeight: '400',
     letterSpacing: 0.5,
   },
@@ -164,6 +158,5 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#34D399',
   },
 });

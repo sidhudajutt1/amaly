@@ -60,6 +60,7 @@ interface AppState {
   markReflectionViewed: () => void;
   markNiyyahCompleted: () => void;
   markPrayerCompleted: (prayer: PrayerName) => void;
+  unmarkPrayerCompleted: (prayer: PrayerName) => void;
   markTafsirRead: () => void;
 
   // Goals actions
@@ -294,6 +295,26 @@ export const useAppStore = create<AppState>((set, get) => ({
         todayProgress: {
           ...progress,
           prayersCompleted: [...progress.prayersCompleted, prayer],
+        },
+      });
+      get().persist();
+    }
+  },
+
+  unmarkPrayerCompleted: (prayer) => {
+    const state = get();
+    const today = todayDate();
+    let progress = state.todayProgress;
+
+    if (progress.date !== today) {
+      progress = defaultProgress();
+    }
+
+    if (progress.prayersCompleted.includes(prayer)) {
+      set({
+        todayProgress: {
+          ...progress,
+          prayersCompleted: progress.prayersCompleted.filter((p) => p !== prayer),
         },
       });
       get().persist();

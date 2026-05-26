@@ -16,6 +16,12 @@ function getName(collection: HadithCollectionMeta, lang: Language): string {
   return collection.nameEn;
 }
 
+function getCompiler(collection: HadithCollectionMeta, lang: Language): string {
+  if (lang === 'ar') return collection.compilerAr;
+  if (lang === 'ur') return collection.compilerUr;
+  return collection.compiler;
+}
+
 function CollectionCard({ collection, theme, language }: {
   collection: HadithCollectionMeta;
   theme: Record<string, string>;
@@ -24,18 +30,38 @@ function CollectionCard({ collection, theme, language }: {
   const availableCount = getHadithsByCollection(collection.id).length;
   const hasContent = availableCount > 0;
 
+  if (!hasContent) {
+    return (
+      <View style={[styles.card, styles.cardDisabled, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+        <MaterialCommunityIcons name="book-open-variant" size={28} color={theme.textTertiary} style={styles.icon} />
+        <View style={styles.cardContent}>
+          <Text style={[styles.nameAr, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>{collection.nameAr}</Text>
+          <Text style={[styles.nameEn, { color: theme.text }]}>{getName(collection, language)}</Text>
+          <Text style={[styles.compiler, { color: theme.textSecondary }]}>{getCompiler(collection, language)}</Text>
+          <View style={[styles.comingSoonBadge, { backgroundColor: theme.surfaceElevated, borderColor: theme.border }]}>
+            <Ionicons name="time-outline" size={14} color={theme.textSecondary} />
+            <Text style={[styles.comingSoonText, { color: theme.textSecondary }]}>
+              {t(language, 'hadith.comingSoon')}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <TouchableOpacity
-      style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border, opacity: hasContent ? 1 : 0.5 }]}
+      style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}
       activeOpacity={0.7}
-      disabled={!hasContent}
       onPress={() => router.push(`/hadith/${collection.id}`)}
+      accessibilityRole="button"
+      accessibilityLabel={getName(collection, language)}
     >
       <MaterialCommunityIcons name="book-open-variant" size={28} color={theme.primary} style={styles.icon} />
       <View style={styles.cardContent}>
         <Text style={[styles.nameAr, { color: theme.textArabic, fontFamily: getArabicFontFamily(language) }]}>{collection.nameAr}</Text>
         <Text style={[styles.nameEn, { color: theme.text }]}>{getName(collection, language)}</Text>
-        <Text style={[styles.compiler, { color: theme.textSecondary }]}>{collection.compiler}</Text>
+        <Text style={[styles.compiler, { color: theme.textSecondary }]}>{getCompiler(collection, language)}</Text>
         <View style={styles.statsRow}>
           <Text style={[styles.stat, { color: theme.textTertiary }]}>
             {`${collection.totalHadiths.toLocaleString()} ${t(language, 'hadith.hadithNumber')}`}
@@ -48,7 +74,7 @@ function CollectionCard({ collection, theme, language }: {
           <View style={[styles.availableBadge, { backgroundColor: theme.primaryLight }]}>
             <Ionicons name="checkmark-circle" size={12} color={theme.primary} />
             <Text style={[styles.availableText, { color: theme.primary }]}>
-              {`${availableCount} ${language === 'ar' ? 'حديث متاح' : language === 'ur' ? 'احادیث دستیاب' : 'hadiths available'}`}
+              {`${availableCount} ${t(language, 'hadith.hadithsAvailable')}`}
             </Text>
           </View>
         )}
@@ -103,6 +129,19 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     borderWidth: 1,
   },
+  cardDisabled: { opacity: 0.85 },
+  comingSoonBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+    marginTop: spacing.xs,
+  },
+  comingSoonText: { fontSize: fontSizes.caption, fontWeight: '600' },
   icon: { marginEnd: spacing.md, marginTop: 4 },
   cardContent: { flex: 1 },
   nameAr: { fontSize: fontSizes.heading3, textAlign: 'right', marginBottom: 2 },

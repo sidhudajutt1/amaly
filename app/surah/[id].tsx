@@ -79,7 +79,7 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
           <TouchableOpacity
             onPress={() => onPlayAyah(ayah.number)}
             style={[styles.actionBtn, { backgroundColor: isPlaying ? theme.primary : theme.primaryLight }]}
-            accessibilityLabel={isPlaying ? 'Playing ayah' : 'Play ayah'}
+            accessibilityLabel={isPlaying ? t(language, 'a11y.playingAyah') : t(language, 'a11y.playAyah')}
             accessibilityRole="button"
           >
             <Ionicons name={isPlaying ? 'volume-high' : 'play'} size={14} color={isPlaying ? '#fff' : theme.primary} />
@@ -87,7 +87,7 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
           <TouchableOpacity
             onPress={onToggleBookmark}
             style={[styles.actionBtn, { backgroundColor: isBookmarked ? theme.primary : theme.primaryLight }]}
-            accessibilityLabel={isBookmarked ? 'Remove bookmark' : 'Bookmark ayah'}
+            accessibilityLabel={isBookmarked ? t(language, 'a11y.removeBookmark') : t(language, 'a11y.bookmarkAyah')}
             accessibilityRole="button"
           >
             <Ionicons name={isBookmarked ? 'bookmark' : 'bookmark-outline'} size={14} color={isBookmarked ? '#fff' : theme.primary} />
@@ -211,6 +211,7 @@ export default function SurahReaderScreen() {
   const selectedReciter = useAppStore((s) => s.settings.selectedReciter);
   const markQuranVersesRead = useAppStore((s) => s.markQuranVersesRead);
   const updateReadingProgress = useAppStore((s) => s.updateReadingProgress);
+  const readingProgress = useAppStore((s) => s.readingProgress);
   const addBookmark = useAppStore((s) => s.addBookmark);
   const removeBookmark = useAppStore((s) => s.removeBookmark);
   const bookmarks = useAppStore((s) => s.bookmarks);
@@ -222,6 +223,22 @@ export default function SurahReaderScreen() {
   const listRef = useRef<FlatList<AyahData>>(null);
   const scrollToAyahDone = useRef(false);
   const targetAyah = ayahParam ? parseInt(ayahParam, 10) : null;
+  const [lastViewedAyah, setLastViewedAyah] = useState(() => {
+    if (readingProgress?.lastSurah === surahNumber) return readingProgress.lastAyah;
+    return targetAyah ?? 1;
+  });
+
+  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: Array<{ item: AyahData }> }) => {
+    if (!viewableItems.length) return;
+    const maxAyah = Math.max(...viewableItems.map((v) => v.item.number));
+    setLastViewedAyah((prev) => {
+      const next = Math.max(prev, maxAyah);
+      if (next > prev) updateReadingProgress(surahNumber, next);
+      return next;
+    });
+  }).current;
+
+  const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 40 }).current;
 
   const surahMeta = surahs.find((s) => s.number === surahNumber);
   const surahData = getSurahData(surahNumber);
@@ -358,6 +375,8 @@ export default function SurahReaderScreen() {
             ref={listRef}
             data={surahData.ayahs}
             keyExtractor={(item) => `${surahNumber}-${item.number}`}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
             onScrollToIndexFailed={(info) => {
               listRef.current?.scrollToOffset({
                 offset: info.averageItemLength * info.index,
@@ -392,13 +411,15 @@ export default function SurahReaderScreen() {
                   style={[styles.markReadBtn, { backgroundColor: theme.primary }]}
                   onPress={() => {
                     playerRef.current?.cleanup();
-                    markQuranVersesRead(surahData?.ayahs.length ?? 0);
+                    const versesRead = Math.max(1, Math.min(lastViewedAyah, surahData?.ayahs.length ?? 1));
+                    markQuranVersesRead(versesRead);
+                    updateReadingProgress(surahNumber, versesRead);
                     router.back();
                   }}
                 >
                   <Ionicons name="checkmark-circle" size={20} color="#fff" />
                   <Text style={styles.markReadText}>
-                    {language === 'ar' ? 'تم القراءة' : language === 'ur' ? 'پڑھ لیا' : 'Mark as Read'}
+                    {t(language, 'quran.markAsRead')}
                   </Text>
                 </TouchableOpacity>
               </View>

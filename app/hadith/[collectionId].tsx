@@ -18,6 +18,19 @@ const GRADE_COLORS: Record<string, string> = {
   daif: '#C62828',
 };
 
+function getGradeLabel(grade: string, gradeLabel: string, language: Language): string {
+  if (language === 'en') return gradeLabel;
+  if (grade === 'sahih') return language === 'ar' ? 'صحيح' : 'صحیح';
+  if (grade === 'hasan') return language === 'ar' ? 'حسن' : 'حسن';
+  return language === 'ar' ? 'ضعيف' : 'ضعیف';
+}
+
+function getCompilerName(collection: { compiler: string; compilerAr: string; compilerUr: string }, language: Language): string {
+  if (language === 'ar') return collection.compilerAr;
+  if (language === 'ur') return collection.compilerUr;
+  return collection.compiler;
+}
+
 function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked, onToggleBookmark }: {
   hadith: HadithData;
   language: Language;
@@ -40,7 +53,9 @@ function HadithCard({ hadith, language, theme, showTransliteration, isBookmarked
           <Text style={[styles.bookName, { color: theme.textSecondary }]}>{hadith.bookName}</Text>
         </View>
         <View style={[styles.gradeBadge, { backgroundColor: `${GRADE_COLORS[hadith.grade]}15` }]}>
-          <Text style={[styles.gradeText, { color: GRADE_COLORS[hadith.grade] }]}>{hadith.gradeLabel}</Text>
+          <Text style={[styles.gradeText, { color: GRADE_COLORS[hadith.grade] }]}>
+            {getGradeLabel(hadith.grade, hadith.gradeLabel, language)}
+          </Text>
         </View>
         <TouchableOpacity
           onPress={onToggleBookmark}
@@ -131,7 +146,7 @@ export default function HadithReaderScreen() {
         type: 'hadith',
         hadithId: hadith.id,
         collectionId: hadith.collectionId,
-        label: `${collection?.nameEn ?? collectionId} #${hadith.hadithNumber}`,
+        label: `${colName} #${hadith.hadithNumber}`,
       });
     }
   }, [bookmarks, collection, collectionId, addBookmark, removeBookmark]);
@@ -149,7 +164,7 @@ export default function HadithReaderScreen() {
           <Text style={[styles.headerTitle, { color: theme.text }]}>{colName}</Text>
           {collection && (
             <Text style={[styles.headerCount, { color: theme.textSecondary }]}>
-              {collection.compiler}
+              {getCompilerName(collection, language)}
             </Text>
           )}
         </View>
