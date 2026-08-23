@@ -107,7 +107,7 @@ export default function QiblaScreen() {
       <View style={styles.locationRow}>
         <Ionicons name="location-outline" size={16} color={theme.textSecondary} />
         <Text style={[styles.locationText, { color: theme.textSecondary }]}>
-          {locationName || (language === 'ar' ? 'مكة المكرمة' : language === 'ur' ? 'مکہ المکرمہ' : 'Makkah')}
+          {locationName || t(language, 'qibla.defaultMakkah')}
         </Text>
       </View>
 
@@ -215,20 +215,20 @@ export default function QiblaScreen() {
         <View style={[styles.infoCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <Text style={[styles.infoValue, { color: theme.primary }]}>{`${qiblaAngle}°`}</Text>
           <Text style={[styles.infoLabel, { color: theme.textSecondary }]}>
-            {language === 'ar' ? 'الاتجاه' : language === 'ur' ? 'سمت' : 'Direction'}
+            {t(language, 'qibla.direction')}
           </Text>
         </View>
         <View style={[styles.infoCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <Text style={[styles.infoValue, { color: theme.primary }]}>{`${distance} km`}</Text>
           <Text style={[styles.infoLabel, { color: theme.textSecondary }]}>
-            {language === 'ar' ? 'المسافة' : language === 'ur' ? 'فاصلہ' : 'Distance'}
+            {t(language, 'qibla.distance')}
           </Text>
         </View>
       </View>
 
       {!isLive && (
         <Text style={[styles.note, { color: theme.textTertiary }]}>
-          {language === 'ar' ? 'الاتجاه محسوب من موقعك. للدقة القصوى، استخدم بوصلة فعلية.' : language === 'ur' ? 'سمت آپ کے مقام سے حساب کی گئی ہے۔ زیادہ درستی کے لیے فزیکل کمپاس استعمال کریں۔' : 'Direction calculated from your location. For best accuracy, use a physical compass.'}
+          {t(language, 'qibla.compassNote')}
         </Text>
       )}
     </View>

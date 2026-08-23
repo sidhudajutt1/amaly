@@ -106,6 +106,25 @@ export default function QuranScreen() {
         keyExtractor={(item) => item.number.toString()}
         ListHeaderComponent={
           <>
+            {!searchQuery ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.featureStrip} contentContainerStyle={styles.featureContent}>
+                {[
+                  { route: '/juz', label: t(language, 'quran.juzIndex'), icon: 'library-outline' as const },
+                  { route: '/mushaf', label: t(language, 'quran.mushafView'), icon: 'book-outline' as const },
+                  { route: '/subjects', label: t(language, 'quran.subjects'), icon: 'albums-outline' as const },
+                  { route: '/word-by-word', label: t(language, 'quran.wordByWord'), icon: 'text-outline' as const },
+                ].map((item) => (
+                  <TouchableOpacity
+                    key={item.route}
+                    style={[styles.featureChip, { backgroundColor: theme.surface, borderColor: theme.border }]}
+                    onPress={() => router.push(item.route as '/juz')}
+                  >
+                    <Ionicons name={item.icon} size={14} color={theme.primary} />
+                    <Text style={[styles.featureChipText, { color: theme.text }]}>{item.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            ) : null}
             {lastSurah && !searchQuery ? (
               <TouchableOpacity
                 style={[styles.resumeCard, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}
@@ -193,6 +212,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.xxl,
   },
+  featureStrip: { marginBottom: spacing.sm },
+  featureContent: { gap: 8, paddingBottom: spacing.xs },
+  featureChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+  },
+  featureChipText: { fontSize: fontSizes.caption, fontWeight: '600' },
   surahCard: {
     flexDirection: 'row',
     alignItems: 'center',

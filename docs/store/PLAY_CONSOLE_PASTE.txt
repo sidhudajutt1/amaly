@@ -1,0 +1,45 @@
+AMALY — Play Console paste pack
+Package: com.atifjamil.amaly
+App name: Amaly
+Category: Lifestyle (or Religion if offered)
+Free: Yes
+Ads: No
+
+SHORT DESCRIPTION (max 80 chars):
+Daily niyyah, prayer times, Quran, Qibla, duas — a free Muslim companion.
+
+FULL DESCRIPTION:
+Amaly is a free Sadaqah Jariyah app for daily worship.
+
+• Daily niyyah and streak to keep you consistent
+• Prayer times by your location, plus Qibla
+• Full Quran with English and Urdu, tafsir, word-by-word, Mushaf
+• Hadith from the six books
+• Duas, 99 Names, fasting guide
+• Notifications you control
+• English, Arabic, and Urdu
+
+Amaly does not sell your data. Location is used only for prayer times and Qibla, and stays on your device.
+
+Feedback: amaly.app.feedback@gmail.com
+
+CONTACT EMAIL:
+amaly.app.feedback@gmail.com
+
+DATA SAFETY (typical answers for this app):
+• Does the app collect data? Yes — approximate/precise location (optional, for prayer times & Qibla). Preferences stored on device.
+• Is data shared with third parties? No
+• Is data encrypted in transit? Yes (HTTPS if any network calls)
+• Can users request deletion? Yes — uninstalling the app removes local data
+• Location: App functionality, optional, not required to use most of the app
+• Notifications: optional
+• No ads, no sale of data, no account required for core use
+
+PRIVACY POLICY FILE ON YOUR PC:
+C:\Users\atifn\OneDrive\All\Documents\GitHub\niyyah-app\docs\store\privacy-policy.html
+
+PRODUCTION AAB (already built, versionCode 3):
+https://expo.dev/artifacts/eas/IVoS3VQ-H7w46slWDInGZBHHiy9368aEoAto6AsTuYM.aab
+
+PREVIEW APK (install on your phone):
+https://expo.dev/artifacts/eas/R0LYeapUnbdUHNWWc_JVhdZe3OtfkWah25g4Z5abydw.apk

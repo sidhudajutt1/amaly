@@ -64,9 +64,6 @@ function CollectionCard({ collection, theme, language }: {
         <Text style={[styles.compiler, { color: theme.textSecondary }]}>{getCompiler(collection, language)}</Text>
         <View style={styles.statsRow}>
           <Text style={[styles.stat, { color: theme.textTertiary }]}>
-            {`${collection.totalHadiths.toLocaleString()} ${t(language, 'hadith.hadithNumber')}`}
-          </Text>
-          <Text style={[styles.stat, { color: theme.textTertiary }]}>
             {`${collection.totalBooks} ${t(language, 'hadith.book')}`}
           </Text>
         </View>

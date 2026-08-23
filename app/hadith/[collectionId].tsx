@@ -223,7 +223,7 @@ export default function HadithReaderScreen() {
             <View style={styles.emptyState}>
               <Ionicons name="search" size={40} color={theme.textSecondary} />
               <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-                {language === 'ar' ? 'لا توجد نتائج' : language === 'ur' ? 'کوئی نتیجہ نہیں' : 'No results found'}
+                {t(language, 'hadith.noResults')}
               </Text>
             </View>
           }
@@ -235,7 +235,7 @@ export default function HadithReaderScreen() {
         <View style={styles.emptyState}>
           <MaterialCommunityIcons name="book-open-variant" size={48} color={theme.textSecondary} />
           <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-            {language === 'ar' ? 'الأحاديث قادمة قريباً إن شاء الله' : language === 'ur' ? 'احادیث جلد آ رہی ہیں ان شاء اللہ' : 'Hadiths coming soon, In Sha Allah'}
+            {t(language, 'hadith.emptyCollection')}
           </Text>
         </View>
       )}

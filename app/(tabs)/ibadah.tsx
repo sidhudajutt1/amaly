@@ -6,6 +6,7 @@ import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { t, isRTL } from '../../src/i18n';
 import { duaCategories } from '../../src/data/duaCategories';
+import { countDuasInCategory } from '../../src/data/duas';
 import { getQiblaDirection, getDistanceToMakkah } from '../../src/services/prayerService';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import type { Language } from '../../src/types';
@@ -112,6 +113,12 @@ export default function IbadahScreen() {
           theme={theme}
           onPress={() => router.push('/prayer-guide')}
         />
+        <QuickAccessCard
+          icon={<MaterialCommunityIcons name="moon-waning-crescent" size={32} color={theme.primary} />}
+          label={t(language, 'ibadah.fastingGuide')}
+          theme={theme}
+          onPress={() => router.push('/fasting-guide')}
+        />
       </View>
 
       {/* Zakat Calculator */}
@@ -140,7 +147,7 @@ export default function IbadahScreen() {
         {`${t(language, 'ibadah.source')}: Hisnul Muslim`}
       </Text>
 
-      {duaCategories.map((cat) => (
+      {duaCategories.filter((cat) => countDuasInCategory(cat.id) > 0).map((cat) => (
         <DuaCategoryRow key={cat.id} cat={cat} language={language} theme={theme} />
       ))}
 

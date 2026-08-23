@@ -8,15 +8,12 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { t } from '../../src/i18n';
 import { surahs } from '../../src/data/surahs';
 import { getSurahData, isSurahAvailable, getAvailableSurahNumbers, type AyahData } from '../../src/data/quranText';
-import { getIndoPakAyahText } from '../../src/data/quranTextIndoPak';
+import { getBismillahText, getDisplayAyahArabic, getQuranArabicFontFamily, getQuranArabicLineHeightMultiplier } from '../../src/utils/quranArabicText';
 import { fontSizes, spacing, borderRadius, lineHeights } from '../../src/theme';
-import { getQuranFontFamily, getTranslationFontFamily, fonts } from '../../src/theme/typography';
+import { getQuranFontFamily, getTranslationFontFamily } from '../../src/theme/typography';
 import { createAudioPlayer, type PlaybackState, type AudioPlayer } from '../../src/services/audioService';
-import { getTafsirForAyah } from '../../src/data/tafsirLoader';
+import { getTafsirForAyah, getTafsirText, tafsirUsesEnglishFallback } from '../../src/data/tafsirLoader';
 import type { Language, ReciterId } from '../../src/types';
-
-const BISMILLAH_INDOPAK = 'بِسۡمِ اللهِ الرَّحۡمٰنِ الرَّحِيۡمِ';
-const BISMILLAH_UTHMANI = 'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِيمِ';
 
 // Islamic Network CDN reciter IDs for whole-surah MP3 downloads
 const ISLAMIC_NETWORK_RECITER: Record<ReciterId, string> = {
@@ -38,7 +35,7 @@ function Bismillah({ theme, language }: { theme: Record<string, string>; languag
   return (
     <View style={[styles.bismillahContainer, { borderColor: theme.border }]}>
       <Text style={[styles.bismillahText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language) }]}>
-        {language === 'ur' ? BISMILLAH_INDOPAK : BISMILLAH_UTHMANI}
+        {getBismillahText(language)}
       </Text>
     </View>
   );
@@ -61,16 +58,24 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
   const translation =
     language === 'ur' ? ayah.translationUr : language === 'en' ? ayah.translationEn : null;
 
-  const indoPakText = language === 'ur' ? getIndoPakAyahText(surahNumber, ayah.number) : null;
-  const arabicDisplayText = indoPakText ?? ayah.textAr;
-  const arabicFontFamily = language === 'ur' ? fonts.quranIndoPak : fonts.quranMushaf;
+  const arabicDisplayText = getDisplayAyahArabic(language, surahNumber, ayah.number, ayah.textAr);
+  const arabicFontFamily = getQuranArabicFontFamily(language);
 
   const tafsir = tafsirOpen ? getTafsirForAyah(surahNumber, ayah.number) : undefined;
-  const tafsirText = tafsir
-    ? (language === 'ur' && tafsir.ur ? tafsir.ur : language === 'en' ? tafsir.en : null)
-    : null;
-  const tafsirNote = language === 'ar' && tafsir ? t(language, 'quran.tafsirEnglishOnly') : null;
+  const tafsirText = tafsir ? getTafsirText(tafsir, language) : null;
+  const tafsirNote =
+    tafsir && tafsirUsesEnglishFallback(tafsir, language)
+      ? t(language, 'quran.tafsirArabicFallback')
+      : null;
   const hasTafsir = !!getTafsirForAyah(surahNumber, ayah.number);
+  const markTafsirRead = useAppStore((s) => s.markTafsirRead);
+
+  const toggleTafsir = () => {
+    setTafsirOpen((open) => {
+      if (!open) markTafsirRead();
+      return !open;
+    });
+  };
 
   return (
     <View style={[styles.ayahCard, { backgroundColor: theme.surface, borderColor: isPlaying ? theme.primary : theme.border, borderWidth: isPlaying ? 2 : 1 }]}>
@@ -97,7 +102,7 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, lineHeight: quranFontSize * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic), fontFamily: arabicFontFamily }]}>
+      <Text style={[styles.arabicText, { color: theme.textArabic, fontSize: quranFontSize, lineHeight: quranFontSize * getQuranArabicLineHeightMultiplier(language), fontFamily: arabicFontFamily }]}>
         {arabicDisplayText}
       </Text>
       {translation ? (
@@ -114,14 +119,14 @@ function AyahCard({ ayah, surahNumber, language, theme, quranFontSize, translati
       {hasTafsir && (
         <TouchableOpacity
           style={[styles.tafsirToggle, { borderColor: theme.border }]}
-          onPress={() => setTafsirOpen((o) => !o)}
+          onPress={toggleTafsir}
           activeOpacity={0.7}
         >
           <MaterialCommunityIcons name="book-open-page-variant" size={14} color={theme.primary} />
           <Text style={[styles.tafsirToggleText, { color: theme.primary }]}>
             {tafsirOpen
-              ? (language === 'ar' ? 'إخفاء التفسير' : language === 'ur' ? 'تفسیر چھپائیں' : 'Hide Tafsir')
-              : (language === 'ar' ? 'تفسير ابن كثير' : language === 'ur' ? 'تفسیر ابن کثیر' : 'Ibn Kathir Tafsir')}
+              ? t(language, 'quran.hideTafsir')
+              : t(language, 'quran.showTafsir')}
           </Text>
           <Ionicons name={tafsirOpen ? 'chevron-up' : 'chevron-down'} size={14} color={theme.primary} />
         </TouchableOpacity>
@@ -174,8 +179,8 @@ function AudioControlBar({ playbackState, currentAyah, totalAyahs, surahName, on
             )}
             <Text style={[styles.audioText, { color: theme.text }]} numberOfLines={1}>
               {playbackState === 'loading'
-                ? (language === 'ar' ? 'جاري التحميل...' : language === 'ur' ? 'لوڈ ہو رہا ہے...' : 'Loading...')
-                : `${language === 'ar' ? 'آية' : language === 'ur' ? 'آیت' : 'Ayah'} ${currentAyah ?? '?'} / ${totalAyahs}`}
+                ? t(language, 'quran.audioLoading')
+                : `${t(language, 'quran.ayahLabel')} ${currentAyah ?? '?'} / ${totalAyahs}`}
             </Text>
           </View>
           <View style={styles.audioControls}>
@@ -197,14 +202,14 @@ function AudioControlBar({ playbackState, currentAyah, totalAyahs, surahName, on
         <View style={styles.audioInfo}>
           <Ionicons name="wifi-outline" size={16} color={theme.error || '#C62828'} />
           <Text style={[styles.audioText, { color: theme.error || '#C62828', flex: 1 }]}>
-            {language === 'ar' ? 'الصوت غير متاح — تحقق من اتصالك' : language === 'ur' ? 'آڈیو دستیاب نہیں — کنکشن چیک کریں' : 'Audio unavailable — check your connection'}
+            {t(language, 'quran.audioUnavailable')}
           </Text>
         </View>
       ) : (
         <TouchableOpacity onPress={onPlayAll} style={[styles.playAllBtn, { backgroundColor: theme.primary }]} accessibilityLabel="Play full surah" accessibilityRole="button">
           <Ionicons name="play" size={18} color="#fff" />
           <Text style={styles.playAllText}>
-            {language === 'ar' ? 'تشغيل السورة' : language === 'ur' ? 'سورت چلائیں' : 'Play Surah'}
+            {t(language, 'quran.playSurah')}
           </Text>
         </TouchableOpacity>
       )}
@@ -241,12 +246,15 @@ export default function SurahReaderScreen() {
   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: Array<{ item: AyahData }> }) => {
     if (!viewableItems.length) return;
     const maxAyah = Math.max(...viewableItems.map((v) => v.item.number));
-    setLastViewedAyah((prev) => {
-      const next = Math.max(prev, maxAyah);
-      if (next > prev) updateReadingProgress(surahNumber, next);
-      return next;
-    });
+    setLastViewedAyah((prev) => Math.max(prev, maxAyah));
   }).current;
+
+  useEffect(() => {
+    const storedAyah = readingProgress?.lastSurah === surahNumber ? readingProgress.lastAyah : 0;
+    if (lastViewedAyah > storedAyah) {
+      updateReadingProgress(surahNumber, lastViewedAyah);
+    }
+  }, [lastViewedAyah, surahNumber, readingProgress, updateReadingProgress]);
 
   const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 40 }).current;
 
@@ -456,23 +464,12 @@ export default function SurahReaderScreen() {
             {surahMeta.nameEn}
           </Text>
           <Text style={[styles.comingSoonText, { color: theme.textSecondary }]}>
-            {language === 'ar' ? `${getAvailableSurahNumbers().length} سورة متاحة. المزيد قريباً.` : language === 'ur' ? `${getAvailableSurahNumbers().length} سورتیں دستیاب ہیں۔ مزید جلد آ رہی ہیں۔` : `${getAvailableSurahNumbers().length} surahs available now. More coming soon.`}
+            {language === 'ar'
+              ? 'النص الكامل لهذه السورة غير متاح حالياً.'
+              : language === 'ur'
+              ? 'اس سورت کا مکمل متن ابھی دستیاب نہیں۔'
+              : 'Full text for this surah is not yet available.'}
           </Text>
-          <View style={styles.availableList}>
-            {getAvailableSurahNumbers().slice(0, 6).map((num) => {
-              const s = surahs.find((x) => x.number === num);
-              if (!s) return null;
-              return (
-                <TouchableOpacity
-                  key={num}
-                  style={[styles.availableChip, { backgroundColor: theme.primaryLight, borderColor: theme.primary }]}
-                  onPress={() => router.replace(`/surah/${num}`)}
-                >
-                  <Text style={[styles.availableChipText, { color: theme.primary }]}>{s.nameEn}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
         </View>
       )}
     </View>

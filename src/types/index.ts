@@ -184,15 +184,12 @@ export interface StreakData {
   categoryProgress: Record<GrowthCategory, number>;
 }
 
-export interface SupportTier {
-  id: 'sadaqah' | 'supporter' | 'patron' | 'lifetime';
-  nameEn: string;
-  nameAr: string;
-  nameUr: string;
-  price: string;
-  descriptionEn: string;
-  descriptionAr: string;
-  descriptionUr: string;
+export interface ReflectionArchiveEntry {
+  date: string;
+  niyyahEn: string;
+  niyyahAr: string;
+  niyyahUr: string;
+  ayahRef?: string;
 }
 
 export interface HijriDate {

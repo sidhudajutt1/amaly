@@ -10,12 +10,12 @@ import { getArabicFontFamily } from '../../src/theme/typography';
 import { hapticMedium, hapticSuccess } from '../../src/utils/haptics';
 
 const DHIKR_PRESETS = [
-  { id: 'subhanallah', ar: 'سُبْحَانَ ٱللَّهِ', en: 'SubhanAllah', target: 33 },
-  { id: 'alhamdulillah', ar: 'ٱلْحَمْدُ لِلَّهِ', en: 'Alhamdulillah', target: 33 },
-  { id: 'allahuakbar', ar: 'ٱللَّهُ أَكْبَرُ', en: 'Allahu Akbar', target: 34 },
-  { id: 'lailahaillallah', ar: 'لَا إِلَٰهَ إِلَّا ٱللَّهُ', en: 'La ilaha illallah', target: 100 },
-  { id: 'astaghfirullah', ar: 'أَسْتَغْفِرُ ٱللَّهَ', en: 'Astaghfirullah', target: 100 },
-  { id: 'subhanallahi', ar: 'سُبْحَانَ ٱللَّهِ وَبِحَمْدِهِ', en: 'SubhanAllahi wa bihamdihi', target: 100 },
+  { id: 'subhanallah', ar: 'سُبْحَانَ ٱللَّهِ', chipAr: 'سبحان الله', en: 'SubhanAllah', target: 33 },
+  { id: 'alhamdulillah', ar: 'ٱلْحَمْدُ لِلَّهِ', chipAr: 'الحمد لله', en: 'Alhamdulillah', target: 33 },
+  { id: 'allahuakbar', ar: 'ٱللَّهُ أَكْبَرُ', chipAr: 'الله أكبر', en: 'Allahu Akbar', target: 34 },
+  { id: 'lailahaillallah', ar: 'لَا إِلَٰهَ إِلَّا ٱللَّهُ', chipAr: 'لا إله إلا الله', en: 'La ilaha illallah', target: 100 },
+  { id: 'astaghfirullah', ar: 'أَسْتَغْفِرُ ٱللَّهَ', chipAr: 'أستغفر الله', en: 'Astaghfirullah', target: 100 },
+  { id: 'subhanallahi', ar: 'سُبْحَانَ ٱللَّهِ وَبِحَمْدِهِ', chipAr: 'سبحانه وبحمده', en: 'SubhanAllahi wa bihamdihi', target: 100 },
 ];
 
 export default function DhikrScreen() {
@@ -85,7 +85,7 @@ export default function DhikrScreen() {
             onPress={() => { setSelected(idx); setCount(0); }}
           >
             <Text style={[styles.presetText, { color: idx === selected ? '#fff' : theme.text }]}>
-              {preset.en.split(' ')[0]}
+              {(language === 'ar' || language === 'ur') ? preset.chipAr : preset.en.split(' ')[0]}
             </Text>
           </TouchableOpacity>
         ))}

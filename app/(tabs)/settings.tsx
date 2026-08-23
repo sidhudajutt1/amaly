@@ -2,32 +2,14 @@ import { useCallback, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet, Linking, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import * as StoreReview from 'expo-store-review';
 import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLocation } from '../../src/hooks/useLocation';
 import { t, isRTL } from '../../src/i18n';
 import { fontSizes, spacing, borderRadius, colorThemeMeta, type ColorThemeName } from '../../src/theme';
+import { FEEDBACK_EMAIL } from '../../src/data/feedback';
+import { requestAppReview, shareAmaly } from '../../src/services/appReview';
 import type { Language, ColorTheme, CalculationMethod, ReciterId } from '../../src/types';
-
-const FEEDBACK_EMAIL = 'amaly.app.feedback@gmail.com';
-const FEEDBACK_FORM_URL = 'https://forms.gle/AmalyFeedback';
-
-async function requestAppReview(language: Language) {
-  const available = await StoreReview.isAvailableAsync();
-  if (available) {
-    await StoreReview.requestReview();
-  } else {
-    const msg =
-      language === 'ar' ? 'شكراً جزيلاً على دعمك! تقييمك يساعدنا كثيراً.' :
-      language === 'ur' ? 'آپ کے تعاون کا شکریہ! آپ کا ریویو ہمارے لیے بہت قیمتی ہے۔' :
-      'Thank you for your support! Your review helps spread this Sadaqah Jariyah app.';
-    Alert.alert(
-      language === 'ar' ? 'تقييم التطبيق' : language === 'ur' ? 'ایپ ریویو' : 'Rate Amaly',
-      msg,
-    );
-  }
-}
 
 const RECITERS: { id: ReciterId; name: string; nameAr: string }[] = [
   { id: 'alafasy', name: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
@@ -38,19 +20,19 @@ const RECITERS: { id: ReciterId; name: string; nameAr: string }[] = [
   { id: 'shuraim', name: 'Saud Al-Shuraim', nameAr: 'سعود الشريم' },
 ];
 
-const CALC_METHODS: { id: CalculationMethod; label: string }[] = [
-  { id: 'UmmAlQura', label: 'Umm al-Qura (Makkah)' },
-  { id: 'MuslimWorldLeague', label: 'Muslim World League' },
-  { id: 'Egyptian', label: 'Egyptian General Authority' },
-  { id: 'Karachi', label: 'University of Islamic Sciences, Karachi' },
-  { id: 'Dubai', label: 'Dubai' },
-  { id: 'Kuwait', label: 'Kuwait' },
-  { id: 'Qatar', label: 'Qatar' },
-  { id: 'Singapore', label: 'MUIS (Singapore)' },
-  { id: 'Turkey', label: 'Diyanet (Turkey)' },
-  { id: 'Tehran', label: 'Institute of Geophysics, Tehran' },
-  { id: 'NorthAmerica', label: 'ISNA (North America)' },
-  { id: 'MoonsightingCommittee', label: 'Moonsighting Committee' },
+const CALC_METHODS: { id: CalculationMethod; label: string; labelAr: string; labelUr: string }[] = [
+  { id: 'UmmAlQura', label: 'Umm al-Qura (Makkah)', labelAr: 'أم القرى (مكة)', labelUr: 'ام القریٰ (مکہ)' },
+  { id: 'MuslimWorldLeague', label: 'Muslim World League', labelAr: 'رابطة العالم الإسلامي', labelUr: 'مسلم ورلڈ لیگ' },
+  { id: 'Egyptian', label: 'Egyptian General Authority', labelAr: 'الهيئة المصرية العامة', labelUr: 'مصری جنرل اتھارٹی' },
+  { id: 'Karachi', label: 'University of Islamic Sciences, Karachi', labelAr: 'جامعة العلوم الإسلامية، كراتشي', labelUr: 'جامعۃ العلوم الاسلامیہ، کراچی' },
+  { id: 'Dubai', label: 'Dubai', labelAr: 'دبي', labelUr: 'دبئی' },
+  { id: 'Kuwait', label: 'Kuwait', labelAr: 'الكويت', labelUr: 'کویت' },
+  { id: 'Qatar', label: 'Qatar', labelAr: 'قطر', labelUr: 'قطر' },
+  { id: 'Singapore', label: 'MUIS (Singapore)', labelAr: 'مجلس علماء سنغافورة', labelUr: 'مجلس علماء سنگاپور' },
+  { id: 'Turkey', label: 'Diyanet (Turkey)', labelAr: 'الديانة (تركيا)', labelUr: 'دیانت (ترکیہ)' },
+  { id: 'Tehran', label: 'Institute of Geophysics, Tehran', labelAr: 'معهد الجيوفيزياء، طهران', labelUr: 'انسٹیٹیوٹ آف جیوفزکس، تہران' },
+  { id: 'NorthAmerica', label: 'ISNA (North America)', labelAr: 'جمعية علماء أمريكا الشمالية', labelUr: 'آئی ایس این اے (شمالی امریکہ)' },
+  { id: 'MoonsightingCommittee', label: 'Moonsighting Committee', labelAr: 'لجنة رؤية الهلال', labelUr: 'رویت ہلال کمیٹی' },
 ];
 
 function SettingRow({ label, value, onPress, theme, accessibilityHint }: {
@@ -181,7 +163,12 @@ export default function SettingsTab() {
   const { theme } = useTheme();
   const [expanded, setExpanded] = useState<ExpandedSection>(null);
 
-  const currentMethodLabel = CALC_METHODS.find((m) => m.id === calcMethod)?.label || calcMethod;
+  const currentMethod = CALC_METHODS.find((m) => m.id === calcMethod);
+  const currentMethodLabel = language === 'ar'
+    ? (currentMethod?.labelAr ?? calcMethod)
+    : language === 'ur'
+    ? (currentMethod?.labelUr ?? calcMethod)
+    : (currentMethod?.label ?? calcMethod);
   const currentReciter = RECITERS.find((r) => r.id === selectedReciter);
   const reciterLabel = language === 'ar' || language === 'ur'
     ? currentReciter?.nameAr
@@ -201,7 +188,8 @@ export default function SettingsTab() {
     }
   }, [language, setLanguage]);
 
-  const handleRateApp = useCallback(() => requestAppReview(language), [language]);
+  const handleRateApp = useCallback(() => { void requestAppReview(language); }, [language]);
+  const handleShareApp = useCallback(() => { void shareAmaly(language); }, [language]);
   const handleReportContent = useCallback(() => {
     const subject = encodeURIComponent(
       language === 'ar' ? 'الإبلاغ عن محتوى' : language === 'ur' ? 'مواد کی اطلاع دیں' : 'Report Content — Amaly App',
@@ -211,7 +199,15 @@ export default function SettingsTab() {
     );
     Linking.openURL(`mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`);
   }, [language]);
-  const handleFeedbackForm = useCallback(() => Linking.openURL(FEEDBACK_FORM_URL), []);
+  const handleFeedbackForm = useCallback(() => {
+    const subject = encodeURIComponent(
+      language === 'ar' ? 'ملاحظات على تطبيق Amaly' : language === 'ur' ? 'Amaly ایپ پر رائے' : 'Feedback — Amaly App',
+    );
+    const body = encodeURIComponent(
+      language === 'ar' ? 'اكتب ملاحظاتك هنا:\n\n' : language === 'ur' ? 'اپنی رائے یہاں لکھیں:\n\n' : 'Share your thoughts here:\n\n',
+    );
+    Linking.openURL(`mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`);
+  }, [language]);
 
   return (
     <ScrollView
@@ -254,7 +250,7 @@ export default function SettingsTab() {
       />
 
       <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.lg }]}>
-        {language === 'ar' ? 'نمط الألوان' : language === 'ur' ? 'رنگ تھیم' : 'Color Theme'}
+        {t(language, 'settings.colorTheme')}
       </Text>
       <View style={styles.themeGrid}>
         {(Object.keys(colorThemeMeta) as ColorThemeName[]).map((key) => {
@@ -325,23 +321,26 @@ export default function SettingsTab() {
         theme={theme}
         accessibilityHint={t(language, 'settings.tapToChoose')}
       />
-      {expanded === 'calc' && CALC_METHODS.map((method) => (
-        <TouchableOpacity
-          key={method.id}
-          style={[styles.pickerRow, { borderColor: theme.border }]}
-          onPress={() => {
-            setCalculationMethod(method.id);
-            setExpanded(null);
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={method.label}
-        >
-          <Text style={[styles.pickerLabel, { color: theme.text }]}>{method.label}</Text>
-          {calcMethod === method.id && (
-            <Ionicons name="checkmark-circle" size={22} color={theme.primary} />
-          )}
-        </TouchableOpacity>
-      ))}
+      {expanded === 'calc' && CALC_METHODS.map((method) => {
+        const methodLabel = language === 'ar' ? method.labelAr : language === 'ur' ? method.labelUr : method.label;
+        return (
+          <TouchableOpacity
+            key={method.id}
+            style={[styles.pickerRow, { borderColor: theme.border }]}
+            onPress={() => {
+              setCalculationMethod(method.id);
+              setExpanded(null);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={methodLabel}
+          >
+            <Text style={[styles.pickerLabel, { color: theme.text }]}>{methodLabel}</Text>
+            {calcMethod === method.id && (
+              <Ionicons name="checkmark-circle" size={22} color={theme.primary} />
+            )}
+          </TouchableOpacity>
+        );
+      })}
 
       <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.md }]}>
         {t(language, 'settings.hijriAdjust')}
@@ -432,6 +431,20 @@ export default function SettingsTab() {
           )}
         </TouchableOpacity>
       ))}
+
+      <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.lg }]}>
+        {t(language, 'support.title')}
+      </Text>
+      <SettingRow
+        label={t(language, 'support.openPage')}
+        onPress={() => router.push('/support')}
+        theme={theme}
+      />
+      <SettingRow
+        label={t(language, 'support.shareApp')}
+        onPress={handleShareApp}
+        theme={theme}
+      />
 
       <Text style={[styles.sectionHeader, { color: theme.textSecondary, marginTop: spacing.lg }]}>
         {t(language, 'settings.more')}

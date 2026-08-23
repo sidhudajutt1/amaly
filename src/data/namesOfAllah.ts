@@ -3,6 +3,7 @@ export interface AllahNameData {
   nameAr: string;
   transliteration: string;
   meaningEn: string;
+  meaningAr: string;
   meaningUr: string;
 }
 
@@ -12,6 +13,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الرَّحْمَنُ",
     transliteration: "Ar-Rahman",
     meaningEn: "The Most Gracious",
+    meaningAr: "الذي وسعت رحمته كل شيء",
     meaningUr: "بہت مہربان",
   },
   {
@@ -19,6 +21,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الرَّحِيمُ",
     transliteration: "Ar-Raheem",
     meaningEn: "The Most Merciful",
+    meaningAr: "الرحيم بعباده المؤمنين",
     meaningUr: "نہایت رحم والا",
   },
   {
@@ -26,6 +29,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمَلِكُ",
     transliteration: "Al-Malik",
     meaningEn: "The King",
+    meaningAr: "مالك الملك وسيد الخلق",
     meaningUr: "بادشاہ",
   },
   {
@@ -33,6 +37,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْقُدُّوسُ",
     transliteration: "Al-Quddus",
     meaningEn: "The Most Holy",
+    meaningAr: "المنزه عن كل عيب ونقص",
     meaningUr: "پاک ذات",
   },
   {
@@ -40,6 +45,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "السَّلَامُ",
     transliteration: "As-Salam",
     meaningEn: "The Source of Peace",
+    meaningAr: "السالم من كل نقص ومصدر السلام",
     meaningUr: "سلامتی والا",
   },
   {
@@ -47,6 +53,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُؤْمِنُ",
     transliteration: "Al-Mu'min",
     meaningEn: "The Granter of Security",
+    meaningAr: "المصدّق لعباده وهابُ الأمان",
     meaningUr: "امن دینے والا",
   },
   {
@@ -54,6 +61,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُهَيْمِنُ",
     transliteration: "Al-Muhaymin",
     meaningEn: "The Guardian",
+    meaningAr: "الرقيب الحافظ على كل شيء",
     meaningUr: "نگہبان",
   },
   {
@@ -61,6 +69,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْعَزِيزُ",
     transliteration: "Al-Aziz",
     meaningEn: "The Almighty",
+    meaningAr: "القاهر الغالب الذي لا يُغلَب",
     meaningUr: "غالب",
   },
   {
@@ -68,6 +77,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْجَبَّارُ",
     transliteration: "Al-Jabbar",
     meaningEn: "The Compeller",
+    meaningAr: "الذي يجبر الكسور ويقهر الجبابرة",
     meaningUr: "زبردست",
   },
   {
@@ -75,6 +85,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُتَكَبِّرُ",
     transliteration: "Al-Mutakabbir",
     meaningEn: "The Supreme",
+    meaningAr: "المتعالي عن صفات الخلق",
     meaningUr: "بڑائی والا",
   },
   {
@@ -82,6 +93,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْخَالِقُ",
     transliteration: "Al-Khaliq",
     meaningEn: "The Creator",
+    meaningAr: "الذي أوجد الأشياء من العدم",
     meaningUr: "پیدا کرنے والا",
   },
   {
@@ -89,6 +101,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْبَارِئُ",
     transliteration: "Al-Bari'",
     meaningEn: "The Originator",
+    meaningAr: "الذي خلق الخلق مُبرَّأً من التفاوت",
     meaningUr: "ایجاد کرنے والا",
   },
   {
@@ -96,6 +109,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُصَوِّرُ",
     transliteration: "Al-Musawwir",
     meaningEn: "The Fashioner of Forms",
+    meaningAr: "الذي صوّر الخلق وأعطى كل شيء صورته",
     meaningUr: "صورت بنانے والا",
   },
   {
@@ -103,6 +117,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْغَفَّارُ",
     transliteration: "Al-Ghaffar",
     meaningEn: "The Ever-Forgiving",
+    meaningAr: "الكثير المغفرة لذنوب عباده",
     meaningUr: "بہت بخشنے والا",
   },
   {
@@ -110,6 +125,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْقَهَّارُ",
     transliteration: "Al-Qahhar",
     meaningEn: "The Subduer",
+    meaningAr: "الغالب على كل شيء لا يُعجزه شيء",
     meaningUr: "سب پر غالب",
   },
   {
@@ -117,6 +133,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْوَهَّابُ",
     transliteration: "Al-Wahhab",
     meaningEn: "The Bestower",
+    meaningAr: "الكثير العطاء بلا عوض ولا غرض",
     meaningUr: "بہت عطا کرنے والا",
   },
   {
@@ -124,6 +141,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الرَّزَّاقُ",
     transliteration: "Ar-Razzaq",
     meaningEn: "The Provider",
+    meaningAr: "الذي يرزق كل مخلوق بما يحتاج",
     meaningUr: "رزق دینے والا",
   },
   {
@@ -131,6 +149,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْفَتَّاحُ",
     transliteration: "Al-Fattah",
     meaningEn: "The Opener",
+    meaningAr: "الذي يفتح أبواب الرحمة والرزق والنصر",
     meaningUr: "کھولنے والا",
   },
   {
@@ -138,6 +157,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْعَلِيمُ",
     transliteration: "Al-'Aleem",
     meaningEn: "The All-Knowing",
+    meaningAr: "المحيط علمه بكل شيء ظاهراً وباطناً",
     meaningUr: "سب جاننے والا",
   },
   {
@@ -145,6 +165,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْقَابِضُ",
     transliteration: "Al-Qabid",
     meaningEn: "The Constrictor",
+    meaningAr: "الذي يقبض الأرواح ويضيّق الرزق بحكمة",
     meaningUr: "تنگی کرنے والا",
   },
   {
@@ -152,6 +173,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْبَاسِطُ",
     transliteration: "Al-Basit",
     meaningEn: "The Expander",
+    meaningAr: "الذي يبسط الرزق ويوسّع بحكمة",
     meaningUr: "کشادگی دینے والا",
   },
   {
@@ -159,6 +181,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْخَافِضُ",
     transliteration: "Al-Khafid",
     meaningEn: "The Abaser",
+    meaningAr: "الذي يخفض من يشاء من الجبابرة",
     meaningUr: "پست کرنے والا",
   },
   {
@@ -166,6 +189,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الرَّافِعُ",
     transliteration: "Ar-Rafi'",
     meaningEn: "The Exalter",
+    meaningAr: "الذي يرفع أولياءه ويعلي من يشاء",
     meaningUr: "بلند کرنے والا",
   },
   {
@@ -173,6 +197,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُعِزُّ",
     transliteration: "Al-Mu'izz",
     meaningEn: "The Giver of Honor",
+    meaningAr: "الذي يُعزّ من يشاء بطاعته",
     meaningUr: "عزت دینے والا",
   },
   {
@@ -180,6 +205,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُذِلُّ",
     transliteration: "Al-Mudhill",
     meaningEn: "The Giver of Disgrace",
+    meaningAr: "الذي يُذلّ من يشاء بعصيانه",
     meaningUr: "ذلت دینے والا",
   },
   {
@@ -187,6 +213,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "السَّمِيعُ",
     transliteration: "As-Sami'",
     meaningEn: "The All-Hearing",
+    meaningAr: "الذي يسمع كل صوت جهراً وسراً",
     meaningUr: "سب سننے والا",
   },
   {
@@ -194,6 +221,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْبَصِيرُ",
     transliteration: "Al-Basir",
     meaningEn: "The All-Seeing",
+    meaningAr: "الذي يرى كل شيء دقيقه وجليله",
     meaningUr: "سب دیکھنے والا",
   },
   {
@@ -201,6 +229,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْحَكَمُ",
     transliteration: "Al-Hakam",
     meaningEn: "The Judge",
+    meaningAr: "الحاكم العدل الفصل بين الخلق",
     meaningUr: "فیصلہ کرنے والا",
   },
   {
@@ -208,6 +237,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْعَدْلُ",
     transliteration: "Al-'Adl",
     meaningEn: "The Just",
+    meaningAr: "المتصف بالعدل التام في كل أحكامه",
     meaningUr: "انصاف والا",
   },
   {
@@ -215,6 +245,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "اللَّطِيفُ",
     transliteration: "Al-Latif",
     meaningEn: "The Subtle One",
+    meaningAr: "البرّ بعباده اللطيف في تدبيره",
     meaningUr: "باریک بین",
   },
   {
@@ -222,6 +253,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْخَبِيرُ",
     transliteration: "Al-Khabir",
     meaningEn: "The All-Aware",
+    meaningAr: "العليم بخفايا الأمور وبواطنها",
     meaningUr: "باخبر",
   },
   {
@@ -229,6 +261,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْحَلِيمُ",
     transliteration: "Al-Halim",
     meaningEn: "The Forbearing",
+    meaningAr: "الذي لا يُعاجل العاصين بالعقوبة",
     meaningUr: "بردبار",
   },
   {
@@ -236,6 +269,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْعَظِيمُ",
     transliteration: "Al-'Azim",
     meaningEn: "The Magnificent",
+    meaningAr: "الذي تعظم ذاته وصفاته عن كل وصف",
     meaningUr: "عظمت والا",
   },
   {
@@ -243,6 +277,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْغَفُورُ",
     transliteration: "Al-Ghafur",
     meaningEn: "The All-Forgiving",
+    meaningAr: "الساتر لذنوب عباده التائبين",
     meaningUr: "بخشنے والا",
   },
   {
@@ -250,6 +285,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الشَّكُورُ",
     transliteration: "Ash-Shakur",
     meaningEn: "The Appreciative",
+    meaningAr: "الذي يجزي على القليل بالكثير",
     meaningUr: "قدر کرنے والا",
   },
   {
@@ -257,6 +293,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْعَلِيُّ",
     transliteration: "Al-'Aliyy",
     meaningEn: "The Most High",
+    meaningAr: "المتعالي فوق كل شيء بذاته وقدرته",
     meaningUr: "بلند و بالا",
   },
   {
@@ -264,6 +301,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْكَبِيرُ",
     transliteration: "Al-Kabir",
     meaningEn: "The Most Great",
+    meaningAr: "الكبير الذي لا شيء أكبر منه",
     meaningUr: "بہت بڑا",
   },
   {
@@ -271,6 +309,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْحَفِيظُ",
     transliteration: "Al-Hafiz",
     meaningEn: "The Preserver",
+    meaningAr: "الحافظ لكل شيء لا يضيع عنده شيء",
     meaningUr: "حفاظت کرنے والا",
   },
   {
@@ -278,6 +317,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُقِيتُ",
     transliteration: "Al-Muqit",
     meaningEn: "The Sustainer",
+    meaningAr: "الذي يُقيت خلقه ويُمدّهم بالقوة",
     meaningUr: "قوت دینے والا",
   },
   {
@@ -285,6 +325,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْحَسِيبُ",
     transliteration: "Al-Hasib",
     meaningEn: "The Reckoner",
+    meaningAr: "الكافي لمن توكّل عليه المحاسب لعباده",
     meaningUr: "حساب لینے والا",
   },
   {
@@ -292,6 +333,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْجَلِيلُ",
     transliteration: "Al-Jalil",
     meaningEn: "The Majestic",
+    meaningAr: "ذو الجلال والعظمة والكبرياء",
     meaningUr: "جلال والا",
   },
   {
@@ -299,6 +341,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْكَرِيمُ",
     transliteration: "Al-Karim",
     meaningEn: "The Generous",
+    meaningAr: "الجواد المُفضل الكثير الخير والإحسان",
     meaningUr: "کرم والا",
   },
   {
@@ -306,6 +349,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الرَّقِيبُ",
     transliteration: "Ar-Raqib",
     meaningEn: "The Watchful",
+    meaningAr: "المراقب لأعمال عباده لا يخفى عليه شيء",
     meaningUr: "نگرانی کرنے والا",
   },
   {
@@ -313,6 +357,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُجِيبُ",
     transliteration: "Al-Mujib",
     meaningEn: "The Responsive",
+    meaningAr: "الذي يستجيب لمن دعاه",
     meaningUr: "قبول کرنے والا",
   },
   {
@@ -320,6 +365,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْوَاسِعُ",
     transliteration: "Al-Wasi'",
     meaningEn: "The All-Encompassing",
+    meaningAr: "الواسع العلم والرحمة والفضل",
     meaningUr: "وسعت والا",
   },
   {
@@ -327,6 +373,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْحَكِيمُ",
     transliteration: "Al-Hakim",
     meaningEn: "The All-Wise",
+    meaningAr: "الذي يضع كل شيء في موضعه اللائق به",
     meaningUr: "حکمت والا",
   },
   {
@@ -334,6 +381,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْوَدُودُ",
     transliteration: "Al-Wadud",
     meaningEn: "The Most Loving",
+    meaningAr: "المحب لعباده الصالحين",
     meaningUr: "محبت کرنے والا",
   },
   {
@@ -341,6 +389,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمَجِيدُ",
     transliteration: "Al-Majid",
     meaningEn: "The Most Glorious",
+    meaningAr: "العظيم الشرف الواسع الكرم",
     meaningUr: "بزرگی والا",
   },
   {
@@ -348,6 +397,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْبَاعِثُ",
     transliteration: "Al-Ba'ith",
     meaningEn: "The Resurrector",
+    meaningAr: "الذي يبعث الخلق يوم القيامة",
     meaningUr: "اٹھانے والا",
   },
   {
@@ -355,6 +405,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الشَّهِيدُ",
     transliteration: "Ash-Shahid",
     meaningEn: "The Witness",
+    meaningAr: "الشاهد على كل شيء لا يغيب عنه شيء",
     meaningUr: "گواہ",
   },
   {
@@ -362,6 +413,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْحَقُّ",
     transliteration: "Al-Haqq",
     meaningEn: "The Truth",
+    meaningAr: "الثابت الوجود الذي لا يتغير",
     meaningUr: "برحق",
   },
   {
@@ -369,6 +421,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْوَكِيلُ",
     transliteration: "Al-Wakil",
     meaningEn: "The Trustee",
+    meaningAr: "الكافل بأرزاق عباده المفوَّض إليه الأمور",
     meaningUr: "کارساز",
   },
   {
@@ -376,6 +429,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْقَوِيُّ",
     transliteration: "Al-Qawiyy",
     meaningEn: "The Most Strong",
+    meaningAr: "الشديد القوة الذي لا يُعجزه شيء",
     meaningUr: "طاقتور",
   },
   {
@@ -383,6 +437,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمَتِينُ",
     transliteration: "Al-Matin",
     meaningEn: "The Firm",
+    meaningAr: "الشديد القوة التام القدرة",
     meaningUr: "مضبوط",
   },
   {
@@ -390,6 +445,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْوَلِيُّ",
     transliteration: "Al-Waliyy",
     meaningEn: "The Protecting Friend",
+    meaningAr: "وليّ المؤمنين وناصرهم",
     meaningUr: "دوست",
   },
   {
@@ -397,6 +453,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْحَمِيدُ",
     transliteration: "Al-Hamid",
     meaningEn: "The Praiseworthy",
+    meaningAr: "المحمود في ذاته وصفاته وأفعاله",
     meaningUr: "قابلِ تعریف",
   },
   {
@@ -404,6 +461,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُحْصِي",
     transliteration: "Al-Muhsi",
     meaningEn: "The Counter",
+    meaningAr: "الذي أحصى كل شيء وعلمه",
     meaningUr: "شمار کرنے والا",
   },
   {
@@ -411,6 +469,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُبْدِئُ",
     transliteration: "Al-Mubdi'",
     meaningEn: "The Originator",
+    meaningAr: "الذي بدأ الخلق ابتداءً لا عن مثال",
     meaningUr: "پہلی بار پیدا کرنے والا",
   },
   {
@@ -418,6 +477,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُعِيدُ",
     transliteration: "Al-Mu'id",
     meaningEn: "The Restorer",
+    meaningAr: "الذي يُعيد الخلق بعد الفناء",
     meaningUr: "دوبارہ پیدا کرنے والا",
   },
   {
@@ -425,6 +485,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُحْيِي",
     transliteration: "Al-Muhyi",
     meaningEn: "The Giver of Life",
+    meaningAr: "الذي يُحيي الأموات ويُنعم بالحياة",
     meaningUr: "زندگی دینے والا",
   },
   {
@@ -432,6 +493,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُمِيتُ",
     transliteration: "Al-Mumit",
     meaningEn: "The Bringer of Death",
+    meaningAr: "الذي يُميت الأحياء إذا شاء",
     meaningUr: "موت دینے والا",
   },
   {
@@ -439,6 +501,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْحَيُّ",
     transliteration: "Al-Hayy",
     meaningEn: "The Ever-Living",
+    meaningAr: "الحيّ الذي لا يموت أبداً",
     meaningUr: "ہمیشہ زندہ",
   },
   {
@@ -446,6 +509,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْقَيُّومُ",
     transliteration: "Al-Qayyum",
     meaningEn: "The Self-Subsisting",
+    meaningAr: "القائم بنفسه المُقيم لغيره",
     meaningUr: "خود قائم",
   },
   {
@@ -453,6 +517,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْوَاجِدُ",
     transliteration: "Al-Wajid",
     meaningEn: "The Finder",
+    meaningAr: "الذي لا يفتقر إلى شيء ولا يعجزه شيء",
     meaningUr: "پانے والا",
   },
   {
@@ -460,6 +525,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمَاجِدُ",
     transliteration: "Al-Majid",
     meaningEn: "The Noble",
+    meaningAr: "الكريم الشريف المتعالي",
     meaningUr: "عظمت والا",
   },
   {
@@ -467,6 +533,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْوَاحِدُ",
     transliteration: "Al-Wahid",
     meaningEn: "The One",
+    meaningAr: "المنفرد في ذاته لا شريك له",
     meaningUr: "ایک",
   },
   {
@@ -474,6 +541,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْأَحَدُ",
     transliteration: "Al-Ahad",
     meaningEn: "The Unique",
+    meaningAr: "الفرد الذي لا مثيل له ولا نظير",
     meaningUr: "یکتا",
   },
   {
@@ -481,6 +549,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الصَّمَدُ",
     transliteration: "As-Samad",
     meaningEn: "The Eternal",
+    meaningAr: "السيد الذي تصمد إليه الخلائق في حوائجها",
     meaningUr: "بے نیاز",
   },
   {
@@ -488,6 +557,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْقَادِرُ",
     transliteration: "Al-Qadir",
     meaningEn: "The Able",
+    meaningAr: "الذي يفعل ما يشاء ولا يُعجزه شيء",
     meaningUr: "قدرت والا",
   },
   {
@@ -495,6 +565,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُقْتَدِرُ",
     transliteration: "Al-Muqtadir",
     meaningEn: "The All-Powerful",
+    meaningAr: "الكامل القدرة على كل شيء",
     meaningUr: "پوری قدرت والا",
   },
   {
@@ -502,6 +573,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُقَدِّمُ",
     transliteration: "Al-Muqaddim",
     meaningEn: "The Expediter",
+    meaningAr: "الذي يُقدّم من يشاء بفضله",
     meaningUr: "آگے کرنے والا",
   },
   {
@@ -509,6 +581,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُؤَخِّرُ",
     transliteration: "Al-Mu'akhkhir",
     meaningEn: "The Delayer",
+    meaningAr: "الذي يُؤخّر من يشاء بحكمته",
     meaningUr: "پیچھے کرنے والا",
   },
   {
@@ -516,6 +589,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْأَوَّلُ",
     transliteration: "Al-Awwal",
     meaningEn: "The First",
+    meaningAr: "الذي ليس قبله شيء",
     meaningUr: "سب سے پہلے",
   },
   {
@@ -523,6 +597,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْآخِرُ",
     transliteration: "Al-Akhir",
     meaningEn: "The Last",
+    meaningAr: "الذي ليس بعده شيء",
     meaningUr: "سب سے آخر",
   },
   {
@@ -530,6 +605,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الظَّاهِرُ",
     transliteration: "Az-Zahir",
     meaningEn: "The Manifest",
+    meaningAr: "الذي ظهر بالأدلة فوق كل شيء",
     meaningUr: "ظاہر",
   },
   {
@@ -537,6 +613,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْبَاطِنُ",
     transliteration: "Al-Batin",
     meaningEn: "The Hidden",
+    meaningAr: "الذي بطن عن إدراك الأبصار",
     meaningUr: "پوشیدہ",
   },
   {
@@ -544,6 +621,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْوَالِي",
     transliteration: "Al-Wali",
     meaningEn: "The Governor",
+    meaningAr: "المتولي تدبير ملكه",
     meaningUr: "مالک",
   },
   {
@@ -551,6 +629,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُتَعَالِي",
     transliteration: "Al-Muta'ali",
     meaningEn: "The Most Exalted",
+    meaningAr: "المتنزّه عن صفات الخلق علواً كبيراً",
     meaningUr: "بلند و برتر",
   },
   {
@@ -558,6 +637,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْبَرُّ",
     transliteration: "Al-Barr",
     meaningEn: "The Source of Goodness",
+    meaningAr: "الكثير الإحسان والبرّ بعباده",
     meaningUr: "احسان کرنے والا",
   },
   {
@@ -565,6 +645,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "التَّوَّابُ",
     transliteration: "At-Tawwab",
     meaningEn: "The Acceptor of Repentance",
+    meaningAr: "الذي يقبل التوبة ويعفو عن الزلات",
     meaningUr: "توبہ قبول کرنے والا",
   },
   {
@@ -572,6 +653,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُنْتَقِمُ",
     transliteration: "Al-Muntaqim",
     meaningEn: "The Avenger",
+    meaningAr: "الذي ينتقم من الظالمين ولا يُفلت منه أحد",
     meaningUr: "بدلہ لینے والا",
   },
   {
@@ -579,6 +661,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْعَفُوُّ",
     transliteration: "Al-'Afuww",
     meaningEn: "The Pardoner",
+    meaningAr: "الذي يعفو عن السيئات ويمحوها",
     meaningUr: "معاف کرنے والا",
   },
   {
@@ -586,6 +669,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الرَّؤُوفُ",
     transliteration: "Ar-Ra'uf",
     meaningEn: "The Most Kind",
+    meaningAr: "الشديد الرأفة والرحمة بعباده",
     meaningUr: "بہت شفقت کرنے والا",
   },
   {
@@ -593,6 +677,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "مَالِكُ الْمُلْكِ",
     transliteration: "Malik-ul-Mulk",
     meaningEn: "The Owner of Sovereignty",
+    meaningAr: "مالك الملك يُعطيه من يشاء وينزعه ممن يشاء",
     meaningUr: "سلطنت کا مالک",
   },
   {
@@ -600,6 +685,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "ذُو الْجَلَالِ وَالْإِكْرَامِ",
     transliteration: "Dhul-Jalali wal-Ikram",
     meaningEn: "The Lord of Majesty and Generosity",
+    meaningAr: "صاحب الجلال والعظمة والكرم",
     meaningUr: "جلال اور عزت والا",
   },
   {
@@ -607,6 +693,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُقْسِطُ",
     transliteration: "Al-Muqsit",
     meaningEn: "The Equitable",
+    meaningAr: "العادل في حكمه الذي لا يظلم أحداً",
     meaningUr: "انصاف کرنے والا",
   },
   {
@@ -614,6 +701,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْجَامِعُ",
     transliteration: "Al-Jami'",
     meaningEn: "The Gatherer",
+    meaningAr: "الذي يجمع الخلق يوم القيامة للحساب",
     meaningUr: "جمع کرنے والا",
   },
   {
@@ -621,6 +709,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْغَنِيُّ",
     transliteration: "Al-Ghaniyy",
     meaningEn: "The Self-Sufficient",
+    meaningAr: "الغني عن كل شيء والكل محتاج إليه",
     meaningUr: "بے نیاز",
   },
   {
@@ -628,6 +717,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمُغْنِي",
     transliteration: "Al-Mughni",
     meaningEn: "The Enricher",
+    meaningAr: "الذي يُغني من يشاء من عباده",
     meaningUr: "غنی کرنے والا",
   },
   {
@@ -635,6 +725,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْمَانِعُ",
     transliteration: "Al-Mani'",
     meaningEn: "The Preventer",
+    meaningAr: "الذي يمنع ما يشاء ويعطي ما يشاء",
     meaningUr: "روکنے والا",
   },
   {
@@ -642,6 +733,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الضَّارُّ",
     transliteration: "Ad-Darr",
     meaningEn: "The Distresser",
+    meaningAr: "الذي يُنزل الضرر بمن يستحقه حكمةً",
     meaningUr: "نقصان پہنچانے والا",
   },
   {
@@ -649,6 +741,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "النَّافِعُ",
     transliteration: "An-Nafi'",
     meaningEn: "The Benefactor",
+    meaningAr: "الذي ينفع من يشاء بإذنه",
     meaningUr: "نفع دینے والا",
   },
   {
@@ -656,6 +749,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "النُّورُ",
     transliteration: "An-Nur",
     meaningEn: "The Light",
+    meaningAr: "نور السماوات والأرض الهادي للخلق",
     meaningUr: "روشنی",
   },
   {
@@ -663,6 +757,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْهَادِي",
     transliteration: "Al-Hadi",
     meaningEn: "The Guide",
+    meaningAr: "الذي يهدي من يشاء إلى صراطه المستقيم",
     meaningUr: "ہدایت دینے والا",
   },
   {
@@ -670,6 +765,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْبَدِيعُ",
     transliteration: "Al-Badi'",
     meaningEn: "The Originator",
+    meaningAr: "الذي أبدع الخلق على غير مثال سابق",
     meaningUr: "نئی چیز بنانے والا",
   },
   {
@@ -677,6 +773,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْبَاقِي",
     transliteration: "Al-Baqi",
     meaningEn: "The Everlasting",
+    meaningAr: "الدائم الذي لا يفنى ولا يزول",
     meaningUr: "ہمیشہ رہنے والا",
   },
   {
@@ -684,6 +781,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الْوَارِثُ",
     transliteration: "Al-Warith",
     meaningEn: "The Inheritor",
+    meaningAr: "الذي يرث الأرض ومن عليها بعد فنائها",
     meaningUr: "سب کا وارث",
   },
   {
@@ -691,6 +789,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الرَّشِيدُ",
     transliteration: "Ar-Rashid",
     meaningEn: "The Guide to the Right Path",
+    meaningAr: "الذي أرشد الخلق إلى مصالحهم",
     meaningUr: "سیدھی راہ دکھانے والا",
   },
   {
@@ -698,6 +797,7 @@ export const namesOfAllah: AllahNameData[] = [
     nameAr: "الصَّبُورُ",
     transliteration: "As-Sabur",
     meaningEn: "The Patient",
+    meaningAr: "الذي لا يُعاجل بالعقوبة وصبره لا حدّ له",
     meaningUr: "صبر کرنے والا",
   },
 ];

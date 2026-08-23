@@ -23,7 +23,7 @@
     },
     "android": {
       "package": "com.atifjamil.amaly",
-      "versionCode": 2,
+      "versionCode": 3,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",

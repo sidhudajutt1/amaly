@@ -8,6 +8,19 @@ export interface TafsirAyah {
   ayah: number;
   en: string;
   ur: string;
+  ar?: string;
+}
+
+/** Pick tafsir body text for the active UI language. */
+export function getTafsirText(tafsir: TafsirAyah, language: 'en' | 'ar' | 'ur'): string | null {
+  if (language === 'ur' && tafsir.ur) return tafsir.ur;
+  if (language === 'ar') return tafsir.ar ?? tafsir.en ?? null;
+  return tafsir.en ?? null;
+}
+
+/** Label when Arabic UI shows English edition (no Arabic corpus in assets yet). */
+export function tafsirUsesEnglishFallback(tafsir: TafsirAyah, language: 'en' | 'ar' | 'ur'): boolean {
+  return language === 'ar' && !tafsir.ar && !!tafsir.en;
 }
 
 type SurahLoader = () => TafsirAyah[];

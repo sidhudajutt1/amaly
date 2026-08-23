@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, Share } from 'react-native';
 import * as ExpoSharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
@@ -17,12 +17,13 @@ import { toHijri, formatHijriDate, getRamadanDay, getRamadanThird, getIslamicEve
 import { generateDailyGoals, getGoalsSummary, getStreakMilestone } from '../../src/services/goalsService';
 import { fontSizes, spacing, borderRadius, lineHeights } from '../../src/theme';
 import { getQuranFontFamily, getArabicFontFamily } from '../../src/theme/typography';
+import { getBismillahText, getDisplayAyahArabicFromRef, getQuranArabicLineHeightMultiplier } from '../../src/utils/quranArabicText';
 import { getSmartReflection } from '../../src/data/getReflection';
 import { hapticLight, hapticSuccess } from '../../src/utils/haptics';
+import { maybeAskForReview } from '../../src/services/appReview';
 import type { Language, GoalType } from '../../src/types';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 const QUICK_SURAHS = [
   { id: 18, nameKey: 'surah.alKahf' },
@@ -97,6 +98,9 @@ export default function TodayScreen() {
   const goalConfig = useAppStore((s) => s.goalConfig);
   const hijriAdjustment = useAppStore((s) => s.settings.hijriAdjustment);
   const markNiyyahCompleted = useAppStore((s) => s.markNiyyahCompleted);
+  const markReflectionViewed = useAppStore((s) => s.markReflectionViewed);
+  const recordReflectionArchive = useAppStore((s) => s.recordReflectionArchive);
+  const growthCategories = useAppStore((s) => s.settings.growthCategories);
   const markMorningAdhkar = useAppStore((s) => s.markMorningAdhkar);
   const markEveningAdhkar = useAppStore((s) => s.markEveningAdhkar);
   const markFasting = useAppStore((s) => s.markFasting);
@@ -155,6 +159,17 @@ export default function TodayScreen() {
 
   const reflection = useMemo(() => getSmartReflection(now, hijri), [now.toDateString(), hijri.month, hijri.day]);
 
+  useEffect(() => {
+    markReflectionViewed();
+    recordReflectionArchive({
+      date: now.toISOString().split('T')[0]!,
+      niyyahEn: reflection.niyyahEn,
+      niyyahAr: reflection.niyyahAr,
+      niyyahUr: reflection.niyyahUr,
+      ayahRef: reflection.ayahRef,
+    });
+  }, [reflection.niyyahEn, reflection.ayahRef, markReflectionViewed, recordReflectionArchive]);
+
   const handleShareNiyyah = useCallback(async () => {
     setSharing(true);
     try {
@@ -195,8 +210,9 @@ export default function TodayScreen() {
 
   const handleNiyyahPress = () => {
     hapticSuccess();
-    markNiyyahCompleted();
+    markNiyyahCompleted(growthCategories);
     setTimeout(maybeCelebrate, 0);
+    setTimeout(() => maybeAskForReview(language), 1200);
   };
 
   const dismissCelebration = () => {
@@ -314,6 +330,22 @@ export default function TodayScreen() {
             </Text>
           </TouchableOpacity>
         ) : null}
+      </View>
+
+      {/* ── Today shortcuts ──────────────────────────────────────── */}
+      <View style={styles.shortcutRow}>
+        <TouchableOpacity style={[styles.shortcutChip, { backgroundColor: theme.surface, borderColor: theme.border }]} onPress={() => router.push('/growth')}>
+          <MaterialCommunityIcons name="chart-line" size={16} color={theme.primary} />
+          <Text style={[styles.shortcutLabel, { color: theme.text }]}>{t(language, 'today.growth')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.shortcutChip, { backgroundColor: theme.surface, borderColor: theme.border }]} onPress={() => router.push('/archive')}>
+          <Ionicons name="archive-outline" size={16} color={theme.primary} />
+          <Text style={[styles.shortcutLabel, { color: theme.text }]}>{t(language, 'today.archive')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.shortcutChip, { backgroundColor: theme.surface, borderColor: theme.border }]} onPress={() => router.push('/greetings')}>
+          <Ionicons name="gift-outline" size={16} color={theme.primary} />
+          <Text style={[styles.shortcutLabel, { color: theme.text }]}>{t(language, 'today.greetings')}</Text>
+        </TouchableOpacity>
       </View>
 
       {/* ── Next Prayer ──────────────────────────────────────────── */}
@@ -465,11 +497,11 @@ export default function TodayScreen() {
         accessibilityLabel={`Quran verse: ${reflection.ayahRef}`}
       >
         <IslamicPattern width={SCREEN_WIDTH - spacing.md * 2} height={160} color={theme.primary} opacity={0.04} variant="arch" />
-        <Text style={[styles.bismillah, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.bismillah * 0.8 * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic) }]}>
-          {language === 'ur' ? 'بِسۡمِ اللهِ الرَّحۡمٰنِ الرَّحِيۡمِ' : 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ'}
+        <Text style={[styles.bismillah, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.bismillah * 0.8 * getQuranArabicLineHeightMultiplier(language) }]}>
+          {getBismillahText(language)}
         </Text>
-        <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.quranArabic * (language === 'ur' ? lineHeights.urdu : lineHeights.arabic) }]}>
-          {reflection.ayahAr}
+        <Text style={[styles.arabicText, { color: theme.textArabic, fontFamily: getQuranFontFamily(language), lineHeight: fontSizes.quranArabic * getQuranArabicLineHeightMultiplier(language) }]}>
+          {getDisplayAyahArabicFromRef(language, reflection.ayahRef, reflection.ayahAr)}
         </Text>
         <Text style={[styles.translationText, { color: theme.text, textAlign, lineHeight: fontSizes.translationDefault * (language === 'ur' ? lineHeights.urdu : lineHeights.latin) }]}>
           {language === 'ur' ? reflection.ayahUr : language === 'ar' ? reflection.ayahAr : reflection.ayahEn}
@@ -598,6 +630,24 @@ const styles = StyleSheet.create({
   niyyahButton: { borderRadius: borderRadius.md, paddingVertical: spacing.md, alignItems: 'center', zIndex: 1 },
   niyyahButtonText: { color: '#FFFFFF', fontSize: fontSizes.body, fontWeight: '700' },
   shareIconBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
+
+  shortcutRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  shortcutChip: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.xs,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+  },
+  shortcutLabel: { fontSize: fontSizes.caption, fontWeight: '600' },
 
   nextPrayerCard: {
     flexDirection: 'row',

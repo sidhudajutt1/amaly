@@ -16,6 +16,7 @@ import type {
   BookmarkType,
   ReadingProgress,
   NotificationPrefs,
+  ReflectionArchiveEntry,
 } from '../types';
 import { DEFAULT_GOAL_CONFIG } from '../services/goalsService';
 
@@ -39,6 +40,10 @@ interface AppState {
   bookmarks: Bookmark[];
   readingProgress: ReadingProgress | null;
   notificationPrefs: NotificationPrefs;
+  reflectionArchive: ReflectionArchiveEntry[];
+  firstOpenAt: string | null;
+  lastReviewPromptAt: string | null;
+  reviewDeclinedUntil: string | null;
 
   // Settings actions
   setLanguage: (language: Language) => void;
@@ -58,7 +63,8 @@ interface AppState {
 
   // Progress actions
   markReflectionViewed: () => void;
-  markNiyyahCompleted: () => void;
+  recordReflectionArchive: (entry: ReflectionArchiveEntry) => void;
+  markNiyyahCompleted: (categories?: GrowthCategory[]) => void;
   markPrayerCompleted: (prayer: PrayerName) => void;
   unmarkPrayerCompleted: (prayer: PrayerName) => void;
   markTafsirRead: () => void;
@@ -89,6 +95,7 @@ interface AppState {
   // Persistence
   hydrate: () => Promise<void>;
   persist: () => Promise<void>;
+  markReviewPrompted: (declined: boolean) => void;
 }
 
 const defaultSettings: UserSettings = {
@@ -153,6 +160,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   bookmarks: [],
   readingProgress: null,
   notificationPrefs: defaultNotificationPrefs,
+  reflectionArchive: [],
+  firstOpenAt: null,
+  lastReviewPromptAt: null,
+  reviewDeclinedUntil: null,
 
   setLanguage: (language) => {
     set((state) => ({ settings: { ...state.settings, language } }));
@@ -260,7 +271,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
 
-  markNiyyahCompleted: () => {
+  recordReflectionArchive: (entry) => {
+    const { reflectionArchive } = get();
+    if (reflectionArchive.some((e) => e.date === entry.date)) return;
+    set({ reflectionArchive: [entry, ...reflectionArchive].slice(0, 365) });
+    get().persist();
+  },
+
+  markNiyyahCompleted: (categories) => {
     const state = get();
     const today = todayDate();
     let progress = state.todayProgress;
@@ -270,11 +288,23 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
 
     if (!progress.niyyahCompleted) {
+      const cats = categories?.length
+        ? categories
+        : state.settings.growthCategories.length > 0
+          ? state.settings.growthCategories
+          : (Object.keys(state.streakData.categoryProgress) as GrowthCategory[]);
+
+      const categoryProgress = { ...state.streakData.categoryProgress };
+      for (const cat of cats) {
+        categoryProgress[cat] = (categoryProgress[cat] ?? 0) + 1;
+      }
+
       set({
         todayProgress: { ...progress, niyyahCompleted: true },
         streakData: {
           ...state.streakData,
           totalNiyyahsCompleted: state.streakData.totalNiyyahsCompleted + 1,
+          categoryProgress,
         },
       });
       get().persist();
@@ -476,6 +506,18 @@ export const useAppStore = create<AppState>((set, get) => ({
     get().persist();
   },
 
+  markReviewPrompted: (declined) => {
+    const now = new Date();
+    const declinedUntil = declined
+      ? new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString()
+      : null;
+    set({
+      lastReviewPromptAt: now.toISOString(),
+      reviewDeclinedUntil: declinedUntil,
+    });
+    get().persist();
+  },
+
   hydrate: async () => {
     try {
       let data = await AsyncStorage.getItem(STORAGE_KEY);
@@ -501,10 +543,16 @@ export const useAppStore = create<AppState>((set, get) => ({
           notificationPrefs: parsed.notificationPrefs
             ? { ...defaultNotificationPrefs, ...parsed.notificationPrefs }
             : defaultNotificationPrefs,
+          reflectionArchive: parsed.reflectionArchive ?? [],
+          firstOpenAt: parsed.firstOpenAt ?? new Date().toISOString(),
+          lastReviewPromptAt: parsed.lastReviewPromptAt ?? null,
+          reviewDeclinedUntil: parsed.reviewDeclinedUntil ?? null,
           isLoading: false,
         });
+        if (!parsed.firstOpenAt) get().persist();
       } else {
-        set({ isLoading: false });
+        set({ firstOpenAt: new Date().toISOString(), isLoading: false });
+        get().persist();
       }
     } catch {
       set({ isLoading: false });
@@ -513,10 +561,16 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   persist: async () => {
     try {
-      const { settings, streakData, todayProgress, goalConfig, bookmarks, readingProgress, notificationPrefs } = get();
+      const {
+        settings, streakData, todayProgress, goalConfig, bookmarks, readingProgress,
+        notificationPrefs, reflectionArchive, firstOpenAt, lastReviewPromptAt, reviewDeclinedUntil,
+      } = get();
       await AsyncStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ settings, streakData, todayProgress, goalConfig, bookmarks, readingProgress, notificationPrefs })
+        JSON.stringify({
+          settings, streakData, todayProgress, goalConfig, bookmarks, readingProgress,
+          notificationPrefs, reflectionArchive, firstOpenAt, lastReviewPromptAt, reviewDeclinedUntil,
+        })
       );
     } catch {
       // Silently fail — will retry on next action

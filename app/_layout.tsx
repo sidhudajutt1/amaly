@@ -36,24 +36,39 @@ export default function RootLayout() {
     );
   }
 
+  const slideIn = isRTL(language) ? 'slide_from_left' : 'slide_from_right';
+
   return (
     <SafeAreaProvider>
       <StatusBar style={themeMode === 'dark' ? 'light' : 'auto'} />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
-        <Stack.Screen name="surah/[id]" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="settings/index" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="dua/[categoryId]" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="names/index" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="dhikr/index" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="calendar/index" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="goals/index" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="zakat/index" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="qibla/index" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="notifications/index" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="hadith/[collectionId]" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="prayer-guide/index" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="surah/[id]" options={{ animation: slideIn }} />
+        <Stack.Screen name="settings/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="dua/[categoryId]" options={{ animation: slideIn }} />
+        <Stack.Screen name="names/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="dhikr/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="calendar/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="goals/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="zakat/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="qibla/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="notifications/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="hadith/[collectionId]" options={{ animation: slideIn }} />
+        <Stack.Screen name="prayer-guide/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="about/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="privacy/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="city-search/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="juz/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="subjects/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="subjects/[id]" options={{ animation: slideIn }} />
+        <Stack.Screen name="mushaf/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="word-by-word/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="growth/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="archive/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="greetings/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="fasting-guide/index" options={{ animation: slideIn }} />
+        <Stack.Screen name="support/index" options={{ animation: slideIn }} />
       </Stack>
     </SafeAreaProvider>
   );

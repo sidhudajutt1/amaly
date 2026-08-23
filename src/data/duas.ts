@@ -615,3 +615,7 @@ export const duas: DuaData[] = [
     repetitions: 1,
   },
 ];
+
+export function countDuasInCategory(categoryId: string): number {
+  return duas.filter((d) => d.categoryId === categoryId).length;
+}

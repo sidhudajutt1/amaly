@@ -14,7 +14,7 @@ function NameCard({ name, language, theme }: {
   language: Language;
   theme: Record<string, string>;
 }) {
-  const meaning = language === 'ur' ? name.meaningUr : name.meaningEn;
+  const meaning = language === 'ar' ? name.meaningAr : language === 'ur' ? name.meaningUr : name.meaningEn;
   return (
     <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
       <View style={[styles.numberBadge, { backgroundColor: theme.primaryLight }]}>
