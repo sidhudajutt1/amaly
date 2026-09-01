@@ -10,6 +10,7 @@ import { fontSizes, spacing, borderRadius, colorThemeMeta, type ColorThemeName }
 import { FEEDBACK_EMAIL } from '../../src/data/feedback';
 import { requestAppReview, shareAmaly } from '../../src/services/appReview';
 import type { Language, ColorTheme, CalculationMethod, ReciterId } from '../../src/types';
+import { formatLocationName } from '../../src/utils/locationDisplay';
 
 const RECITERS: { id: ReciterId; name: string; nameAr: string }[] = [
   { id: 'alafasy', name: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
@@ -284,7 +285,7 @@ export default function SettingsTab() {
       </Text>
       <SettingRow
         label={t(language, 'settings.location')}
-        value={isDetecting ? '...' : locationName || t(language, 'settings.detectLocation')}
+        value={isDetecting ? '...' : (locationName ? formatLocationName(locationName, language) : t(language, 'settings.detectLocation'))}
         onPress={detectLocation}
         theme={theme}
       />

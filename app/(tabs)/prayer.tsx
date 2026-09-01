@@ -7,6 +7,7 @@ import { useTheme } from '../../src/hooks/useTheme';
 import { usePrayerTimes } from '../../src/hooks/usePrayerTimes';
 import { formatTime } from '../../src/services/prayerService';
 import { t } from '../../src/i18n';
+import { formatLocationName } from '../../src/utils/locationDisplay';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 import { useLocation } from '../../src/hooks/useLocation';
 import { toHijri, formatHijriDate, isRamadan, getRamadanDay } from '../../src/services/hijriService';
@@ -62,7 +63,7 @@ export default function PrayerScreen() {
       <View style={styles.locationRow}>
         <Ionicons name="location-outline" size={16} color={theme.textSecondary} />
         <Text style={[styles.locationText, { color: theme.textSecondary }]}>
-          {detectedLocation}
+          {formatLocationName(detectedLocation, language)}
         </Text>
       </View>
 

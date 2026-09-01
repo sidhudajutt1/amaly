@@ -464,11 +464,7 @@ export default function SurahReaderScreen() {
             {surahMeta.nameEn}
           </Text>
           <Text style={[styles.comingSoonText, { color: theme.textSecondary }]}>
-            {language === 'ar'
-              ? 'النص الكامل لهذه السورة غير متاح حالياً.'
-              : language === 'ur'
-              ? 'اس سورت کا مکمل متن ابھی دستیاب نہیں۔'
-              : 'Full text for this surah is not yet available.'}
+            {t(language, 'quran.surahTextUnavailable')}
           </Text>
         </View>
       )}

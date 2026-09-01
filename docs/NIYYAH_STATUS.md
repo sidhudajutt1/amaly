@@ -1,6 +1,6 @@
 # Amaly App — Live Status Board
 
-## Last Updated: 2026-08-19 (feature wiring session)
+## Last Updated: 2026-09-01 (Hisnul Muslim + polish)
 
 ## Current State: FEATURE COMPLETE (v1 UI scope) — Store submission not started
 
@@ -19,8 +19,8 @@
 | Prayer times (adhan.js, 12 methods) | DONE | GPS + city search, Ramadan mode |
 | Quran reader | DONE | 114/114 surahs — Uthmani + Indo-Pak + EN/UR translation + tafsir |
 | Hadith reader | DONE | 1077 hadiths across all 6 Kutub al-Sittah |
-| Duas (Hisnul Muslim) | PARTIAL | 51/280 (~18%) across 15 categories |
-| 99 Names of Allah | DONE | All 99; Arabic meanings field missing (shows English to AR users) |
+| Duas (Hisnul Muslim) | DONE | 267/267 full Hisnul Muslim collection across 30 categories |
+| 99 Names of Allah | DONE | All 99 with meaningEn, meaningAr, meaningUr |
 | Dhikr counter | DONE | 6 presets |
 | Qibla compass | DONE | Static on web; live magnetometer on native |
 | Zakat calculator | DONE | 8 fields, 6 currencies |
@@ -56,11 +56,11 @@
 | AMY-003 | ~~99 Names — no `meaningAr`~~ | FIXED |
 | AMY-004 | ~~Feedback placeholder URL~~ | FIXED (mailto) |
 | AMY-005 | ~~Calc method labels English-only~~ | FIXED |
-| AMY-006 | Weekday strip on Today tab hardcoded `['M','T','W','T','F','S','S']` instead of i18n keys | LOW |
+| AMY-006 | ~~Weekday strip on Today tab hardcoded~~ | FIXED (StreakCelebration uses i18n) |
 | AMY-007 | ~~`EmptyState` dead code~~ | FIXED (removed) |
 | AMY-008 | ~~`src/constants/theme.ts` dead code~~ | FIXED (removed) |
 | AMY-009 | Expo packages — run `npx expo install --fix` | LOW (run completed) |
-| AMY-010 | No git remote — one hardware failure loses all work | HIGH |
+| AMY-010 | ~~No git remote~~ | FIXED (origin on GitHub — push regularly) |
 
 ---
 
@@ -70,8 +70,8 @@
 |---------|--------:|----------:|----------:|
 | Surahs (full text) | 114 | 114 ✓ | — |
 | Hadiths (curated) | 1077 | 1077 ✓ | Expand all 6 collections |
-| Duas (Hisnul Muslim) | 51 | 100 | 280 |
-| 99 Names | 99 | 99 ✓ | Add `meaningAr` |
+| Duas (Hisnul Muslim) | 267 | 267 ✓ | — |
+| 99 Names | 99 | 99 ✓ | — |
 | Daily Reflections | 366 | 365 ✓ | — |
 
 ---

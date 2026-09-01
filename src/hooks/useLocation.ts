@@ -6,6 +6,7 @@ import {
   getCurrentLocation,
   getDefaultLocation,
 } from '../services/locationService';
+import { LEGACY_DETECTED_LOCATION } from '../utils/locationDisplay';
 import type { CalculationMethod } from '../types';
 
 // Map ISO country codes to the most-used calculation method in that country.
@@ -51,7 +52,7 @@ export function useLocation() {
             navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
           });
           const { latitude, longitude } = position.coords;
-          setLocation(latitude, longitude, 'Detected Location');
+          setLocation(latitude, longitude, LEGACY_DETECTED_LOCATION);
           setLocationAutoDetect?.(true);
           return true;
         } catch {

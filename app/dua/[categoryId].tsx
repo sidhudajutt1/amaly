@@ -24,7 +24,7 @@ function DuaCard({ dua, language, theme, showTransliteration, isBookmarked, onTo
   const isDone = count >= dua.repetitions;
 
   const getTranslation = () => {
-    if (language === 'ur') return dua.translationUr;
+    if (language === 'ur') return dua.translationUr || dua.translationEn;
     return dua.translationEn;
   };
 

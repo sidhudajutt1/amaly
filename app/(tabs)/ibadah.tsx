@@ -9,6 +9,7 @@ import { duaCategories } from '../../src/data/duaCategories';
 import { countDuasInCategory } from '../../src/data/duas';
 import { getQiblaDirection, getDistanceToMakkah } from '../../src/services/prayerService';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
+import { formatDistanceKm } from '../../src/utils/locationDisplay';
 import type { Language } from '../../src/types';
 
 function QuickAccessCard({ icon, label, sublabel, theme, onPress }: {
@@ -40,19 +41,20 @@ function DuaCategoryRow({ cat, language, theme }: {
 }) {
   const name = language === 'ar' ? cat.nameAr : language === 'ur' ? cat.nameUr : cat.nameEn;
   const rtl = isRTL(language);
+  const count = countDuasInCategory(cat.id);
   return (
     <TouchableOpacity
       style={[styles.duaRow, { backgroundColor: theme.surface, borderColor: theme.border }]}
       activeOpacity={0.7}
       onPress={() => router.push(`/dua/${cat.id}`)}
-      accessibilityLabel={`${name}, ${cat.count} duas`}
+      accessibilityLabel={`${name}, ${count} duas`}
       accessibilityRole="button"
     >
       <Ionicons name="heart-outline" size={20} color={theme.primary} style={styles.duaIcon} />
       <View style={styles.duaInfo}>
         <Text style={[styles.duaName, { color: theme.text }]}>{name}</Text>
         <Text style={[styles.duaCount, { color: theme.textTertiary }]}>
-          {cat.count} {language === 'ar' ? 'دعاء' : language === 'ur' ? 'دعائیں' : 'duas'}
+          {count} {language === 'ar' ? 'دعاء' : language === 'ur' ? 'دعائیں' : 'duas'}
         </Text>
       </View>
       <Ionicons name={rtl ? 'chevron-back' : 'chevron-forward'} size={18} color={theme.textTertiary} />
@@ -89,7 +91,7 @@ export default function IbadahScreen() {
         <QuickAccessCard
           icon={<MaterialCommunityIcons name="compass-outline" size={32} color={theme.primary} />}
           label={t(language, 'ibadah.qibla')}
-          sublabel={`${qiblaDir}° • ${distKm} km`}
+          sublabel={`${qiblaDir}° • ${formatDistanceKm(distKm, language)}`}
           theme={theme}
           onPress={() => router.push('/qibla')}
         />

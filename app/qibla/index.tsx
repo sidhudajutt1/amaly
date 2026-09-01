@@ -7,6 +7,7 @@ import { useAppStore } from '../../src/store/useAppStore';
 import { useTheme } from '../../src/hooks/useTheme';
 import { getQiblaDirection, getDistanceToMakkah } from '../../src/services/prayerService';
 import { t } from '../../src/i18n';
+import { formatLocationName, formatDistanceKm } from '../../src/utils/locationDisplay';
 import { fontSizes, spacing, borderRadius } from '../../src/theme';
 
 function useHeading(): number | null {
@@ -107,7 +108,7 @@ export default function QiblaScreen() {
       <View style={styles.locationRow}>
         <Ionicons name="location-outline" size={16} color={theme.textSecondary} />
         <Text style={[styles.locationText, { color: theme.textSecondary }]}>
-          {locationName || t(language, 'qibla.defaultMakkah')}
+          {locationName ? formatLocationName(locationName, language) : t(language, 'qibla.defaultMakkah')}
         </Text>
       </View>
 
@@ -219,7 +220,7 @@ export default function QiblaScreen() {
           </Text>
         </View>
         <View style={[styles.infoCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-          <Text style={[styles.infoValue, { color: theme.primary }]}>{`${distance} km`}</Text>
+          <Text style={[styles.infoValue, { color: theme.primary }]}>{formatDistanceKm(distance, language)}</Text>
           <Text style={[styles.infoLabel, { color: theme.textSecondary }]}>
             {t(language, 'qibla.distance')}
           </Text>

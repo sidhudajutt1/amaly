@@ -47,19 +47,13 @@ export function StreakCelebration({ visible, streak, language, theme, onDismiss 
 
   if (!visible) return null;
 
-  const streakLabel = language === 'ar'
-    ? `اليوم ${streak}`
-    : language === 'ur'
-      ? `دن ${streak}`
-      : `Day ${streak}`;
+  const streakLabel = t(language, 'streak.modalDay').replace('{{count}}', String(streak));
 
-  const congratsText = language === 'ar'
-    ? `الحمد لله! سلسلتك الآن ${streak} ${streak === 1 ? 'يوم' : 'أيام'}`
-    : language === 'ur'
-      ? `الحمدللہ! آپ کا سلسلہ اب ${streak} دن ہے`
-      : `Alhamdulillah! Your streak is now ${streak} day${streak !== 1 ? 's' : ''}`;
+  const congratsText = streak === 1
+    ? t(language, 'streak.modalMessageOne')
+    : t(language, 'streak.modalMessageMany').replace('{{count}}', String(streak));
 
-  const dismissLabel = language === 'ar' ? 'الحمد لله' : language === 'ur' ? 'الحمدللہ' : 'Alhamdulillah';
+  const dismissLabel = t(language, 'streak.celebration');
 
   return (
     <Animated.View style={[styles.overlay, { opacity }]} accessibilityViewIsModal importantForAccessibility="yes">

@@ -6,6 +6,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAppStore } from '../../src/store/useAppStore';
 import { t } from '../../src/i18n';
+import { formatLocationName } from '../../src/utils/locationDisplay';
 import { useTheme } from '../../src/hooks/useTheme';
 import { useLocation } from '../../src/hooks/useLocation';
 import { usePrayerTimes } from '../../src/hooks/usePrayerTimes';
@@ -230,8 +231,8 @@ export default function TodayScreen() {
     >
       {/* ── Date Header ─────────────────────────────────────────────── */}
       <View style={styles.dateHeader} accessibilityRole="header">
-        <Text style={[styles.locationLabel, { color: theme.textSecondary }]} accessibilityLabel={`Location: ${locationName}`}>
-          {locationName}
+        <Text style={[styles.locationLabel, { color: theme.textSecondary }]} accessibilityLabel={`Location: ${formatLocationName(locationName, language)}`}>
+          {formatLocationName(locationName, language)}
         </Text>
         <TouchableOpacity
           onPress={() => router.push('/calendar')}
